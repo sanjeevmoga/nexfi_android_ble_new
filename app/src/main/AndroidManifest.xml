@@ -36,7 +36,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.GuideActivity"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -127,6 +127,11 @@
 
         <activity
             android:name=".activity.NexFiActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <activity
+            android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>

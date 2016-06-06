@@ -53,12 +53,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private int userAge;
     private String userAvatar;
 
-    private boolean isFirstIn = false;
     private boolean isExit;
 
 
-    BleDBDao bleDBDao=new BleDBDao(BleApplication.getContext());
-    public String userIdOfFirstLogin=UUID.randomUUID().toString();//第一次进入登录时会生成一个用户id
+    BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
+    public String userIdOfFirstLogin = UUID.randomUUID().toString();//第一次进入登录时会生成一个用户id
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,15 +98,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void setViewData() {
-        if (!isFirstIn) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-        } else {
-            tv_username.setText("未填写");
-            tv_userAge.setText("未填写");
-            iv_userhead_icon.setImageResource(R.mipmap.img_head_01);
-        }
-
+        tv_username.setText("未填写");
+        tv_userAge.setText("未填写");
+        iv_userhead_icon.setImageResource(R.mipmap.img_head_01);
     }
 
     private void initData() {
@@ -114,7 +108,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         userAvatar = UserInfo.initUserAvatar(userAvatar, this);
         userGender = UserInfo.initUserGender(userGender, this);
         userNick = UserInfo.initUserNick(userNick, this);
-        isFirstIn = UserInfo.initConfigurationInformation(isFirstIn, this);
     }
 
     private void radioSetOnCheckedListener() {
@@ -141,25 +134,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.btn_finish:
                 //如果userAvatar是默认值，说明用户没有选择头像，那就随机选择一个
-                if(userAvatar.equals("img_head_01")){
+                if (userAvatar.equals("img_head_01")) {
                     //用户不选择，就为其随机选择一个
-                    int randomNum=new Random().nextInt(15)+2;//随机生成2~15之间的数字
-                    if(randomNum<10){
-                        userAvatar="img_head_0"+randomNum;
-                    }else{
-                        userAvatar="img_head_"+randomNum;
+                    int randomNum = new Random().nextInt(15) + 2;//随机生成2~15之间的数字
+                    if (randomNum < 10) {
+                        userAvatar = "img_head_0" + randomNum;
+                    } else {
+                        userAvatar = "img_head_" + randomNum;
                     }
-                    UserInfo.saveUserHeadIcon(this,userAvatar);
-                }else{
+                    UserInfo.saveUserHeadIcon(this, userAvatar);
+                } else {
                     //如果不是默认值，说明用户自己选择了头像
-                    if(userAge != 0 && userGender != null && !userNick.equals("未填写")){
+                    if (userAge != 0 && userGender != null && !userNick.equals("未填写")) {
                         UserInfo.setConfigurationInformation(this);
                         UserInfo.saveUserId(this, userIdOfFirstLogin);
-                        SharedPreferencesUtils.saveString(getApplicationContext(),"userSelfId",userIdOfFirstLogin);
+                        SharedPreferencesUtils.saveString(getApplicationContext(), "userSelfId", userIdOfFirstLogin);
                         saveUserInfo();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
-                    }else{
+                    } else {
                         Toast.makeText(this, "您还未输入完信息哦", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -183,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * 保存用户信息
      */
     private void saveUserInfo() {
-        BaseMessage baseMessage=new BaseMessage();
+        BaseMessage baseMessage = new BaseMessage();
         baseMessage.messageType = MessageType.eMessageType_requestUserInfo;
         UserMessage userMessage = new UserMessage();
         userMessage.userNick = userNick;
