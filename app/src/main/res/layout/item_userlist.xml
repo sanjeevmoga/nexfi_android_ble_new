@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/layout_userList"
+        android:background="#FFF">
+
+
+        <ImageView
+            android:id="@+id/iv_userhead_icon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="25dp"
+            android:src="@mipmap/img_head_06" />
+
+        <TextView
+            android:id="@+id/tv_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/iv_userhead_icon"
+            android:text="Baby"
+            android:textColor="#575757"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/iv_sex"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/tv_username"
+            android:src="@mipmap/img_female" />
+
+        <Button
+            android:id="@+id/btn_chat"
+            android:layout_width="52dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/shape_userlist_button"
+            android:gravity="center"
+            android:text="私聊"
+            android:textColor="#FFF"
+            android:textSize="15sp" />
+    </RelativeLayout>
+</RelativeLayout>

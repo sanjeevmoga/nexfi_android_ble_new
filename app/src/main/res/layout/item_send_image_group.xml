@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_sendTime_send_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textColor="@color/textNormol"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="7dp">
+
+        <ImageView
+            android:id="@+id/iv_userhead_send_image"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:focusable="false"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/img_head_11" />
+
+        <TextView
+            android:id="@+id/tv_userNick_send_image"
+            android:layout_width="60dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/iv_userhead_send_image"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/textNormol"
+            android:textSize="14sp" />
+
+        <RelativeLayout
+            android:id="@+id/chatcontent_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/iv_userhead_send_image"
+            android:background="@drawable/chat_to_img_bg_normal"
+            android:focusable="true"
+            android:minHeight="50dp">
+
+            <ImageView
+                android:id="@+id/iv_icon_send"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentLeft="true"
+                android:src="@mipmap/png" />
+
+            <ProgressBar
+                android:id="@+id/pb_send"
+                style="@style/CustomProgressStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminateDrawable="@drawable/progressbar" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>
+
+

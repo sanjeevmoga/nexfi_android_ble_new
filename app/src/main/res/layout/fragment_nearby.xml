@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EEEEEE"
+    tools:context=".MainActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/layout_topGroup"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:background="#3B3B3B">
+
+        <TextView
+            android:id="@+id/tv_near"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="附近的人"
+            android:textColor="#FFF"
+            android:textSize="19sp" />
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="20dp"
+            android:src="@mipmap/icon_popmenu" />
+    </RelativeLayout>
+
+    <com.nexfi.yuanpeigen.nexfi_android_ble.smoothprogressbar.SmoothProgressBar
+        android:id="@+id/myProgressbar"
+        style="@style/GradientProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@+id/layout_topGroup"
+        android:indeterminate="true"
+        android:visibility="visible" />
+
+    <ListView
+        android:id="@+id/lv_userlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/myProgressbar"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="67dp"
+        android:cacheColorHint="#0000"
+        android:divider="@null"
+        android:dividerHeight="6dp"
+        android:scrollbarStyle="outsideOverlay" />
+
+</RelativeLayout>

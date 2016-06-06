@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.nexfi.yuanpeigen.nexfi_android_ble"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile project(':underdark')
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'io.underdark:underdark:1.+'
+    compile('org.apache.httpcomponents:httpcore:4.+') {
+        exclude module: 'httpclient'
+    }
+    compile 'org.apache.httpcomponents:httpclient:4.2.2'
+    compile files('libs/gson.jar')
+}
+
+repositories {
+    maven {
+        url 'https://dl.bintray.com/underdark/android/'
+    }
+}

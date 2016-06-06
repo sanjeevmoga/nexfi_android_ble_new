@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#000" >
+
+    <Button
+        android:id="@+id/bt_cancle"
+        android:layout_width="52dp"
+        android:layout_height="32dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/shape_userlist_button"
+        android:text="取消"
+        android:textSize="18sp"/>
+
+
+    <Button
+        android:id="@+id/bt_sure"
+        android:layout_width="52dp"
+        android:layout_height="32dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/shape_userlist_button"
+        android:text="确定"
+        android:textSize="18sp"/>
+
+    <com.nexfi.yuanpeigen.nexfi_android_ble.view.ShowScaleImageView
+        android:id="@+id/imgView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+         android:clickable="false">
+    </com.nexfi.yuanpeigen.nexfi_android_ble.view.ShowScaleImageView>
+
+</RelativeLayout>
