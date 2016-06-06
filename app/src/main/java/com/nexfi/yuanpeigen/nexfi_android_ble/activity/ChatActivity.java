@@ -454,6 +454,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     recordButton.setVisibility(View.INVISIBLE);
                     iv_editPrivate.setVisibility(View.INVISIBLE);
                     et_chatPrivate.setVisibility(View.VISIBLE);
+                    et_chatPrivate.setFocusable(true);
+                    et_chatPrivate.setFocusableInTouchMode(true);
+                    et_chatPrivate.requestFocus();
                     visibility_Flag_edit = false;
                 }
                 break;
