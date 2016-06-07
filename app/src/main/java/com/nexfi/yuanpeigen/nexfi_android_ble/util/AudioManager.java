@@ -76,8 +76,9 @@ public class AudioManager {
             mRecorder = new MediaRecorder();
             // 设置输出文件
             mRecorder.setOutputFile(file.getAbsolutePath());
+
             // 设置meidaRecorder的音频源是麦克风
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);//对有些手机会报错:java.lang.RuntimeException: setAudioSource failed.
             // 设置文件音频的输出格式为amr
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
             // 设置音频的编码格式为amr
@@ -103,6 +104,7 @@ public class AudioManager {
         }
 
     }
+
 
     /**
      * 随机生成文件的名称
@@ -135,7 +137,7 @@ public class AudioManager {
     public void release() {
         // 严格按照api流程进行
         if(mRecorder!=null) {
-            mRecorder.stop();
+//            mRecorder.stop();
             mRecorder.release();
             mRecorder = null;
         }

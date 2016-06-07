@@ -15,6 +15,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.VoiceMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.helper.BleDBHelper;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,6 @@ public class BleDBDao {
         db.close();
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user.com"), null);
-        Log.e("TAG", userMessage.userNick + "---------------------用户数据改变了------------------" + userMessage.userAvatar);
     }
 
 
@@ -94,7 +94,6 @@ public class BleDBDao {
         SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor = db.query("userData", null, null, null, null, null, null);
         List<UserMessage> mDatas = new ArrayList<UserMessage>();
-        List<UserMessage> mList = new ArrayList<UserMessage>();
         while (cursor.moveToNext()) {
             UserMessage user = new UserMessage();
             user.nodeId = cursor.getString(cursor.getColumnIndex("nodeId"));
@@ -203,9 +202,11 @@ public class BleDBDao {
 
         VoiceMessage voiceMessage = singleChatMessage.voiceMessage;
         if (voiceMessage != null) {
+            Debug.debugLog("shujuku","语音消息保存到数据库----------------");
             values.put("durational", voiceMessage.durational);
             values.put("fileData", voiceMessage.fileData);
             values.put("isRead", voiceMessage.isRead);
+            values.put("filePath",voiceMessage.filePath);
         }
         db.insert("textP2PMessg", null, values);
         db.close();
@@ -272,6 +273,7 @@ public class BleDBDao {
                 voiceMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
                 voiceMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
                 voiceMessage.durational = cursor.getString(cursor.getColumnIndex("durational"));
+                voiceMessage.filePath=cursor.getString(cursor.getColumnIndex("filePath"));
                 singleChatMessage.voiceMessage = voiceMessage;
 
                 mDatas.add(singleChatMessage);
@@ -352,6 +354,7 @@ public class BleDBDao {
             values.put("durational", voiceMessage.durational);
             values.put("fileData", voiceMessage.fileData);
             values.put("isRead", voiceMessage.isRead);
+            values.put("filePath",voiceMessage.filePath);
         }
 
         db.insert("textGroupMesg", null, values);
@@ -426,6 +429,7 @@ public class BleDBDao {
             voiceMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
             voiceMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
             voiceMessage.durational = cursor.getString(cursor.getColumnIndex("durational"));
+            voiceMessage.filePath= cursor.getString(cursor.getColumnIndex("filePath"));
             groupChatMessage.voiceMessage = voiceMessage;
 
             mDatas.add(groupChatMessage);

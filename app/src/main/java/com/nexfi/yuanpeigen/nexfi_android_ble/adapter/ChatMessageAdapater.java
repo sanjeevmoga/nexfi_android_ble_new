@@ -27,6 +27,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageBodyType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.SingleChatMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.VoiceMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.listener.VoicePlayClickListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 
 import java.util.List;
@@ -137,6 +138,7 @@ public class ChatMessageAdapater extends BaseAdapter {
         ViewHolder_chatSend viewHolder_chatSend = null;
         ViewHolder_sendImage viewHolder_sendImage = null;
         ViewHolder_voice viewHolder_voice = null;
+
         if (convertView == null) {
             viewHolder_chatSend = new ViewHolder_chatSend();
             viewHolder_sendImage = new ViewHolder_sendImage();
@@ -164,6 +166,8 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_voice.length = convertView.findViewById(R.id.recorder_length);
                     viewHolder_voice.seconds = (TextView) convertView.findViewById(R.id.recorder_time);
                     viewHolder_voice.userHeadIcon = (ImageView) convertView.findViewById(R.id.item_icon);
+
+                    viewHolder_voice.id_recorder_anim= (ImageView) convertView.findViewById(R.id.id_recorder_anim);//
                     convertView.setTag(viewHolder_voice);
                     break;
 
@@ -226,6 +230,32 @@ public class ChatMessageAdapater extends BaseAdapter {
                 lParams.width = (int) (mMinItemWith + mMaxItemWith / 60f * Double.parseDouble(voiceMsg.durational));
                 viewHolder_voice.length.setLayoutParams(lParams);
                 viewHolder_voice.userHeadIcon.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
+                viewHolder_voice.id_recorder_anim.setOnClickListener(new VoicePlayClickListener(entity,viewHolder_voice.id_recorder_anim,userSelfId,this));
+
+//                viewHolder_voice.id_recorder_anim.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Debug.debugLog("animation","播放动画-------------------------------");
+//                        if(entity.userMessage.userId.equals(userSelfId)){
+//                            viewHolder_voice.id_recorder_anim.setBackgroundResource(R.drawable.voice_to_icon);
+//                        }else{
+//                            viewHolder_voice.id_recorder_anim.setBackgroundResource(R.drawable.voice_from_icon);
+//                        }
+//                        AnimationDrawable animationDrawable = (AnimationDrawable) viewHolder_voice.id_recorder_anim.getBackground();
+//                        animationDrawable.start();
+//                        MediaManager.playSound(entity.voiceMessage.filePath, new MediaPlayer.OnCompletionListener() {
+//                            @Override
+//                            public void onCompletion(MediaPlayer mp) {
+//                                if(entity.userMessage.userId.equals(userSelfId)){
+//                                    viewHolder_voice.id_recorder_anim.setBackgroundResource(R.drawable.chatto_voice_playing);
+//                                }else{
+//                                    viewHolder_voice.id_recorder_anim.setBackgroundResource(R.drawable.chatfrom_voice_playing);
+//                                }
+//                            }
+//                        });
+//                    }
+//                });
+
                 break;
 
             case MessageBodyType.eMessageBodyType_Image:
@@ -306,6 +336,7 @@ public class ChatMessageAdapater extends BaseAdapter {
         public TextView seconds;// 时间
         public View length;// 对话框长度
         public ImageView userHeadIcon;
+        public ImageView id_recorder_anim;
     }
 
 

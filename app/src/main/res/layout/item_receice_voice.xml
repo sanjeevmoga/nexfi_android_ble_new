@@ -24,12 +24,12 @@
         android:layout_toRightOf="@id/item_icon"
         android:background="@drawable/chat_from_bg_normal">
 
-        <View
+        <ImageView
             android:id="@+id/id_recorder_anim"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
-            android:background="@drawable/adj_receive" />
+            android:background="@drawable/chatfrom_voice_playing" />
 
     </FrameLayout>
 

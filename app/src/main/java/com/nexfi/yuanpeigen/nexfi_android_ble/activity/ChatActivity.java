@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,7 +25,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -76,7 +73,7 @@ import io.underdark.transport.Link;
 /**
  * Created by Mark on 2016/4/14.
  */
-public class ChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveTextMsgListener, Runnable {
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveTextMsgListener, Runnable ,AudioRecordButton.LongClickToRecordAudioListener{
 
     private RelativeLayout layout_backPrivate;
     private ImageView iv_add_Private, iv_camera, iv_position, iv_pic, iv_editPrivate, iv_changePrivate;
@@ -179,6 +176,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         MediaManager.release();
     }
 
+
+
     private class Myobserve extends ContentObserver {
         public Myobserve(Handler handler) {
             super(handler);
@@ -210,12 +209,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mCount = bleDBDao.getCount(userId);
         //计算总页数
         totalPageCount = (mCount + pageSize - 1) / pageSize;
-
+        Debug.debugLog("initAdapter",mCount+"================mCount==============");
         // 判断是否是第一次加载数据
         if (mDataArrays != null && mDataArrays.size() == 0) {
             // 初始化20条数据
             mDataArrays = bleDBDao.findPartMsgByChatId(userId, pageSize, startIndex);
             Collections.reverse(mDataArrays);
+            Debug.debugLog("initAdapter",mDataArrays.size()+"================分页==============");
         }
 
 
@@ -228,6 +228,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 chatMessageAdapater.notifyDataSetChanged();
             }
         }
+    }
+
+
+    @Override
+    public void requestRecord() {//长按按钮录音时
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            if (!(checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
+//                requestRecordAudioPermission();
+//            }
+//        }
     }
 
 
@@ -246,45 +256,45 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             node.setReceiveTextMsgListener(this);
         }
 
-        lv_chatPrivate.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final boolean isSend = mDataArrays.get(position).userMessage.userId.equals(userSelfId);
-                if (mDataArrays.get(position).messageBodyType == MessageBodyType.eMessageBodyType_Voice) {
-                    // 播放动画
-                    if (viewanim != null) {//让第二个播放的时候第一个停止播放
-                        if (isSend) {
-                            viewanim.setBackgroundResource(R.drawable.adj_send);
-                        } else {
-                            viewanim.setBackgroundResource(R.drawable.adj_receive);
-                        }
-                        viewanim = null;
-                    }
-                    viewanim = view.findViewById(R.id.id_recorder_anim);
-                    if (isSend) {
-                        viewanim.setBackgroundResource(R.drawable.play);
-                    } else {
-                        viewanim.setBackgroundResource(R.drawable.play_receive);
-                    }
-                    AnimationDrawable drawable = (AnimationDrawable) viewanim
-                            .getBackground();
-                    drawable.start();
-
-                    // 播放音频
-                    MediaManager.playSound(mDataArrays.get(position).voiceMessage.filePath,
-                            new MediaPlayer.OnCompletionListener() {
-                                @Override
-                                public void onCompletion(MediaPlayer mp) {
-                                    if (isSend) {
-                                        viewanim.setBackgroundResource(R.drawable.adj_send);
-                                    } else {
-                                        viewanim.setBackgroundResource(R.drawable.adj_receive);
-                                    }
-                                }
-                            });
-                }
-            }
-        });
+//        lv_chatPrivate.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                final boolean isSend = mDataArrays.get(position).userMessage.userId.equals(userSelfId);
+//                if (mDataArrays.get(position).messageBodyType == MessageBodyType.eMessageBodyType_Voice) {
+//                    // 播放动画
+//                    if (viewanim != null) {//让第二个播放的时候第一个停止播放
+//                        if (isSend) {
+//                            viewanim.setBackgroundResource(R.drawable.adj_send);
+//                        } else {
+//                            viewanim.setBackgroundResource(R.drawable.adj_receive);
+//                        }
+//                        viewanim = null;
+//                    }
+//                    viewanim = view.findViewById(R.id.id_recorder_anim);
+//                    if (isSend) {
+//                        viewanim.setBackgroundResource(R.drawable.play);
+//                    } else {
+//                        viewanim.setBackgroundResource(R.drawable.play_receive);
+//                    }
+//                    AnimationDrawable drawable = (AnimationDrawable) viewanim
+//                            .getBackground();
+//                    drawable.start();
+//
+//                    // 播放音频
+//                    MediaManager.playSound(mDataArrays.get(position).voiceMessage.filePath,
+//                            new MediaPlayer.OnCompletionListener() {
+//                                @Override
+//                                public void onCompletion(MediaPlayer mp) {
+//                                    if (isSend) {
+//                                        viewanim.setBackgroundResource(R.drawable.adj_send);
+//                                    } else {
+//                                        viewanim.setBackgroundResource(R.drawable.adj_receive);
+//                                    }
+//                                }
+//                            });
+//                }
+//            }
+//        });
 
         et_chatPrivate.addTextChangedListener(new TextWatcher() {
                                                   @Override
@@ -308,18 +318,24 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                               }
 
         );
+        recordButton.setOnLongClickToRecordAudioListener(this);
         recordButton.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener()
 
                                                     {
                                                         @Override
                                                         public void onFinished(float seconds, String filePath) {
-
-                                                            sendVoiceMsg(seconds, filePath);
+                                                            if (null != link) {
+                                                                sendVoiceMsg(seconds, filePath);
+                                                            }else{
+                                                                initDialogConnectedStatus();
+                                                            }
                                                         }
                                                     }
 
         );
     }
+
+
 
 
     /**
@@ -333,6 +349,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         SingleChatMessage singleChatMessage = new SingleChatMessage();
         singleChatMessage.messageType = MessageType.eMessageType_SingleChat;
         singleChatMessage.messageBodyType = MessageBodyType.eMessageBodyType_Voice;
+        singleChatMessage.receiver = userId;
+        singleChatMessage.msgId = UUID.randomUUID().toString();
+        singleChatMessage.timeStamp = TimeUtils.getNowTime();
 
         UserMessage user = bleDBDao.findUserByUserId(userSelfId);
         singleChatMessage.userMessage = user;
@@ -345,16 +364,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         voiceMessage.fileData = voiceData;
         voiceMessage.filePath = filePath;
         singleChatMessage.voiceMessage = voiceMessage;
-        setAdapter(singleChatMessage);
+
         Gson gson = new Gson();
         String json = gson.toJson(singleChatMessage);
         byte[] send_text_data = json.getBytes();
-        Debug.debugLog("sendvoice", "--------语音已发送-1111111----");
         if (null != link) {
             link.sendFrame(send_text_data);
             Debug.debugLog("sendvoice", "--------语音已发送-----");
-//            bleDBDao.addP2PTextMsg(singleChatMessage);//geng
-//            setAdapter(singleChatMessage);
+            bleDBDao.addP2PTextMsg(singleChatMessage);//geng
+            setAdapter(singleChatMessage);
+            Debug.debugLog("setAdapter", "--------语音已发送-设置适配器----");
         }
 
     }
@@ -530,15 +549,25 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 2;
 
+    private static final int RECORD_AUDIO_REQUEST_CODE = 3;
 
+
+    //拍照
     @TargetApi(Build.VERSION_CODES.M)
     private void requestCameraPermission() {
         requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION_CAMERA_CODE);
     }
 
+    //内存卡
     @TargetApi(Build.VERSION_CODES.M)
     private void requestStoragePermission() {
         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+    }
+
+    //录音
+    @TargetApi(Build.VERSION_CODES.M)
+    private void requestRecordAudioPermission() {
+        requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
     }
 
 
@@ -560,7 +589,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             if (granted) {
                 cameraToSend();
             }
-
+        }else if (requestCode == RECORD_AUDIO_REQUEST_CODE) {
+            int grantResult = grantResults[0];
+            boolean granted = grantResult == PackageManager.PERMISSION_GRANTED;
+            if (!granted) {
+                return;
+            }
         }
     }
 
@@ -613,6 +647,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             TextMessage textMessage = new TextMessage();
             textMessage.fileData = contString;
             singleChatMessage.textMessage = textMessage;
+
             Gson gson = new Gson();
             String json = gson.toJson(singleChatMessage);
             byte[] send_text_data = json.getBytes();

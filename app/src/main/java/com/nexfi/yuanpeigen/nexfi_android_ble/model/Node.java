@@ -241,7 +241,7 @@ public class Node implements TransportListener {
                 File fileDir = null;
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     //存在sd卡
-                    fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NexFi_ble/image");
+                    fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NexFi_ble/voice");
                     if (!fileDir.exists()) {
                         fileDir.mkdirs();
                     }
@@ -249,10 +249,9 @@ public class Node implements TransportListener {
                 String rece_file_path = fileDir + "/" + videoFileName;
                 File fileRece=FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
                 singleChatMessage.voiceMessage.filePath=fileRece.getAbsolutePath();
-                Debug.debugLog("receivevoice","----收到语音路径------------------"+fileRece.getAbsolutePath());
             }
             singleChatMessage.receiver = singleChatMessage.userMessage.userId;
-//            bleDBDao.addP2PTextMsg(singleChatMessage);//geng
+            bleDBDao.addP2PTextMsg(singleChatMessage);//geng
             if (null != mReceiveTextMsgListener) {
                 mReceiveTextMsgListener.onReceiveTextMsg(singleChatMessage);
             }
