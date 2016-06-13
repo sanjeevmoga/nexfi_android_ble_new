@@ -73,7 +73,7 @@ public class GroupChatAdapater extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 35;
+        return 40;
     }
 
     @Override

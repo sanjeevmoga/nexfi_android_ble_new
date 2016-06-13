@@ -139,12 +139,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private View viewanim;
 
-//    public native void convertmp3(String wav,String mp3);
-//    public native String getLameVersion();
-//    static{
-//        System.loadLibrary("Hello");
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
