@@ -236,6 +236,7 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
             return true;
         }
         if (y < -DISTANCE_Y_CANCEL || y > getHeight() + DISTANCE_Y_CANCEL) {
+
             return true;
         }
 

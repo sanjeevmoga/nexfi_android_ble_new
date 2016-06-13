@@ -207,6 +207,11 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
         user.userAge = userAge;
         user.userGender = userGender;
         user.userAvatar = userAvatar;
+        //保存到shared
+        UserInfo.saveUserAge(BleApplication.getContext(),userAge);
+        UserInfo.saveUsername(BleApplication.getContext(), userNick);
+        UserInfo.saveUsersex(BleApplication.getContext(), userGender);
+        UserInfo.saveUserHeadIcon(BleApplication.getContext(), userAvatar);
         //将修改后的数据更新到数据库中
         bleDBDao.updateUserInfoByUserId(user, userSelfId);
         bleDBDao.updateP2PMsgByUserId(user, userSelfId);

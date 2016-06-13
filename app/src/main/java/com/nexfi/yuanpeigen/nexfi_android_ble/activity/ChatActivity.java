@@ -58,6 +58,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.TUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 import com.nexfi.yuanpeigen.nexfi_android_ble.view.AudioRecordButton;
+import com.pocketdigi.utils.FLameUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -138,6 +139,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private View viewanim;
 
+//    public native void convertmp3(String wav,String mp3);
+//    public native String getLameVersion();
+//    static{
+//        System.loadLibrary("Hello");
+//    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -209,13 +216,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mCount = bleDBDao.getCount(userId);
         //计算总页数
         totalPageCount = (mCount + pageSize - 1) / pageSize;
-        Debug.debugLog("initAdapter",mCount+"================mCount==============");
         // 判断是否是第一次加载数据
         if (mDataArrays != null && mDataArrays.size() == 0) {
             // 初始化20条数据
             mDataArrays = bleDBDao.findPartMsgByChatId(userId, pageSize, startIndex);
             Collections.reverse(mDataArrays);
-            Debug.debugLog("initAdapter",mDataArrays.size()+"================分页==============");
         }
 
 
@@ -256,46 +261,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             node.setReceiveTextMsgListener(this);
         }
 
-//        lv_chatPrivate.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                final boolean isSend = mDataArrays.get(position).userMessage.userId.equals(userSelfId);
-//                if (mDataArrays.get(position).messageBodyType == MessageBodyType.eMessageBodyType_Voice) {
-//                    // 播放动画
-//                    if (viewanim != null) {//让第二个播放的时候第一个停止播放
-//                        if (isSend) {
-//                            viewanim.setBackgroundResource(R.drawable.adj_send);
-//                        } else {
-//                            viewanim.setBackgroundResource(R.drawable.adj_receive);
-//                        }
-//                        viewanim = null;
-//                    }
-//                    viewanim = view.findViewById(R.id.id_recorder_anim);
-//                    if (isSend) {
-//                        viewanim.setBackgroundResource(R.drawable.play);
-//                    } else {
-//                        viewanim.setBackgroundResource(R.drawable.play_receive);
-//                    }
-//                    AnimationDrawable drawable = (AnimationDrawable) viewanim
-//                            .getBackground();
-//                    drawable.start();
-//
-//                    // 播放音频
-//                    MediaManager.playSound(mDataArrays.get(position).voiceMessage.filePath,
-//                            new MediaPlayer.OnCompletionListener() {
-//                                @Override
-//                                public void onCompletion(MediaPlayer mp) {
-//                                    if (isSend) {
-//                                        viewanim.setBackgroundResource(R.drawable.adj_send);
-//                                    } else {
-//                                        viewanim.setBackgroundResource(R.drawable.adj_receive);
-//                                    }
-//                                }
-//                            });
-//                }
-//            }
-//        });
-
         et_chatPrivate.addTextChangedListener(new TextWatcher() {
                                                   @Override
                                                   public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -325,7 +290,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                                         @Override
                                                         public void onFinished(float seconds, String filePath) {
                                                             if (null != link) {
-                                                                sendVoiceMsg(seconds, filePath);
+                                                                Debug.debugLog("filepath",filePath+"=========");
+                                                                ///storage/emulated/0/nexfi_recorder_audios/f8d2d2eb-99f6-46b8-b3f3-5ffafb500cf9.amr
+                                                                String finalPath=filePath.replace(".raw", ".mp3");
+                                                                // 这里没有判断储存卡是否存在，有空要判断
+                                                                FLameUtils lameUtils=new FLameUtils(1, 16000, 96);
+                                                                lameUtils.raw2mp3(filePath,finalPath);
+                                                                Debug.debugLog("finalPath", finalPath + "======已转换路径===");
+                                                                sendVoiceMsg(seconds, finalPath);
                                                             }else{
                                                                 initDialogConnectedStatus();
                                                             }
@@ -360,6 +332,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         voiceMessage.durational = seconds + "";
         File file = new File(filePath);
         byte[] voice_send = FileTransferUtils.getBytesFromFile(file);
+        Debug.debugLog("sendvoice", file + "--------sendvoice--------" + voice_send);
+        if(voice_send==null){
+            return;
+        }
         String voiceData = Base64.encodeToString(voice_send, Base64.DEFAULT);
         voiceMessage.fileData = voiceData;
         voiceMessage.filePath = filePath;
@@ -370,7 +346,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         byte[] send_text_data = json.getBytes();
         if (null != link) {
             link.sendFrame(send_text_data);
-            Debug.debugLog("sendvoice", "--------语音已发送-----");
             bleDBDao.addP2PTextMsg(singleChatMessage);//geng
             setAdapter(singleChatMessage);
             Debug.debugLog("setAdapter", "--------语音已发送-设置适配器----");
@@ -473,6 +448,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     recordButton.setVisibility(View.INVISIBLE);
                     iv_editPrivate.setVisibility(View.INVISIBLE);
                     et_chatPrivate.setVisibility(View.VISIBLE);
+                    et_chatPrivate.setFocusable(true);
+                    et_chatPrivate.setFocusableInTouchMode(true);
+                    et_chatPrivate.requestFocus();
                     visibility_Flag_edit = false;
                 }
                 break;

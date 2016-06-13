@@ -237,7 +237,7 @@ public class Node implements TransportListener {
                 String fileData=singleChatMessage.voiceMessage.fileData;
                 byte[] by_receive_data= Base64.decode(fileData, Base64.DEFAULT);
                 String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-                String videoFileName = "VIDEO_"+ timeStamp + "_";
+                String videoFileName = "VIDEO_"+ timeStamp + ".mp3";
                 File fileDir = null;
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     //存在sd卡
@@ -249,6 +249,7 @@ public class Node implements TransportListener {
                 String rece_file_path = fileDir + "/" + videoFileName;
                 File fileRece=FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
                 singleChatMessage.voiceMessage.filePath=fileRece.getAbsolutePath();
+                Debug.debugLog("getAbsolutePath",fileRece.getAbsolutePath()+"===============");///storage/emulated/0/NexFi_ble/voice/VIDEO_20160607140854_
             }
             singleChatMessage.receiver = singleChatMessage.userMessage.userId;
             bleDBDao.addP2PTextMsg(singleChatMessage);//geng

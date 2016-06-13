@@ -140,9 +140,11 @@ public class ChatMessageAdapater extends BaseAdapter {
         ViewHolder_voice viewHolder_voice = null;
 
         if (convertView == null) {
+
             viewHolder_chatSend = new ViewHolder_chatSend();
             viewHolder_sendImage = new ViewHolder_sendImage();
             viewHolder_voice = new ViewHolder_voice();
+
             switch (messageBodyType) {
                 case MessageBodyType.eMessageBodyType_Text:
                     if (entity.userMessage.userId.equals(userSelfId)) {//自己是发送(右)，别人是接收(左)
@@ -155,6 +157,20 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_chatSend.tv_sendTime_send = (TextView) convertView.findViewById(R.id.tv_sendtime_send);
                     viewHolder_chatSend.iv_userhead_send_chat = (ImageView) convertView.findViewById(R.id.iv_userhead_send);
                     convertView.setTag(viewHolder_chatSend);
+                    break;
+
+                case MessageBodyType.eMessageBodyType_Image:
+                    if (entity.userMessage.userId.equals(userSelfId)) {//自己是发送(右)，别人是接收(左)
+                        convertView = mInflater.inflate(R.layout.item_send_imge, null);
+                    } else {
+                        convertView = mInflater.inflate(R.layout.item_recevied_imge, null);
+                    }
+                    viewHolder_sendImage.chatcontent_send = (RelativeLayout) convertView.findViewById(R.id.chatcontent_send);
+                    viewHolder_sendImage.iv_icon_send = (ImageView) convertView.findViewById(R.id.iv_icon_send);
+                    viewHolder_sendImage.iv_userhead_send_image = (ImageView) convertView.findViewById(R.id.iv_userhead_send_image);
+                    viewHolder_sendImage.tv_sendTime_send_image = (TextView) convertView.findViewById(R.id.tv_sendTime_send_image);
+                    viewHolder_sendImage.pb_send = (ProgressBar) convertView.findViewById(R.id.pb_send);
+                    convertView.setTag(viewHolder_sendImage);
                     break;
 
                 case MessageBodyType.eMessageBodyType_Voice:
@@ -171,19 +187,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                     convertView.setTag(viewHolder_voice);
                     break;
 
-                case MessageBodyType.eMessageBodyType_Image:
-                    if (entity.userMessage.userId.equals(userSelfId)) {//自己是发送(右)，别人是接收(左)
-                        convertView = mInflater.inflate(R.layout.item_send_imge, null);
-                    } else {
-                        convertView = mInflater.inflate(R.layout.item_recevied_imge, null);
-                    }
-                    viewHolder_sendImage.chatcontent_send = (RelativeLayout) convertView.findViewById(R.id.chatcontent_send);
-                    viewHolder_sendImage.iv_icon_send = (ImageView) convertView.findViewById(R.id.iv_icon_send);
-                    viewHolder_sendImage.iv_userhead_send_image = (ImageView) convertView.findViewById(R.id.iv_userhead_send_image);
-                    viewHolder_sendImage.tv_sendTime_send_image = (TextView) convertView.findViewById(R.id.tv_sendTime_send_image);
-                    viewHolder_sendImage.pb_send = (ProgressBar) convertView.findViewById(R.id.pb_send);
-                    convertView.setTag(viewHolder_sendImage);
-                    break;
             }
         } else {
 
@@ -231,31 +234,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                 viewHolder_voice.length.setLayoutParams(lParams);
                 viewHolder_voice.userHeadIcon.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
                 viewHolder_voice.id_recorder_anim.setOnClickListener(new VoicePlayClickListener(entity,viewHolder_voice.id_recorder_anim,userSelfId,this));
-
-//                viewHolder_voice.id_recorder_anim.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Debug.debugLog("animation","播放动画-------------------------------");
-//                        if(entity.userMessage.userId.equals(userSelfId)){
-//                            viewHolder_voice.id_recorder_anim.setBackgroundResource(R.drawable.voice_to_icon);
-//                        }else{
-//                            viewHolder_voice.id_recorder_anim.setBackgroundResource(R.drawable.voice_from_icon);
-//                        }
-//                        AnimationDrawable animationDrawable = (AnimationDrawable) viewHolder_voice.id_recorder_anim.getBackground();
-//                        animationDrawable.start();
-//                        MediaManager.playSound(entity.voiceMessage.filePath, new MediaPlayer.OnCompletionListener() {
-//                            @Override
-//                            public void onCompletion(MediaPlayer mp) {
-//                                if(entity.userMessage.userId.equals(userSelfId)){
-//                                    viewHolder_voice.id_recorder_anim.setBackgroundResource(R.drawable.chatto_voice_playing);
-//                                }else{
-//                                    viewHolder_voice.id_recorder_anim.setBackgroundResource(R.drawable.chatfrom_voice_playing);
-//                                }
-//                            }
-//                        });
-//                    }
-//                });
-
                 break;
 
             case MessageBodyType.eMessageBodyType_Image:

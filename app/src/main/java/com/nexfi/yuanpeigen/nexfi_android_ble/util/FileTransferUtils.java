@@ -23,6 +23,12 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import it.sauronsoftware.jave.AudioAttributes;
+import it.sauronsoftware.jave.Encoder;
+import it.sauronsoftware.jave.EncoderException;
+import it.sauronsoftware.jave.EncodingAttributes;
+import it.sauronsoftware.jave.InputFormatException;
+
 /**
  * Created by gengbaolong on 2016/3/31.
  */
@@ -222,7 +228,7 @@ public class FileTransferUtils {
         options.inJustDecodeBounds = false;
         Bitmap bitmap=null;
         try{
-            bitmap=BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);
+            bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
         }catch (OutOfMemoryError error){
             //
         }
@@ -317,16 +323,19 @@ public class FileTransferUtils {
      */
     public static byte[] getBytesFromFile(File file) {
         byte[] ret = null;
+        Debug.debugLog("getBytesFromFile",file+"=====================getBytesFromFile----------");
         try {
             if (file == null) {
-                // log.error("helper:the file is null!");
+                Debug.debugLog("getBytesFromFile",file+"===============file----------");
                 return null;
             }
             FileInputStream in = new FileInputStream(file);
             ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+            Debug.debugLog("getBytesFromFile",in+"===============file----------"+out);
             byte[] b = new byte[4096];
             int n;
             while ((n = in.read(b)) != -1) {
+                Debug.debugLog("getbytes",n+"===========================write字节数-------------------");
                 out.write(b, 0, n);
             }
             in.close();
@@ -513,16 +522,30 @@ public class FileTransferUtils {
     }
 
 
-    public static byte[] readStream(InputStream inStream) throws Exception {
-        byte[] buffer = new byte[1024];
-        int len = -1;
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        while ((len = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, len);
+
+
+
+
+    public static void changeToMp3(String sourcePath, String targetPath) {
+        File source = new File(sourcePath);
+        File target = new File(targetPath);
+        AudioAttributes audio = new AudioAttributes();
+        Encoder encoder = new Encoder();
+
+        audio.setCodec("libmp3lame");
+        EncodingAttributes attrs = new EncodingAttributes();
+        attrs.setFormat("mp3");
+        attrs.setAudioAttributes(audio);
+
+        try {
+            encoder.encode(source, target, attrs);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InputFormatException e) {
+            e.printStackTrace();
+        } catch (EncoderException e) {
+            e.printStackTrace();
         }
-        byte[] data = outStream.toByteArray();
-        outStream.close();
-        inStream.close();
-        return data;
     }
+
 }

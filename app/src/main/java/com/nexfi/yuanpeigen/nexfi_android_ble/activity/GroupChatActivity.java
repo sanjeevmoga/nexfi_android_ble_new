@@ -524,6 +524,4 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             }
         }
     }
-
-
 }
