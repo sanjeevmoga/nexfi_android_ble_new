@@ -1,9 +1,5 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.util;
 
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
-
 import com.czt.mp3recorder.MP3Recorder;
 
 import java.io.File;
@@ -12,22 +8,10 @@ import java.util.UUID;
 
 public class AudioManager {
 
-    private MediaRecorder mRecorder;
     private String mDirString;
     private String mCurrentFilePathString;
 
-    AudioRecord mAudioRecord;
     private boolean isPrepared;// 是否准备好了
-    boolean isRecording = false;
-
-
-    private final int audioSource = MediaRecorder.AudioSource.MIC;
-    // 设置音频采样率，44100是目前的标准，但是某些设备仍然支持22050,16000,11025
-    private final int sampleRateInHz = 16000;
-    // 设置音频的录制的声道CHANNEL_IN_STEREO为双声道，CHANNEL_CONFIGURATION_MONO为单声道
-    private final int channelConfig = AudioFormat.CHANNEL_IN_STEREO;
-    // 音频数据格式:PCM 16位每个样本。保证设备支持。PCM 8位每个样本。不一定能得到设备支持。
-    private final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
 
     /**
      * 单例化的方法 1 先声明一个static 类型的变量a 2 在声明默认的构造函数 3 再用public synchronized static
@@ -38,8 +22,6 @@ public class AudioManager {
      * 单例化这个类
      */
     private static AudioManager mInstance;
-    private short[] mBuffer;
-    private int bufferSize;
     private MP3Recorder mp3Recorder;
 
     private AudioManager(String dir) {
@@ -51,7 +33,6 @@ public class AudioManager {
             synchronized (AudioManager.class) {
                 if (mInstance == null) {
                     mInstance = new AudioManager(dir);
-
                 }
             }
         }
@@ -107,7 +88,6 @@ public class AudioManager {
         }catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
 
@@ -124,16 +104,15 @@ public class AudioManager {
 
     // 获得声音的level
     public int getVoiceLevel(int maxLevel) {
-        // mRecorder.getMaxAmplitude()这个是音频的振幅范围，值域是1-32767
-//        if (isPrepared) {
-//            try {
-//                // 取证+1，否则去不到7
-//                return maxLevel * mRecorder.getMaxAmplitude() / 32768 + 1;
-//            } catch (Exception e) {
-//                // TODO Auto-generated catch block
-//
-//            }
-//        }
+        if (isPrepared) {
+            try {
+                // 取证+1，否则去不到7
+                  return maxLevel*mp3Recorder.getRealVolume() / mp3Recorder.getMaxVolume()+1;
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+
+            }
+        }
 
         return 1;
     }
@@ -144,7 +123,6 @@ public class AudioManager {
         if (mp3Recorder != null) {
             mp3Recorder.stop();
         }
-
     }
 
     // 取消,因为prepare时产生了一个文件，所以cancel方法应该要删除这个文件，
@@ -156,13 +134,10 @@ public class AudioManager {
             file.delete();
             mCurrentFilePathString = null;
         }
-
     }
 
     public String getCurrentFilePath() {
         // TODO Auto-generated method stub
         return mCurrentFilePathString;
     }
-
-
 }
