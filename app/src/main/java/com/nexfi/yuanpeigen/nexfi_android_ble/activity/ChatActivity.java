@@ -49,7 +49,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.MediaManager;
@@ -58,7 +57,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.TUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 import com.nexfi.yuanpeigen.nexfi_android_ble.view.AudioRecordButton;
-import com.pocketdigi.utils.FLameUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -74,7 +72,7 @@ import io.underdark.transport.Link;
 /**
  * Created by Mark on 2016/4/14.
  */
-public class ChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveTextMsgListener, Runnable ,AudioRecordButton.LongClickToRecordAudioListener{
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveTextMsgListener, Runnable{
 
     private RelativeLayout layout_backPrivate;
     private ImageView iv_add_Private, iv_camera, iv_position, iv_pic, iv_editPrivate, iv_changePrivate;
@@ -133,11 +131,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
      */
     private int startIndex = 0;
     private int mCount;
-    private int currentPage = 1; //默认在第一页
-    private int totalPageCount = 1;
-    private int lvIndex;
-
-    private View viewanim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,8 +201,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initAdapter() {
         mCount = bleDBDao.getCount(userId);
-        //计算总页数
-        totalPageCount = (mCount + pageSize - 1) / pageSize;
         // 判断是否是第一次加载数据
         if (mDataArrays != null && mDataArrays.size() == 0) {
             // 初始化20条数据
@@ -217,9 +208,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             Collections.reverse(mDataArrays);
         }
 
-
         if (mDataArrays != null && mDataArrays.size() > 0) {
-
             chatMessageAdapater = new ChatMessageAdapater(ChatActivity.this, mDataArrays, userSelfId);
             lv_chatPrivate.setAdapter(chatMessageAdapater);
             lv_chatPrivate.setSelection(mDataArrays.size() - 1);//直接定位到最底部
@@ -227,16 +216,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 chatMessageAdapater.notifyDataSetChanged();
             }
         }
-    }
-
-
-    @Override
-    public void requestRecord() {//长按按钮录音时
-//        if (Build.VERSION.SDK_INT >= 23) {
-//            if (!(checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-//                requestRecordAudioPermission();
-//            }
-//        }
     }
 
 
@@ -277,21 +256,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                               }
 
         );
-        recordButton.setOnLongClickToRecordAudioListener(this);
         recordButton.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener()
 
                                                     {
                                                         @Override
                                                         public void onFinished(float seconds, String filePath) {
                                                             if (null != link) {
-                                                                Debug.debugLog("filepath",filePath+"=========");
-                                                                ///storage/emulated/0/nexfi_recorder_audios/f8d2d2eb-99f6-46b8-b3f3-5ffafb500cf9.amr
-                                                                String finalPath=filePath.replace(".raw", ".mp3");
                                                                 // 这里没有判断储存卡是否存在，有空要判断
-                                                                FLameUtils lameUtils=new FLameUtils(1, 16000, 96);
-                                                                lameUtils.raw2mp3(filePath,finalPath);
-                                                                Debug.debugLog("finalPath", finalPath + "======已转换路径===");
-                                                                sendVoiceMsg(seconds, finalPath);
+                                                                sendVoiceMsg(seconds, filePath);
                                                             }else{
                                                                 initDialogConnectedStatus();
                                                             }
@@ -323,10 +295,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         singleChatMessage.userMessage = user;
 
         VoiceMessage voiceMessage = new VoiceMessage();
-        voiceMessage.durational = seconds + "";
+        voiceMessage.durational = Math.round(seconds) + "";
         File file = new File(filePath);
         byte[] voice_send = FileTransferUtils.getBytesFromFile(file);
-        Debug.debugLog("sendvoice", file + "--------sendvoice--------" + voice_send);
         if(voice_send==null){
             return;
         }
@@ -342,7 +313,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             link.sendFrame(send_text_data);
             bleDBDao.addP2PTextMsg(singleChatMessage);//geng
             setAdapter(singleChatMessage);
-            Debug.debugLog("setAdapter", "--------语音已发送-设置适配器----");
         }
 
     }
@@ -390,7 +360,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     // SCROLL_STATE_TOUCH_SCROLL触摸到屏幕的时候调用
                     case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                        lvIndex = view.getLastVisiblePosition();
                         break;
                     // 惯性滑动
                     case OnScrollListener.SCROLL_STATE_FLING:
@@ -701,21 +670,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onReceiveTextMsg(Object obj) {
         SingleChatMessage singleChatMessage = (SingleChatMessage) obj;
-        if (singleChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Text) {
-            UserMessage userMessage = singleChatMessage.userMessage;
-            if (userMessage.userId.equals(userId)) {//只有两个人都在聊天界面的时候才显示出来：拿到聊天界面的用户的userId，跟接收到的消息的userId比较，看是否一致，一致了才显示消息
-                setAdapter(singleChatMessage);//设置适配器
-            }
-        } else if (singleChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Image) {
-            UserMessage userMsg = singleChatMessage.userMessage;
-            if (userMsg.userId.equals(userId)) {
-                setAdapter(singleChatMessage);//设置适配器
-            }
-        } else if (singleChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Voice) {
-            UserMessage userMsg = singleChatMessage.userMessage;
-            if (userMsg.userId.equals(userId)) {
-                setAdapter(singleChatMessage);//设置适配器
-            }
+        UserMessage userMessage = singleChatMessage.userMessage;
+        if (userMessage.userId.equals(userId)) {//只有两个人都在聊天界面的时候才显示出来：拿到聊天界面的用户的userId，跟接收到的消息的userId比较，看是否一致，一致了才显示消息
+            setAdapter(singleChatMessage);//设置适配器
         }
     }
 

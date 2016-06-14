@@ -94,16 +94,14 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="protobuf-java-2.6.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.2.1" level="project" />
-    <orderEntry type="library" exported="" name="jave-1.0.2" level="project" />
     <orderEntry type="library" exported="" name="httpcore-4.4.5" level="project" />
     <orderEntry type="library" exported="" name="gson" level="project" />
-    <orderEntry type="library" exported="" name="flame" level="project" />
-    <orderEntry type="library" exported="" name="1_flame" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="animated-vector-drawable-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="slf4j-api-1.7.12" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.2.1" level="project" />
     <orderEntry type="module" module-name="underdark" exported="" />
+    <orderEntry type="module" module-name="library" exported="" />
   </component>
 </module>

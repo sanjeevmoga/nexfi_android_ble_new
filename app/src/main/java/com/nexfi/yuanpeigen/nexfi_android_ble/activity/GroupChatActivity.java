@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -44,7 +43,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.VoiceMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveGroupMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.MediaManager;
@@ -52,7 +50,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.TUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 import com.nexfi.yuanpeigen.nexfi_android_ble.view.AudioRecordButton;
-import com.pocketdigi.utils.FLameUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,15 +65,13 @@ import io.underdark.transport.Link;
 /**
  * Created by Mark on 2016/4/13.
  */
-public class GroupChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveGroupMsgListener, AudioRecordButton.LongClickToRecordAudioListener {
+public class GroupChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveGroupMsgListener {
 
     private RelativeLayout layout_backGroup;
     private ImageView iv_add_Group, iv_camera, iv_position, iv_pic, iv_showUserInfo, iv_changeGroup, iv_editGroup;
     private EditText et_chatGroup;
     private Button btn_sendMsgGroup;
     private AudioRecordButton recordButton;
-    private AlertDialog mAlertDialog;
-    private Handler handler;
     private boolean visibility_Flag_add = false, visibility_Flag_edit = false;
     private LinearLayout layout_view;
     private ListView lv_chatGroup;
@@ -93,8 +88,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
 
     private String localTempImgDir;
     private String localTempImgFileName;
-    private Link link;
-    private String nodeId;
 
     /**
      * 每页加载20条数据
@@ -107,8 +100,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     private int mCount;
     private int firstItem = -1;
 
-
-    private boolean sendOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,16 +133,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     protected void onDestroy() {
         super.onDestroy();
         MediaManager.release();
-    }
-
-
-    @Override
-    public void requestRecord() {//长按按钮录音时
-//        if (Build.VERSION.SDK_INT >= 23) {
-//            if (!(checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-//                requestRecordAudioPermission();
-//            }
-//        }
     }
 
 
@@ -220,18 +201,11 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                                             }
 
         );
-        recordButton.setOnLongClickToRecordAudioListener(this);
         recordButton.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener() {
                                                         @Override
                                                         public void onFinished(float seconds, String filePath) {
-                                                            Debug.debugLog("filepath", filePath + "=========");
-                                                            ///storage/emulated/0/nexfi_recorder_audios/f8d2d2eb-99f6-46b8-b3f3-5ffafb500cf9.amr
-                                                            String finalPath = filePath.replace(".raw", ".mp3");
                                                             // 这里没有判断储存卡是否存在，有空要判断
-                                                            FLameUtils lameUtils = new FLameUtils(1, 16000, 96);
-                                                            lameUtils.raw2mp3(filePath, finalPath);
-                                                            Debug.debugLog("finalPath", finalPath + "======已转换路径===");
-                                                            sendVoiceMsg(seconds, finalPath);
+                                                            sendVoiceMsg(seconds, filePath);
                                                         }
                                                     }
 
@@ -257,10 +231,9 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         groupChatMessage.userMessage = user;
 
         VoiceMessage voiceMessage = new VoiceMessage();
-        voiceMessage.durational = seconds + "";
+        voiceMessage.durational = Math.round(seconds) + "";
         File file = new File(filePath);
         byte[] voice_send = FileTransferUtils.getBytesFromFile(file);
-        Debug.debugLog("sendvoice", file + "--------sendvoice--------" + voice_send);
         if (voice_send == null) {
             return;
         }
@@ -276,7 +249,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             node.broadcastFrame(send_text_data);
             bleDBDao.addGroupTextMsg2(groupChatMessage);//geng
             setAdapter(groupChatMessage);
-            Debug.debugLog("setAdapter", "--------语音已发送-设置适配器----");
         }
 
     }
@@ -374,7 +346,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                     et_chatGroup.setVisibility(View.VISIBLE);
                     recordButton.setVisibility(View.INVISIBLE);
                     iv_editGroup.setVisibility(View.INVISIBLE);
-                    et_chatGroup.setVisibility(View.VISIBLE);
+                    iv_changeGroup.setVisibility(View.VISIBLE);
                     et_chatGroup.setFocusable(true);
                     et_chatGroup.setFocusableInTouchMode(true);
                     et_chatGroup.requestFocus();
@@ -394,7 +366,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 break;
 
             case R.id.btn_sendMsgGroup://发送消息
-                sendOnce = true;
                 sendGroupMsg();
                 et_chatGroup.setText(null);
                 break;
@@ -582,45 +553,26 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         if (node == null) {
             return;
         }
-        if (groupChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Text) {
-            TextMessage textMessage = groupChatMessage.textMessage;
-            setAdapter(groupChatMessage);//设置适配器
-            //转发消息
-            if (node.getLinks().size() > 1) {
-                Gson gson = new Gson();
-                String json = gson.toJson(groupChatMessage);
-                final byte[] send_file_data = json.getBytes();
-                if (groupChatMessage.userMessage == null) {
-                    return;
-                }
-                final Link link2 = node.getLink(groupChatMessage.userMessage.nodeId);
-                if (node.getLinks().size() > 0) {
-                    for (Link link1 : node.getLinks()) {
-                        if (link2 != link1) {
-                            link1.sendFrame(send_file_data);
-                        }
-                    }
-                }
+
+        setAdapter(groupChatMessage);//设置适配器
+
+        //转发消息
+        if (node.getLinks().size() > 1) {
+            Gson gson = new Gson();
+            String json = gson.toJson(groupChatMessage);
+            final byte[] send_file_data = json.getBytes();
+            if (groupChatMessage.userMessage == null) {
+                return;
             }
-        } else if (groupChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Image) {
-            FileMessage fileMessage = groupChatMessage.fileMessage;
-            setAdapter(groupChatMessage);//设置适配器
-            //转发消息
-            if (node.getLinks().size() > 1) {
-                Gson gson = new Gson();
-                String json = gson.toJson(groupChatMessage);
-                final byte[] send_file_data = json.getBytes();
-                final Link link2 = node.getLink(groupChatMessage.userMessage.nodeId);
-                if (node.getLinks().size() > 0) {
-                    for (Link link1 : node.getLinks()) {
-                        if (link2 != link1) {
-                            link1.sendFrame(send_file_data);
-                        }
+            final Link link2 = node.getLink(groupChatMessage.userMessage.nodeId);
+            if (node.getLinks().size() > 0) {
+                for (Link link1 : node.getLinks()) {
+                    if (link2 != link1) {
+                        link1.sendFrame(send_file_data);
                     }
                 }
             }
         }
-
     }
 
 

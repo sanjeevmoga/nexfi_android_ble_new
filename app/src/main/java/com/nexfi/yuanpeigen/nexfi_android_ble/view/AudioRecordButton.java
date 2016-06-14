@@ -31,21 +31,6 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
     // 是否触发了onlongclick，准备好了
     private boolean mReady;
 
-    public LongClickToRecordAudioListener recordAudioListener=null;
-
-
-
-    public interface LongClickToRecordAudioListener{
-        void requestRecord();
-    }
-
-
-    public void setOnLongClickToRecordAudioListener(LongClickToRecordAudioListener recordAudioListener){
-        this.recordAudioListener=recordAudioListener;
-    }
-
-
-
     /**
      * 先实现两个参数的构造方法，布局会默认引用这个构造方法， 用一个 构造参数的构造方法来引用这个方法 * @param context
      */
@@ -71,9 +56,6 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
             @Override
             public boolean onLongClick(View v) {
                 // TODO Auto-generated method
-                if(recordAudioListener!=null){
-                    recordAudioListener.requestRecord();
-                }
                 mReady = true;
                 mAudioManager.prepareAudio();
                 return false;

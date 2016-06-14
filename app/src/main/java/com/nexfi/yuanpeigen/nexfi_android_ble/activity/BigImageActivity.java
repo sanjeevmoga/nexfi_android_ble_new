@@ -43,5 +43,5 @@ public class BigImageActivity extends AppCompatActivity {
     private void initView() {
         big_image_view = (ZoomImageView) findViewById(R.id.big_image_view);
     }
-    
+
 }

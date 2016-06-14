@@ -28,13 +28,15 @@ public class VoicePlayClickListener implements View.OnClickListener {
     ImageView iv_read_status;
     Activity activity;
     public static boolean isPlaying = false;
+    int position;
 
 
-    public VoicePlayClickListener(SingleChatMessage singleChatMessage, ImageView imageView, String userSelfId, ChatMessageAdapater chatMessageAdapater) {
+    public VoicePlayClickListener(SingleChatMessage singleChatMessage, ImageView imageView, String userSelfId, ChatMessageAdapater chatMessageAdapater,int position) {
         this.singleChatMessage = singleChatMessage;
         this.voiceIconView = imageView;
         this.chatMessageAdapater = chatMessageAdapater;
         this.userSelfId = userSelfId;
+        this.position=position;
     }
 
 

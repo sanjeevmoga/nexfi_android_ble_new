@@ -233,7 +233,6 @@ public class Node implements TransportListener {
             SingleChatMessage singleChatMessage = gson.fromJson(json, SingleChatMessage.class);
             //如果是语音消息，需要创建临时文件，因为播放语音需要路径
             if(singleChatMessage.messageBodyType== MessageBodyType.eMessageBodyType_Voice){
-                Debug.debugLog("receivevoice","-----======收到语音------------------");
                 String fileData=singleChatMessage.voiceMessage.fileData;
                 byte[] by_receive_data= Base64.decode(fileData, Base64.DEFAULT);
                 String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -249,7 +248,6 @@ public class Node implements TransportListener {
                 String rece_file_path = fileDir + "/" + videoFileName;
                 File fileRece=FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
                 singleChatMessage.voiceMessage.filePath=fileRece.getAbsolutePath();
-                Debug.debugLog("getAbsolutePath",fileRece.getAbsolutePath()+"===============");///storage/emulated/0/NexFi_ble/voice/VIDEO_20160607140854_
             }
             singleChatMessage.receiver = singleChatMessage.userMessage.userId;
             bleDBDao.addP2PTextMsg(singleChatMessage);//geng
@@ -259,6 +257,23 @@ public class Node implements TransportListener {
         } else if (MessageType.eMessageType_AllUserChat == messageType) {
             GroupChatMessage groupChatMessage = gson.fromJson(json, GroupChatMessage.class);
             if (!(bleDBDao.findSameGroupByUuid(groupChatMessage.msgId))) {
+                if(groupChatMessage.messageBodyType== MessageBodyType.eMessageBodyType_Voice) {//群聊语音
+                    String fileData = groupChatMessage.voiceMessage.fileData;
+                    byte[] by_receive_data = Base64.decode(fileData, Base64.DEFAULT);
+                    String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                    String videoFileName = "VIDEO_" + timeStamp + ".mp3";
+                    File fileDir = null;
+                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        //存在sd卡
+                        fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NexFi_ble/voice");
+                        if (!fileDir.exists()) {
+                            fileDir.mkdirs();
+                        }
+                    }
+                    String rece_file_path = fileDir + "/" + videoFileName;
+                    File fileRece = FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
+                    groupChatMessage.voiceMessage.filePath = fileRece.getAbsolutePath();
+                }
                 //如果数据库没有此msgId，则将此条消息转发,并显示
                 UserMessage userMessage=groupChatMessage.userMessage;
                 userMessage.nodeId=link.getNodeId()+"";

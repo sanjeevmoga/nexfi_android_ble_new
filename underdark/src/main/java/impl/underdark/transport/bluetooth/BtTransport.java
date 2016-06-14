@@ -598,7 +598,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 	private void connectToDevice(BluetoothDevice device, List<String> deviceUuids)
 	{
-		Log.e("TAG", "-1004----BtTransport-----connectToDevice---" + device.getAddress());
+//		Log.e("TAG", "-1004----BtTransport-----connectToDevice---" + device.getAddress());
 		BtLink link = BtLink.createClientWithUuids(this, device, deviceUuids);
 		linkConnecting(link);
 	}

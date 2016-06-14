@@ -271,10 +271,10 @@ public class GroupChatAdapater extends BaseAdapter {
                 lParams.width = (int) (mMinItemWith + mMaxItemWith / 60f * Double.parseDouble(voiceMsg.durational));
                 viewHolder_voice.length.setLayoutParams(lParams);
                 viewHolder_voice.userHeadIcon.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
-                viewHolder_voice.id_recorder_anim.setOnClickListener(new GroupVoicePlayClickListener(entity,viewHolder_voice.id_recorder_anim,userSelfId,this));
+                viewHolder_voice.id_recorder_anim.setOnClickListener(new GroupVoicePlayClickListener(entity,viewHolder_voice.id_recorder_anim,userSelfId,this,position));
+
                 break;
         }
-
         return convertView;
     }
 

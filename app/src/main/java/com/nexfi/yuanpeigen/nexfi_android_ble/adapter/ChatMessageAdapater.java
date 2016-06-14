@@ -72,7 +72,7 @@ public class ChatMessageAdapater extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 30;
+        return 40;
     }
 
     @Override
@@ -233,7 +233,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                 lParams.width = (int) (mMinItemWith + mMaxItemWith / 60f * Double.parseDouble(voiceMsg.durational));
                 viewHolder_voice.length.setLayoutParams(lParams);
                 viewHolder_voice.userHeadIcon.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
-                viewHolder_voice.id_recorder_anim.setOnClickListener(new VoicePlayClickListener(entity,viewHolder_voice.id_recorder_anim,userSelfId,this));
+                viewHolder_voice.id_recorder_anim.setOnClickListener(new VoicePlayClickListener(entity,viewHolder_voice.id_recorder_anim,userSelfId,this,position));
                 break;
 
             case MessageBodyType.eMessageBodyType_Image:

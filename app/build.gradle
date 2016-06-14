@@ -31,9 +31,7 @@ dependencies {
     }
     compile 'org.apache.httpcomponents:httpclient:4.2.2'
     compile files('libs/gson.jar')
-    compile files('libs/jave-1.0.2.jar')
-    compile files('libs/flame.jar')
-    compile files('src/main/jniLibs/flame.jar')
+    compile project(':library')
 }
 
 repositories {

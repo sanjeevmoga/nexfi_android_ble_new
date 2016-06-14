@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
-import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.ChatMessageAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.GroupChatAdapater;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.GroupChatMessage;
 
@@ -28,13 +27,14 @@ public class GroupVoicePlayClickListener implements View.OnClickListener {
     ImageView iv_read_status;
     Activity activity;
     public static boolean isPlaying = false;
+    int position;
 
-
-    public GroupVoicePlayClickListener(GroupChatMessage groupChatMessage, ImageView imageView, String userSelfId, GroupChatAdapater groupChatAdapater) {
+    public GroupVoicePlayClickListener(GroupChatMessage groupChatMessage, ImageView imageView, String userSelfId, GroupChatAdapater groupChatAdapater,int position) {
         this.groupChatMessage=groupChatMessage;
         this.voiceIconView = imageView;
         this.groupChatAdapater = groupChatAdapater;
         this.userSelfId = userSelfId;
+        this.position=position;
     }
 
 
