@@ -8,29 +8,40 @@
         android:id="@+id/item_icon"
         android:layout_width="65dp"
         android:layout_height="65dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="7dp"
         android:src="@mipmap/img_head_03" />
 
+    <TextView
+        android:id="@+id/tv_userNick"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/item_icon"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:textColor="@color/textNormol"
+        android:textSize="14sp" />
 
     <FrameLayout
         android:id="@+id/recorder_length"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="7dp"
-        android:layout_toLeftOf="@id/item_icon"
-        android:background="@drawable/chat_to_img_bg_normal">
+        android:layout_toRightOf="@id/item_icon"
+        android:background="@drawable/chat_from_bg_normal">
 
         <ImageView
             android:id="@+id/id_recorder_anim"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
-            android:background="@drawable/chatto_voice_playing" />
+            android:background="@drawable/chatfrom_voice_playing" />
 
     </FrameLayout>
 
@@ -39,8 +50,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginRight="3dp"
-        android:layout_toLeftOf="@id/recorder_length"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@id/recorder_length"
         android:text=""
         android:textColor="#ff777777" />
 

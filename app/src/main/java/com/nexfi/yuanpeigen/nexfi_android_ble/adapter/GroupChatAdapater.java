@@ -53,7 +53,7 @@ public class GroupChatAdapater extends BaseAdapter {
     private int mMaxItemWith;
 
 
-    public GroupChatAdapater(Context context, List<GroupChatMessage> coll,String userSelfId) {
+    public GroupChatAdapater(Context context, List<GroupChatMessage> coll, String userSelfId) {
         this.coll = coll;
         mInflater = LayoutInflater.from(context);
         this.mContext = context;
@@ -81,15 +81,15 @@ public class GroupChatAdapater extends BaseAdapter {
         GroupChatMessage entity = coll.get(position);
         switch (entity.messageBodyType) {
             case MessageBodyType.eMessageBodyType_Text:
-                if(entity.userMessage.userId.equals(userSelfId)){
+                if (entity.userMessage.userId.equals(userSelfId)) {
                     return SEND_RIGHT;
-                }else{
+                } else {
                     return SEND_LEFT;
                 }
             case MessageBodyType.eMessageBodyType_Image:
-                if(entity.userMessage.userId.equals(userSelfId)){
+                if (entity.userMessage.userId.equals(userSelfId)) {
                     return IMAGE_RIGHT;
-                }else{
+                } else {
                     return IMAGE_LEFT;
                 }
             case MessageBodyType.eMessageBodyType_Voice:
@@ -125,12 +125,12 @@ public class GroupChatAdapater extends BaseAdapter {
         TextMessage textMessage = null;
         FileMessage fileMessage = null;
         VoiceMessage voiceMsg = null;
-        switch (msgBodyType){
+        switch (msgBodyType) {
             case MessageBodyType.eMessageBodyType_Text:
                 textMessage = entity.textMessage;
                 break;
             case MessageBodyType.eMessageBodyType_Image:
-                fileMessage=entity.fileMessage;
+                fileMessage = entity.fileMessage;
                 break;
             case MessageBodyType.eMessageBodyType_Voice://语音消息
                 voiceMsg = entity.voiceMessage;
@@ -151,7 +151,7 @@ public class GroupChatAdapater extends BaseAdapter {
                 case MessageBodyType.eMessageBodyType_Text:
                     if (entity.userMessage.userId.equals(userSelfId)) {//自己是发送(右)，别人是接收(左)
                         convertView = mInflater.inflate(R.layout.item_chatting_msg_send_group, null);
-                    }else{
+                    } else {
                         convertView = mInflater.inflate(R.layout.item_chatting_msg_receive_group, null);
                     }
 
@@ -165,7 +165,7 @@ public class GroupChatAdapater extends BaseAdapter {
                 case MessageBodyType.eMessageBodyType_Image:
                     if (entity.userMessage.userId.equals(userSelfId)) {
                         convertView = mInflater.inflate(R.layout.item_send_image_group, null);
-                    }else{
+                    } else {
                         convertView = mInflater.inflate(R.layout.item_recevied_imge_group, null);
                     }
                     viewHolder_sendImage.chatcontent_send = (RelativeLayout) convertView.findViewById(R.id.chatcontent_send);
@@ -179,15 +179,15 @@ public class GroupChatAdapater extends BaseAdapter {
 
                 case MessageBodyType.eMessageBodyType_Voice:
                     if (entity.userMessage.userId.equals(userSelfId)) {
-                        convertView = mInflater.inflate(R.layout.item_send_voice, null);
+                        convertView = mInflater.inflate(R.layout.item_send_voice_group, null);
                     } else {
-                        convertView = mInflater.inflate(R.layout.item_receice_voice, null);
+                        convertView = mInflater.inflate(R.layout.item_receice_voice_group, null);
                     }
                     viewHolder_voice.length = convertView.findViewById(R.id.recorder_length);
                     viewHolder_voice.seconds = (TextView) convertView.findViewById(R.id.recorder_time);
                     viewHolder_voice.userHeadIcon = (ImageView) convertView.findViewById(R.id.item_icon);
-
-                    viewHolder_voice.id_recorder_anim= (ImageView) convertView.findViewById(R.id.id_recorder_anim);//
+                    viewHolder_voice.tv_userNick = (TextView) convertView.findViewById(R.id.tv_userNick);
+                    viewHolder_voice.id_recorder_anim = (ImageView) convertView.findViewById(R.id.id_recorder_anim);//
                     convertView.setTag(viewHolder_voice);
                     break;
             }
@@ -210,7 +210,7 @@ public class GroupChatAdapater extends BaseAdapter {
         switch (msgBodyType) {
             case MessageBodyType.eMessageBodyType_Text:
                 viewHolder_chatSend.iv_userhead_send_chat.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
-                if(entity.userMessage.userId.equals(userSelfId)) {
+                if (entity.userMessage.userId.equals(userSelfId)) {
                     viewHolder_chatSend.iv_userhead_send_chat.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -219,7 +219,7 @@ public class GroupChatAdapater extends BaseAdapter {
                             mContext.startActivity(intent);
                         }
                     });
-                }else{
+                } else {
                     viewHolder_chatSend.iv_userhead_send_chat.setOnClickListener(new AvatarClick(position));
                 }
                 viewHolder_chatSend.tv_sendTime_send.setText(entity.timeStamp);
@@ -233,7 +233,7 @@ public class GroupChatAdapater extends BaseAdapter {
                 viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                 viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
-                if(entity.userMessage.userId.equals(userSelfId)) {
+                if (entity.userMessage.userId.equals(userSelfId)) {
                     viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -242,7 +242,7 @@ public class GroupChatAdapater extends BaseAdapter {
                             mContext.startActivity(intent);
                         }
                     });
-                }else{
+                } else {
                     viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new AvatarClick(position));
                 }
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.timeStamp);
@@ -271,8 +271,8 @@ public class GroupChatAdapater extends BaseAdapter {
                 lParams.width = (int) (mMinItemWith + mMaxItemWith / 60f * Double.parseDouble(voiceMsg.durational));
                 viewHolder_voice.length.setLayoutParams(lParams);
                 viewHolder_voice.userHeadIcon.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
-                viewHolder_voice.id_recorder_anim.setOnClickListener(new GroupVoicePlayClickListener(entity,viewHolder_voice.id_recorder_anim,userSelfId,this,position));
-
+                viewHolder_voice.id_recorder_anim.setOnClickListener(new GroupVoicePlayClickListener(entity, viewHolder_voice.id_recorder_anim, userSelfId, this, position));
+                viewHolder_voice.tv_userNick.setText(entity.userMessage.userNick);
                 break;
         }
         return convertView;
@@ -293,7 +293,7 @@ public class GroupChatAdapater extends BaseAdapter {
 
 
     static class ViewHolder_voice {
-        public TextView seconds;// 时间
+        public TextView seconds, tv_userNick;// 时间
         public View length;// 对话框长度
         public ImageView userHeadIcon;
         public ImageView id_recorder_anim;
