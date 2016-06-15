@@ -30,7 +30,6 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 
 	private ScaleGestureDetector mScaleGestureDetector;
 
-	//�����ƶ�
 	private int mLastPointerCount;
 
 	private float mLastX;
@@ -42,7 +41,6 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 	private boolean isCheckLeftAndRight;
 	private boolean isCheckTopAndBottom;
 
-	//˫���Ŵ���С
 	private GestureDetector mGestureDetector;
 	private boolean isAutoScale;
 
@@ -68,13 +66,9 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 				float y=e.getY();
 
 				if(getScale()<mMidScale){
-//					mScaleMatrix.postScale(mMidScale/getScale(), mMidScale/getScale(), x, y);
-//					setImageMatrix(mScaleMatrix);
 					postDelayed(new AutoScaleRunnable(mMidScale, x, y), 16);
 					isAutoScale=true;
 				}else{
-//					mScaleMatrix.postScale(mInitScale/getScale(), mInitScale/getScale(), x, y);
-//					setImageMatrix(mScaleMatrix);
 					postDelayed(new AutoScaleRunnable(mInitScale, x, y), 16);
 					isAutoScale=true;
 				}
@@ -152,7 +146,7 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 	protected void onAttachedToWindow() {
 		// TODO Auto-generated method stub
 		super.onAttachedToWindow();
-		getViewTreeObserver().addOnGlobalLayoutListener(this);//ע�����
+		getViewTreeObserver().addOnGlobalLayoutListener(this);
 	}
 
 	@SuppressLint("NewApi")
@@ -167,10 +161,10 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 	public void onGlobalLayout() {
 		// TODO Auto-generated method stub
 		if(!mOnce){
-			//�õ��ؼ��Ŀ��
+			//
 			int width=getWidth();
 			int height=getHeight();
-			//�õ�ͼƬ���Լ����
+			//
 			Drawable d=getDrawable();
 			if(d==null){
 				return;
@@ -237,7 +231,6 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 				scale=mMaxScale/scale;
 			}
 
-			//����
 			mScaleMatrix.postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
 
 			checkBorderAndCenterWhenScale();
@@ -247,7 +240,6 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 		return true;
 	}
 
-	//���ͼƬ�Ŵ���С�Ժ�Ŀ��
 	private RectF getMatrixRectF(){
 		Matrix matrix=mScaleMatrix;
 		RectF rectF=new RectF();
@@ -259,7 +251,6 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 		return rectF;
 	}
 
-	//���ŵ�ʱ����б߽����
 	private void checkBorderAndCenterWhenScale() {
 		// TODO Auto-generated method stub
 		RectF rect=getMatrixRectF();
@@ -322,7 +313,6 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 
 		float x=0;
 		float y=0;
-		//��㴥������
 		int pointerCount=event.getPointerCount();
 
 		for (int i = 0; i < pointerCount; i++) {
@@ -350,7 +340,7 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 			case MotionEvent.ACTION_MOVE:
 
 				if(rectF.width()>getWidth()+0.01 || rectF.height()>getHeight()+0.01){
-					getParent().requestDisallowInterceptTouchEvent(true);
+					getParent().requestDisallowInterceptTouchEvent(false);
 				}
 
 				float dx=x-mLastX;

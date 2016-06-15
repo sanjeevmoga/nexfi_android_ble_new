@@ -15,8 +15,8 @@ import android.widget.ImageView;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.bean.GroupChatMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageBodyType;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.SingleChatMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.SharedPreferencesUtils;
@@ -27,18 +27,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
 /**
- * Created by gengbaolong on 2016/4/22.
+ * Created by gengbaolong on 2016/6/15.
  */
-public class BigImageActivity extends AppCompatActivity {
-
+public class GroupImageActivity extends AppCompatActivity {
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     ViewPagerFixed viewpager;
     int firstPosition=0;
     String userId;
-    private List<SingleChatMessage> mAllDataArrays = new ArrayList<SingleChatMessage>();
-    private List<SingleChatMessage> mImageDataArrays = new ArrayList<SingleChatMessage>();
+    private List<GroupChatMessage> mAllDataArrays = new ArrayList<GroupChatMessage>();
+    private List<GroupChatMessage> mImageDataArrays = new ArrayList<GroupChatMessage>();
 
     private int window_width, window_height;// 控件宽度
 
@@ -63,7 +61,7 @@ public class BigImageActivity extends AppCompatActivity {
         width = metric.widthPixels;
         height = metric.heightPixels;
         userId= SharedPreferencesUtils.getString(BleApplication.getContext(), "CHAT_ID", UUID.randomUUID().toString());
-        mAllDataArrays = bleDBDao.findMsgByChatId(userId);
+        mAllDataArrays = bleDBDao.findGroupMsg();
         for (int i = 0; i <mAllDataArrays.size() ; i++) {
             int type=mAllDataArrays.get(i).messageBodyType;
             if(type == MessageBodyType.eMessageBodyType_Image){
@@ -135,5 +133,4 @@ public class BigImageActivity extends AppCompatActivity {
             container.removeView(mImageViews[position]);
         }
     }
-
 }

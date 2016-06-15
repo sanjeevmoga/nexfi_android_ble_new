@@ -15,7 +15,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.VoiceMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.helper.BleDBHelper;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -202,7 +201,6 @@ public class BleDBDao {
 
         VoiceMessage voiceMessage = singleChatMessage.voiceMessage;
         if (voiceMessage != null) {
-            Debug.debugLog("shujuku","语音消息保存到数据库----------------");
             values.put("durational", voiceMessage.durational);
             values.put("fileData", voiceMessage.fileData);
             values.put("isRead", voiceMessage.isRead);
@@ -220,6 +218,70 @@ public class BleDBDao {
         int count = cursor.getInt(0);
         return count;
     }
+
+
+    /**
+     * 查询单聊数据
+     * @param chat_id
+     * @return
+     */
+    public List<SingleChatMessage> findMsgByChatId(String chat_id) {
+        List<SingleChatMessage> mDatas=new ArrayList<SingleChatMessage>();
+        try {
+            SQLiteDatabase db = helper.getReadableDatabase();
+            Cursor cursor = db.rawQuery(
+                    "select * from textP2PMessg where receiver=?",
+                    new String[]{chat_id});
+            while (cursor.moveToNext()) {
+                SingleChatMessage singleChatMessage = new SingleChatMessage();
+                singleChatMessage.messageType = cursor.getInt(cursor.getColumnIndex("messageType"));
+                singleChatMessage.messageBodyType = cursor.getInt(cursor.getColumnIndex("messageBodyType"));
+                singleChatMessage.receiver = cursor.getString(cursor.getColumnIndex("receiver"));
+                singleChatMessage.msgId = cursor.getString(cursor.getColumnIndex("msgId"));
+                singleChatMessage.timeStamp = cursor.getString(cursor.getColumnIndex("timeStamp"));
+
+                UserMessage userMessage = new UserMessage();
+                userMessage.birthday = cursor.getString(cursor.getColumnIndex("birthday"));
+                userMessage.userId = cursor.getString(cursor.getColumnIndex("userId"));
+                userMessage.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
+                userMessage.userAvatar = cursor.getString(cursor.getColumnIndex("userAvatar"));
+                userMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
+                userMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+                singleChatMessage.userMessage = userMessage;
+
+                TextMessage textMessage = new TextMessage();
+                textMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+                textMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
+                singleChatMessage.textMessage = textMessage;
+
+                FileMessage fileMessage = new FileMessage();
+                fileMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+                fileMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
+                fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
+                fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
+                fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
+                fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+                fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
+                singleChatMessage.fileMessage = fileMessage;
+
+                VoiceMessage voiceMessage = new VoiceMessage();
+                voiceMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+                voiceMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
+                voiceMessage.durational = cursor.getString(cursor.getColumnIndex("durational"));
+                singleChatMessage.voiceMessage = voiceMessage;
+
+                mDatas.add(singleChatMessage);
+            }
+            cursor.close();
+            db.close();
+        } catch (OutOfMemoryError error) {
+            //
+        }
+
+        return mDatas;
+    }
+
+
 
 
     /**
@@ -378,7 +440,63 @@ public class BleDBDao {
     }
 
 
-    //TODO
+    /**
+     * 查询群聊数据
+     * @return
+     */
+    public List<GroupChatMessage> findGroupMsg() {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "select * from textGroupMesg",null);
+        List<GroupChatMessage> mDatas = new ArrayList<GroupChatMessage>();
+        while (cursor.moveToNext()) {
+            GroupChatMessage groupChatMessage = new GroupChatMessage();
+            groupChatMessage.messageType = cursor.getInt(cursor.getColumnIndex("messageType"));
+            groupChatMessage.messageBodyType = cursor.getInt(cursor.getColumnIndex("messageBodyType"));
+            groupChatMessage.timeStamp = cursor.getString(cursor.getColumnIndex("timeStamp"));
+            groupChatMessage.groupId = cursor.getString(cursor.getColumnIndex("groupId"));
+            groupChatMessage.msgId = cursor.getString(cursor.getColumnIndex("msgId"));
+
+            UserMessage userMessage = new UserMessage();
+            userMessage.birthday = cursor.getString(cursor.getColumnIndex("birthday"));
+            userMessage.userId = cursor.getString(cursor.getColumnIndex("userId"));
+            userMessage.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
+            userMessage.userAvatar = cursor.getString(cursor.getColumnIndex("userAvatar"));
+            userMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
+            userMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+            groupChatMessage.userMessage = userMessage;
+
+            TextMessage textMessage = new TextMessage();
+            textMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+            textMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
+            groupChatMessage.textMessage = textMessage;
+
+            FileMessage fileMessage = new FileMessage();
+            fileMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+            fileMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
+            fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
+            fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
+            fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
+            fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+            fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
+            groupChatMessage.fileMessage = fileMessage;
+
+            VoiceMessage voiceMessage = new VoiceMessage();
+            voiceMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+            voiceMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
+            voiceMessage.durational = cursor.getString(cursor.getColumnIndex("durational"));
+            voiceMessage.filePath= cursor.getString(cursor.getColumnIndex("filePath"));
+            groupChatMessage.voiceMessage = voiceMessage;
+
+            mDatas.add(groupChatMessage);
+        }
+        cursor.close();
+        db.close();
+        return mDatas;
+    }
+
+
+
 
     /**
      * 分页查询群聊数据

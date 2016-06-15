@@ -18,7 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
-import com.nexfi.yuanpeigen.nexfi_android_ble.activity.BigImageActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.GroupImageActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.ModifyInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
@@ -255,7 +255,7 @@ public class GroupChatAdapater extends BaseAdapter {
                 viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(mContext, BigImageActivity.class);
+                        Intent intent = new Intent(mContext, GroupImageActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("bitmap", bys_send);
                         intent.putExtra("page", position);

@@ -272,6 +272,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                                 Intent intent = new Intent(mContext, BigImageActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.putExtra("bitmap", bys_send);
+                                intent.putExtra("page",position);
                                 mContext.startActivity(intent);
                                 ((Activity) mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
                             }
