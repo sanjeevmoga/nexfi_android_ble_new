@@ -1,7 +1,5 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
-import android.media.MediaDataSource;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,11 +12,9 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentMine;
 import com.nexfi.yuanpeigen.nexfi_android_ble.fragment.FragmentNearby;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.ObjectBytesUtils;
 
 
 public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener {
@@ -48,9 +44,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
                 isExit = false;
             }
         };
-        MediaPlayer mPlayer=new MediaPlayer();
-//        FileDescriptor
-//        MediaDataSource
     }
 
 
@@ -127,13 +120,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
             }
         }
         return true;
-    }
-
-
-
-    public void notifyMineMsgHasChanged(BaseMessage baseMessage){
-        byte[] notify_msg_bys=ObjectBytesUtils.ObjectToByte(baseMessage);
-        node.broadcastFrame(notify_msg_bys);
     }
 }
 

@@ -1,7 +1,5 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.operation;
 
-import android.util.Log;
-
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.SendTextMsgListener;
 
@@ -27,9 +25,7 @@ public class TextMsgOperation {
      * 接收文本消息
      */
     public void receiveTextMessage(Object obj){
-        Log.e("TAG","====接收方法------------------------");
         if(null!=mReceiveTextMsgListener){
-            Log.e("TAG","====接口回调方法------------------------");
             mReceiveTextMsgListener.onReceiveTextMsg(obj);
         }
     }

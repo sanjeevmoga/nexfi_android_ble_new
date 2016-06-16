@@ -50,7 +50,6 @@ public class BleLollipopDetector implements BleDetector
 	@Override
 	public void startScan()
 	{
-//		Log.e("TAG", "-1002----BleLollipopDetector-------------startScan------");
 		if(this.scanCallback != null)
 			return;
 
@@ -74,7 +73,6 @@ public class BleLollipopDetector implements BleDetector
 			@Override
 			public void onScanResult(int callbackType, final ScanResult result)
 			{
-//				Log.e("TAG", "-1002----BleLollipopDetector-------------scanCallback---onScanResult---");
 				// Any thread.
 				super.onScanResult(callbackType, result);
 
@@ -84,7 +82,6 @@ public class BleLollipopDetector implements BleDetector
 					public void run()
 					{
 						scanResult(result);
-//						Log.e("TAG", "---BleLollipopDetector--------startScan--onScanResult----"+result.toString());
 					}
 				});
 			}
@@ -92,7 +89,6 @@ public class BleLollipopDetector implements BleDetector
 			@Override
 			public void onBatchScanResults(List<ScanResult> results)
 			{
-//				Log.e("TAG", "-1002----BleLollipopDetector----scanCallback---onBatchScanResults---");
 				// Any thread.
 				super.onBatchScanResults(results);
 
@@ -112,7 +108,6 @@ public class BleLollipopDetector implements BleDetector
 			@Override
 			public void onScanFailed(int errorCode)
 			{
-//				Log.e("TAG", "-1002----BleLollipopDetector-------------onScanFailed------");
 				// Any thread.
 				super.onScanFailed(errorCode);
 
@@ -161,7 +156,6 @@ public class BleLollipopDetector implements BleDetector
 		try
 		{
 			scanner.startScan(scanCallback);
-//			Log.e("TAG", "-1002----BleLollipopDetector-------------scanner.startScan------");
 			//scanner.startScan(filters, settings, scanCallback);
 		}
 		catch (Exception ex)
@@ -175,7 +169,6 @@ public class BleLollipopDetector implements BleDetector
 				public void run()
 				{
 					listener.onScanStopped(true);
-//					Log.e("TAG", "-1002----BleLollipopDetector-----------onScanStopped------");
 				}
 			});
 			return;
@@ -196,7 +189,6 @@ public class BleLollipopDetector implements BleDetector
 	{
 		if(this.scanCallback == null)
 			return;
-//		Log.e("TAG", "-100222222----BleLollipopDetector-----------stopScan------");
 		BluetoothLeScanner scanner = adapter.getBluetoothLeScanner();
 		if(scanner == null)
 			return;
@@ -216,9 +208,7 @@ public class BleLollipopDetector implements BleDetector
 
 	private void scanResult(ScanResult result)
 	{
-//		Log.e("TAG", "-1003----BleLollipopDetector-------------scanResult------");
 		// Queue.
 		listener.onDeviceDetected(result.getDevice(), result.getScanRecord().getBytes());
-//		Log.e("TAG",result.getDevice().toString()+ "---BleLollipopDetector--------startScan--scanResult----" +result.getScanRecord());
 	}
 } // BleLollipopDetector

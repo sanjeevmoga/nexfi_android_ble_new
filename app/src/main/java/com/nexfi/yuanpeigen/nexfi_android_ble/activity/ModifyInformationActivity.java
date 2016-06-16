@@ -42,9 +42,8 @@ public class ModifyInformationActivity extends AppCompatActivity implements View
 
 
     private String userSelfId;
-    private String userNick, newUserNick, userGender;
-    private int userAge, newUserAge;
-    private String newUserAvater;
+    private String userNick, userGender;
+    private int userAge;
     private String userAvatar;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     private Node node;

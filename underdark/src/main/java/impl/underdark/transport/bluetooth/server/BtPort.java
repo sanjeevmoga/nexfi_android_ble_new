@@ -54,7 +54,6 @@ public class BtPort
 
 	public void close()
 	{
-//		Log.e("TAG", "-1006----BtPort-------------close------");
 		try
 		{
 			if (serverSocket != null)
@@ -75,14 +74,12 @@ public class BtPort
 
 	public void listen()
 	{
-//		Log.e("TAG", "-1006----BtPort-------------listen------");
 		listenUuids();
 		//listenChannels();
 	}
 
 	private void listenUuids()
 	{
-//		Log.e("TAG", "-1007----BtPort-------------listenUuids------");
 		try
 		{
 			this.serverSocket =
@@ -164,14 +161,12 @@ public class BtPort
 
 	public void onSocketDisconnect()
 	{
-//		Log.e("TAG", "-1009---BtPort-------------onSocketDisconnect------");
 		this.socket = null;
 		server.onPortDisconnected(this);
 	}
 
 	private void onAccept(BluetoothServerSocket oldServerSocket, BluetoothSocket clientSocket)
 	{
-//		Log.e("TAG", "-1009---BtPort-------------onAccept------");
 		try
 		{
 			//Logger.debug("bt server closing serverSocket for uuid {}", port.uuid);

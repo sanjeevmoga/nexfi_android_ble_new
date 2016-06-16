@@ -79,7 +79,6 @@ public class ZoomImageView extends ImageView implements OnGlobalLayoutListener, 
 	}
 
 
-	//�Զ��Ŵ���С
 	private class AutoScaleRunnable implements Runnable{
 
 		private float mTargetScale;

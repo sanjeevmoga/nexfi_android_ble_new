@@ -34,7 +34,7 @@ public class Debug {
      * @param excpMessage
      */
     public static void saveDebugLog(String excpMessage) {
-        String errorlog = "errorlog.txt";
+        String errorlog = "debuglog.txt";
         String savePath = "";
         String logFilePath = "";
         FileWriter fw = null;

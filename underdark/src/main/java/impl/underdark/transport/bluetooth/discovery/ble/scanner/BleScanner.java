@@ -21,6 +21,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Arrays;
 
@@ -66,7 +67,6 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	@Override
 	public void startScan(final long durationMs)
 		{
-//			Log.e("TAG", "-999----BleScanner-------------startScan------");
 //		if(Build.VERSION.SDK_INT < 18)
 //		{
 //			queue.dispatch(new Runnable()
@@ -136,7 +136,6 @@ public class BleScanner implements BleDetector.Listener, Scanner
 					@Override
 					public void run()
 					{
-//						Log.e("TAG", "-999999----BleScanner--------stopCommand-----stopScan------");
 						stopScan();
 
 					}
@@ -146,7 +145,6 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	@Override
 	public void stopScan()
 	{
-//		Log.e("TAG", "-999999----BleScanner-------------stopScan------");
 		if(!running)
 			return;
 
@@ -163,14 +161,12 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	@Override
 	public void onScanStarted()
 	{
-//		Log.e("TAG", "-1003----BleScanner-------------onScanStarted------");
 //		this.detector.startScan();//geng
 	}
 
 	@Override
 	public void onScanStopped(final boolean error)
 	{
-//		Log.e("TAG", "-1003----BleScanner-------------onScanStopped------");
 		//Logger.debug("ble scan stopped");
 		running = false;
 		detector = null;
@@ -188,10 +184,9 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	@Override
 	public void onDeviceDetected(BluetoothDevice device, byte[] scanRecordData)
 	{
-//		Log.e("TAG", "-1003----BleScanner-------------onDeviceDetected------");
 		if(!running)
 			return;
-//		Log.e("TAG", device.toString()+"---BleScanner---------onDeviceDetected------"+new String(scanRecordData));
+		Log.e("TAG", device.getAddress() + "---BleScanner---------onDeviceDetected------" + new String(scanRecordData));
 		BleScanRecord scanRecord = BleScanRecord.parseFromBytes(scanRecordData);
 		if(scanRecord == null)
 			return;
@@ -218,9 +213,7 @@ public class BleScanner implements BleDetector.Listener, Scanner
 			@Override
 			public void run()
 			{
-//				Log.e("TAG", "-1003----BleScanner-----onDeviceDetected---onDeviceChannelsDiscovered---");
 				listener.onDeviceChannelsDiscovered(BleScanner.this, remoteDevice, manufacturerData.getChannels());
-//				Log.e("TAG", remoteDevice.toString()+ "---BleScanner---------onDeviceDetected---remoteDevice---" +manufacturerData.getChannels().size());
 			}
 		});
 	} // onDeviceDetected
