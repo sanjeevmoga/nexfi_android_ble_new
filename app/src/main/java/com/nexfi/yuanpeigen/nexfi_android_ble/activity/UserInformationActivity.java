@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 
 /**
  * Created by Mark on 2016/4/27.
@@ -64,7 +63,6 @@ public class UserInformationActivity extends AppCompatActivity {
         tv_username.setText(userNick);
         tv_userAge.setText(userAge + "");
         iv_userhead_icon.setImageResource(BleApplication.iconMap.get(userAvatar));
-        Debug.debugLog("UserInformationActivity",userGender+"=====userGender---------------"+USER_SEX);
         if (userGender.equals(USER_SEX)) {
             rb_male.setChecked(true);
         } else {

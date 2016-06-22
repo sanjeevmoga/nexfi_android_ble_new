@@ -274,8 +274,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
-
     /**
      * 发送语音
      *
@@ -546,8 +544,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if (status.equals(Environment.MEDIA_MOUNTED)) {
             try {
                 String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-                localTempImgDir = "Nexfi_ble";
-                localTempImgFileName = "camera_" + timeStamp + ".jpg";
+                localTempImgDir = "NexFi_ble/camera";
+                localTempImgFileName = "CAMERA_" + timeStamp + ".jpg";
                 File dir = new File(Environment.getExternalStorageDirectory() + "/" + localTempImgDir);
                 if (!dir.exists()) dir.mkdirs();
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

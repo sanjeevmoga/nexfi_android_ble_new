@@ -103,10 +103,8 @@ public class MainImageActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("TAG", "--图片发送-MainImageActivity-----------"+data);
         if(data!=null){
             if(requestCode==1) {
-                Log.e("TAG", "--图片发送-MainImageActivity-----------" + data.getStringExtra("RESULT"));
                 MainImageActivity.this.setResult(0, data);
                 MainImageActivity.this.finish();
             }
@@ -161,7 +159,6 @@ public class MainImageActivity extends AppCompatActivity {
                     String path = mCursor.getString(mCursor
                             .getColumnIndex(MediaStore.Images.Media.DATA));
 
-                    Log.e("TAG", path);
                     if (firstImage == null)
                         firstImage = path;
                     File parentFile = new File(path).getParentFile();

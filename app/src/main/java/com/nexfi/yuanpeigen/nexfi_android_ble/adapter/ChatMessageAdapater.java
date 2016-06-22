@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -183,7 +184,7 @@ public class ChatMessageAdapater extends BaseAdapter {
                     viewHolder_voice.seconds = (TextView) convertView.findViewById(R.id.recorder_time);
                     viewHolder_voice.userHeadIcon = (ImageView) convertView.findViewById(R.id.item_icon);
 
-                    viewHolder_voice.id_recorder_anim= (ImageView) convertView.findViewById(R.id.id_recorder_anim);//
+                    viewHolder_voice.id_recorder_anim = (ImageView) convertView.findViewById(R.id.id_recorder_anim);//
                     convertView.setTag(viewHolder_voice);
                     break;
 
@@ -233,53 +234,55 @@ public class ChatMessageAdapater extends BaseAdapter {
                 lParams.width = (int) (mMinItemWith + mMaxItemWith / 60f * Double.parseDouble(voiceMsg.durational));
                 viewHolder_voice.length.setLayoutParams(lParams);
                 viewHolder_voice.userHeadIcon.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
-                viewHolder_voice.id_recorder_anim.setOnClickListener(new VoicePlayClickListener(entity,viewHolder_voice.id_recorder_anim,userSelfId,this,position));
+                viewHolder_voice.id_recorder_anim.setOnClickListener(new VoicePlayClickListener(entity, viewHolder_voice.id_recorder_anim, userSelfId, this, position));
                 break;
 
             case MessageBodyType.eMessageBodyType_Image:
-                try {
-                    final byte[] bys_send = Base64.decode(fileMsg.fileData, Base64.DEFAULT);
 
-                    if (bys_send != null) {
+                    try {
+                        final byte[] bys_send = Base64.decode(fileMsg.fileData, Base64.DEFAULT);
                         Bitmap bitmap = FileTransferUtils.getPicFromBytes(bys_send);
                         viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
                         viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
+                    } catch (OutOfMemoryError error) {
+                        final Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_loading);
+                        viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
+                        viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
+                    }
 
-                        viewHolder_sendImage.iv_userhead_send_image.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
+                    viewHolder_sendImage.iv_userhead_send_image.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
 
-                        if (entity.userMessage.userId.equals(userSelfId)) {
-                            viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(mContext, ModifyInformationActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    mContext.startActivity(intent);
-                                }
-                            });
-                        } else {
-                            viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new AvatarClick(position));
-                        }
-
-                        viewHolder_sendImage.tv_sendTime_send_image.setText(entity.timeStamp);
-                        if (fileMsg.isPb == 0) {
-                            viewHolder_sendImage.pb_send.setVisibility(View.INVISIBLE);
-                        } else {
-                            viewHolder_sendImage.pb_send.setVisibility(View.VISIBLE);
-                        }
-                        viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
+                    if (entity.userMessage.userId.equals(userSelfId)) {
+                        viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Intent intent = new Intent(mContext, BigImageActivity.class);
+                                Intent intent = new Intent(mContext, ModifyInformationActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.putExtra("bitmap", bys_send);
-                                intent.putExtra("page",position);
                                 mContext.startActivity(intent);
-                                ((Activity) mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
                             }
                         });
+                    } else {
+                        viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new AvatarClick(position));
                     }
-                } catch (OutOfMemoryError error) {
-                }
+
+                    viewHolder_sendImage.tv_sendTime_send_image.setText(entity.timeStamp);
+                    if (fileMsg.isPb == 0) {
+                        viewHolder_sendImage.pb_send.setVisibility(View.INVISIBLE);
+                    } else {
+                        viewHolder_sendImage.pb_send.setVisibility(View.VISIBLE);
+                    }
+                    viewHolder_sendImage.chatcontent_send.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(mContext, BigImageActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            intent.putExtra("bitmap", bys_send);
+                            intent.putExtra("page", position);
+                            intent.putExtra("filePath", entity.fileMessage.filePath);
+                            mContext.startActivity(intent);
+                            ((Activity) mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
+                        }
+                    });
                 break;
         }
 
@@ -325,6 +328,4 @@ public class ChatMessageAdapater extends BaseAdapter {
         public RelativeLayout chatcontent_send;
         public ProgressBar pb_send;
     }
-
-
 }

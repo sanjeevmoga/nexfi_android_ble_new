@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,11 +45,19 @@ public class BigImageActivity extends AppCompatActivity {
     Bitmap[] bitmaps=null;
     private int width;
     private int height;
+    private ZoomImageView big_image;
+    private byte[] bis;//图片数据
+    private String filePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_activity);
+
+        Intent intent=getIntent();
+        int page=intent.getIntExtra("page", 0);
+        bis = intent.getByteArrayExtra("bitmap");
+        filePath = intent.getStringExtra("filePath");
 
         /** 获取可見区域高度 **/
         WindowManager manager = getWindowManager();
@@ -63,22 +70,35 @@ public class BigImageActivity extends AppCompatActivity {
         width = metric.widthPixels;
         height = metric.heightPixels;
         userId= SharedPreferencesUtils.getString(BleApplication.getContext(), "CHAT_ID", UUID.randomUUID().toString());
-        mAllDataArrays = bleDBDao.findMsgByChatId(userId);
+
+        big_image = (ZoomImageView) findViewById(R.id.big_image);//ImageView
+
+        viewpager = (ViewPagerFixed) findViewById(R.id.viewpager);
+
+        try {
+            mAllDataArrays = bleDBDao.findMsgByChatId(userId);
+        }catch (OutOfMemoryError error){
+            //数据量过大会内存溢出
+            viewpager.setVisibility(View.INVISIBLE);
+            big_image.setVisibility(View.VISIBLE);
+            Bitmap bigBit= FileTransferUtils.compressImageFromFile(filePath, width, height);
+            big_image.setImageBitmap(bigBit);
+        }
+
+        //查询所有数据
         for (int i = 0; i <mAllDataArrays.size() ; i++) {
             int type=mAllDataArrays.get(i).messageBodyType;
             if(type == MessageBodyType.eMessageBodyType_Image){
                 mImageDataArrays.add(mAllDataArrays.get(i));
             }
         }
-        Intent intent=getIntent();
-        int page=intent.getIntExtra("page", 0);
+        //过滤出图片
         for (int i = 0; i <mImageDataArrays.size() ; i++) {
-            if(mImageDataArrays.get(i)==mAllDataArrays.get(page)){
+            if(mImageDataArrays.get(i).fileMessage.filePath.equals(filePath)){
                 firstPosition=i;
                 break;
             }
         }
-        viewpager = (ViewPagerFixed) findViewById(R.id.viewpager);
 
         initAllImages();
 
@@ -91,8 +111,16 @@ public class BigImageActivity extends AppCompatActivity {
         mImageViews=new ImageView[bitmaps.length];
         for (int i = 0; i<mImageDataArrays.size() ; i++) {
             FileMessage fileMessage = mImageDataArrays.get(i).fileMessage;
-            byte[] bys_send = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
-            Bitmap bitmap= FileTransferUtils.decodeSampledBitmapFromResource(bys_send, width, height);
+            Bitmap bitmap = null;
+            try {
+                bitmap = FileTransferUtils.compressImageFromFile(fileMessage.filePath, (float) width, (float) height);
+            }catch (OutOfMemoryError error){
+                //出现内存溢出就只显示一张图片
+                viewpager.setVisibility(View.INVISIBLE);
+                big_image.setVisibility(View.VISIBLE);
+                Bitmap bigBit= FileTransferUtils.compressImageFromFile(filePath, width, height);
+                big_image.setImageBitmap(bigBit);
+            }
             bitmaps[i]=bitmap;
         }
 

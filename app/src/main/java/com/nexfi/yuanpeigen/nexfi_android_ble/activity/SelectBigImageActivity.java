@@ -58,7 +58,6 @@ public class SelectBigImageActivity extends AppCompatActivity {
                 Intent data=new Intent(SelectBigImageActivity.this,ChatActivity.class);
                 data.putExtra("RESULT", picturePath);
                 SelectBigImageActivity.this.setResult(2, data);
-//                startActivity(data);
                 SelectBigImageActivity.this.finish();
             }
         });

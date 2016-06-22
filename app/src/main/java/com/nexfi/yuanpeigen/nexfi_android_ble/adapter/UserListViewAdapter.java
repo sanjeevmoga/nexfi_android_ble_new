@@ -150,5 +150,4 @@ public class UserListViewAdapter extends BaseAdapter {
             mContext.startActivity(intent);
         }
     }
-
 }

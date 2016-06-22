@@ -20,7 +20,11 @@ public class GuideActivity extends AppCompatActivity implements Runnable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ImageView imageView = new ImageView(this);
-        imageView.setImageResource(R.mipmap.icon_loading);
+        try {
+            imageView.setImageResource(R.mipmap.icon_loading);//outOfMemoryError
+        }catch (OutOfMemoryError error){
+            imageView.setImageResource(R.mipmap.img_add);
+        }
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         setContentView(imageView);
         isFirstIn = UserInfo.initConfigurationInformation(isFirstIn, this);

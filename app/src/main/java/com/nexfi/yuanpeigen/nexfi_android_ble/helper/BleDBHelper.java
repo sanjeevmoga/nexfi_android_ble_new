@@ -24,6 +24,8 @@ public class BleDBHelper extends SQLiteOpenHelper {
         db.execSQL("create table textGroupMesg(_id integer primary key autoincrement,messageType Integer(20),messageBodyType Integer(20),timeStamp varchar(20),msgId varchar(20),nodeId varchar(20),userId varchar(20),userNick varchar(20),userAge Integer(20),userGender varchar(20),userAvatar varchar(20),birthday varchar(20),"+
                 "groupId varchar(20),fileData varchar(20),isRead varchar(20),fileName varchar(20),filePath varchar(20),fileSize varchar(20),fileIcon Integer(20),isPb Integer(20),durational varchar(20))");
 
+
+        db.execSQL("create table textGroupImageMesg(_id integer primary key autoincrement,fileName varchar(20),filePath varchar(20),fileSize varchar(20),fileData varchar(20),fileIcon Integer(20),isRead varchar(20),isPb Integer(20))");
     }
 
     @Override

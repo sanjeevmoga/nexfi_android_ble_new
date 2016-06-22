@@ -9,4 +9,12 @@
         android:layout_height="match_parent" >
     </com.nexfi.yuanpeigen.nexfi_android_ble.view.ViewPagerFixed>
 
+    <com.nexfi.yuanpeigen.nexfi_android_ble.view.ZoomImageView
+        android:id="@+id/big_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/icon_loading"
+        android:visibility="gone"
+        />
+
 </LinearLayout>

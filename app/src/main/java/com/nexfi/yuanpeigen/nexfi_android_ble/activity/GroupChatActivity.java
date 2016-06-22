@@ -159,7 +159,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             Collections.reverse(mDataArrays);
         }
         if (mDataArrays != null && mDataArrays.size() > 0) {
-            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId);
+            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId,pageSize,startIndex);
             lv_chatGroup.setAdapter(groupChatAdapater);
             lv_chatGroup.setSelection(mDataArrays.size() - 1);//直接定位到最底部
         }
@@ -285,7 +285,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                             List<GroupChatMessage> mLists = bleDBDao.findPartGroupMsg(pageSize, startIndex);
                             Collections.reverse(mLists);
                             mDataArrays.addAll(0, mLists);
-                            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId);
+                            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId,pageSize,startIndex);
                             lv_chatGroup.setAdapter(groupChatAdapater);
                             lv_chatGroup.setSelection(mLists.size());
                         }
@@ -442,8 +442,8 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
         if (status.equals(Environment.MEDIA_MOUNTED)) {
             try {
                 String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-                localTempImgDir = "Nexfi_ble";
-                localTempImgFileName = "camera_" + timeStamp + ".jpg";
+                localTempImgDir = "Nexfi_ble/camera";
+                localTempImgFileName = "CAMERA_" + timeStamp + ".jpg";
                 File dir = new File(Environment.getExternalStorageDirectory() + "/" + localTempImgDir);
                 if (!dir.exists()) dir.mkdirs();
 
@@ -537,6 +537,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             byte[] send_file_data = json.getBytes();
             node.broadcastFrame(send_file_data);
             bleDBDao.addGroupTextMsg2(groupChatMessage);//geng
+            bleDBDao.addGroupImageMsg(fileMessage);//保存图片数据
             setAdapter(groupChatMessage);
         }
     }
@@ -579,7 +580,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     private void setAdapter(GroupChatMessage groupChatMessage) {
         mDataArrays.add(groupChatMessage);
         if (null == groupChatAdapater) {
-            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId);
+            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId,pageSize,startIndex);
             lv_chatGroup.setAdapter(groupChatAdapater);
         }
         groupChatAdapater.notifyDataSetChanged();

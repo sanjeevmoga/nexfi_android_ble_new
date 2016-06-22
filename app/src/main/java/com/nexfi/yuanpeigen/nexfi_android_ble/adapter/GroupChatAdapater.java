@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +28,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageBodyType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.VoiceMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.GroupVoicePlayClickListener;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.BitMapUtil;
 
 import java.util.List;
 
@@ -41,6 +41,9 @@ public class GroupChatAdapater extends BaseAdapter {
     private List<GroupChatMessage> coll;
     private Context mContext;
     private String userSelfId;
+    private int pageSize;
+    private int startIndex;
+
 
     public final static int SEND_LEFT = 30;
     public final static int SEND_RIGHT = 31;
@@ -53,11 +56,13 @@ public class GroupChatAdapater extends BaseAdapter {
     private int mMaxItemWith;
 
 
-    public GroupChatAdapater(Context context, List<GroupChatMessage> coll, String userSelfId) {
+    public GroupChatAdapater(Context context, List<GroupChatMessage> coll, String userSelfId,int pageSize,int startIndex) {
         this.coll = coll;
         mInflater = LayoutInflater.from(context);
         this.mContext = context;
         this.userSelfId = userSelfId;
+        this.pageSize=pageSize;
+        this.startIndex=startIndex;
 
         // 获取系统宽度
         WindowManager wManager = (WindowManager) context
@@ -122,15 +127,16 @@ public class GroupChatAdapater extends BaseAdapter {
         convertView = null;
         final GroupChatMessage entity = coll.get(position);
         int msgBodyType = entity.messageBodyType;
+
         TextMessage textMessage = null;
-        FileMessage fileMessage = null;
         VoiceMessage voiceMsg = null;
+
         switch (msgBodyType) {
             case MessageBodyType.eMessageBodyType_Text:
                 textMessage = entity.textMessage;
                 break;
             case MessageBodyType.eMessageBodyType_Image:
-                fileMessage = entity.fileMessage;
+                FileMessage fileMessage = entity.fileMessage;
                 break;
             case MessageBodyType.eMessageBodyType_Voice://语音消息
                 voiceMsg = entity.voiceMessage;
@@ -228,10 +234,15 @@ public class GroupChatAdapater extends BaseAdapter {
                 break;
 
             case MessageBodyType.eMessageBodyType_Image:
-                final byte[] bys_send = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
-                final Bitmap bitmap = FileTransferUtils.getPicFromBytes(bys_send);
-                viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
-                viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
+                try {
+                    final Bitmap bitmap = BitMapUtil.getBitmap(entity.fileMessage.filePath, 100, 100);
+                    viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
+                    viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
+                }catch (OutOfMemoryError error){
+                    final Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.mipmap.icon_loading);
+                    viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
+                    viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
+                }
                 viewHolder_sendImage.iv_userhead_send_image.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
                 if (entity.userMessage.userId.equals(userSelfId)) {
                     viewHolder_sendImage.iv_userhead_send_image.setOnClickListener(new View.OnClickListener() {
@@ -247,7 +258,7 @@ public class GroupChatAdapater extends BaseAdapter {
                 }
                 viewHolder_sendImage.tv_sendTime_send_image.setText(entity.timeStamp);
                 viewHolder_sendImage.tv_userNick_send_image.setText(entity.userMessage.userNick);
-                if (fileMessage.isPb == 0) {
+                if (entity.fileMessage.isPb == 0) {
                     viewHolder_sendImage.pb_send.setVisibility(View.INVISIBLE);
                 } else {
                     viewHolder_sendImage.pb_send.setVisibility(View.VISIBLE);
@@ -257,8 +268,11 @@ public class GroupChatAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, GroupImageActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("bitmap", bys_send);
+//                        intent.putExtra("bitmap", bys_send);
                         intent.putExtra("page", position);
+                        intent.putExtra("pageSize",pageSize);
+                        intent.putExtra("startIndex", startIndex);
+                        intent.putExtra("filePath",entity.fileMessage.filePath);
                         mContext.startActivity(intent);
                         ((Activity) mContext).overridePendingTransition(R.anim.img_scale_in, R.anim.img_scale_out);
                     }

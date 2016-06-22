@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.GroupChatMessage;
-import com.nexfi.yuanpeigen.nexfi_android_ble.bean.MessageBodyType;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.SharedPreferencesUtils;
@@ -38,18 +36,21 @@ public class GroupImageActivity extends AppCompatActivity {
     private List<GroupChatMessage> mAllDataArrays = new ArrayList<GroupChatMessage>();
     private List<GroupChatMessage> mImageDataArrays = new ArrayList<GroupChatMessage>();
 
+    private List<FileMessage> mAllImageArrays = new ArrayList<FileMessage>();
+
     private int window_width, window_height;// 控件宽度
 
     private ImageView[] mImageViews=null;
     Bitmap[] bitmaps=null;
     private int width;
     private int height;
+    private ZoomImageView big_image;
+    private String filePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_activity);
-
         /** 获取可見区域高度 **/
         WindowManager manager = getWindowManager();
         window_width = manager.getDefaultDisplay().getWidth();
@@ -61,22 +62,29 @@ public class GroupImageActivity extends AppCompatActivity {
         width = metric.widthPixels;
         height = metric.heightPixels;
         userId= SharedPreferencesUtils.getString(BleApplication.getContext(), "CHAT_ID", UUID.randomUUID().toString());
-        mAllDataArrays = bleDBDao.findGroupMsg();
-        for (int i = 0; i <mAllDataArrays.size() ; i++) {
-            int type=mAllDataArrays.get(i).messageBodyType;
-            if(type == MessageBodyType.eMessageBodyType_Image){
-                mImageDataArrays.add(mAllDataArrays.get(i));
-            }
-        }
         Intent intent=getIntent();
         int page=intent.getIntExtra("page", 0);
-        for (int i = 0; i <mImageDataArrays.size() ; i++) {
-            if(mImageDataArrays.get(i)==mAllDataArrays.get(page)){
+        int pageSize=intent.getIntExtra("pageSize", 20);
+        int startIndex=intent.getIntExtra("startIndex",0);
+        filePath = intent.getStringExtra("filePath");
+
+        big_image = (ZoomImageView) findViewById(R.id.big_image);
+        viewpager = (ViewPagerFixed) findViewById(R.id.viewpager);
+
+        try {
+            mAllImageArrays = bleDBDao.findGroupImageMsg();
+        }catch (OutOfMemoryError error){
+            viewpager.setVisibility(View.INVISIBLE);
+            big_image.setVisibility(View.VISIBLE);
+            Bitmap bigBit= FileTransferUtils.compressImageFromFile(filePath, width, height);
+            big_image.setImageBitmap(bigBit);
+        }
+        for (int i = 0; i <mAllImageArrays.size() ; i++) {
+            if(mAllImageArrays.get(i).filePath.equals(filePath)){
                 firstPosition=i;
                 break;
             }
         }
-        viewpager = (ViewPagerFixed) findViewById(R.id.viewpager);
 
         initAllImages();
 
@@ -85,12 +93,20 @@ public class GroupImageActivity extends AppCompatActivity {
     }
 
     private void initAllImages() {
-        bitmaps=new Bitmap[mImageDataArrays.size()];
+        bitmaps=new Bitmap[mAllImageArrays.size()];
         mImageViews=new ImageView[bitmaps.length];
-        for (int i = 0; i<mImageDataArrays.size() ; i++) {
-            FileMessage fileMessage = mImageDataArrays.get(i).fileMessage;
-            byte[] bys_send = Base64.decode(fileMessage.fileData, Base64.DEFAULT);
-            Bitmap bitmap= FileTransferUtils.decodeSampledBitmapFromResource(bys_send, width, height);
+        for (int i = 0; i<mAllImageArrays.size() ; i++) {
+            FileMessage fileMessage = mAllImageArrays.get(i);
+            Bitmap bitmap = null;
+            try {
+                bitmap = FileTransferUtils.compressImageFromFile(fileMessage.filePath, (float) width, (float) height);
+            }catch (OutOfMemoryError error){
+                //出现内存溢出就只显示一张图片
+                viewpager.setVisibility(View.INVISIBLE);
+                big_image.setVisibility(View.VISIBLE);
+                Bitmap bigBit= FileTransferUtils.compressImageFromFile(filePath, width, height);
+                big_image.setImageBitmap(bigBit);
+            }
             bitmaps[i]=bitmap;
         }
 

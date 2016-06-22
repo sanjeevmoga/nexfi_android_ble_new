@@ -15,14 +15,12 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveGroupMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
-import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import org.json.JSONObject;
-import org.slf4j.impl.StaticLoggerBinder;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -36,8 +34,6 @@ import io.underdark.transport.Link;
 import io.underdark.transport.Transport;
 import io.underdark.transport.TransportKind;
 import io.underdark.transport.TransportListener;
-import io.underdark.util.nslogger.NSLogger;
-import io.underdark.util.nslogger.NSLoggerAdapter;
 
 public class Node implements TransportListener {
     private boolean running;
@@ -46,9 +42,7 @@ public class Node implements TransportListener {
     private Transport transport;
 
     private ArrayList<Link> links = new ArrayList<>();
-    private int framesCount = 0;
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
-    TextMsgOperation textMsgOperation = new TextMsgOperation();
     ReceiveTextMsgListener mReceiveTextMsgListener = null;
     ReceiveGroupMsgListener mReceiveGroupMsgListener=null;
     private Gson gson;
@@ -90,10 +84,10 @@ public class Node implements TransportListener {
     }
 
     private void configureLogging() {
-        NSLoggerAdapter adapter = (NSLoggerAdapter)
-                StaticLoggerBinder.getSingleton().getLoggerFactory().getLogger(Node.class.getName());
-        adapter.logger = new NSLogger(activity.getApplicationContext());
-        adapter.logger.connect("192.168.5.203", 50000);
+//        NSLoggerAdapter adapter = (NSLoggerAdapter)
+//                StaticLoggerBinder.getSingleton().getLoggerFactory().getLogger(Node.class.getName());
+//        adapter.logger = new NSLogger(activity.getApplicationContext());
+//        adapter.logger.connect("192.168.5.203", 50000);
 
         Underdark.configureLogging(true);
     }
@@ -176,9 +170,11 @@ public class Node implements TransportListener {
         String json = new String(frameData);
         JSONObject jsonObject = null;
         try {
-            jsonObject = new JSONObject(json);
+            jsonObject = new JSONObject(json);//outOfMemoryError
         } catch (Exception e) {//
             e.printStackTrace();
+        }catch (OutOfMemoryError error){
+            return;
         }
         if (jsonObject == null) {
             return;
@@ -231,8 +227,25 @@ public class Node implements TransportListener {
         }
         else if (MessageType.eMessageType_SingleChat == messageType) {//单聊
             SingleChatMessage singleChatMessage = gson.fromJson(json, SingleChatMessage.class);
-            //如果是语音消息，需要创建临时文件，因为播放语音需要路径
-            if(singleChatMessage.messageBodyType== MessageBodyType.eMessageBodyType_Voice){
+            //如果是图片消息，需要创建文件
+            if(singleChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Image){
+                String imageData=singleChatMessage.fileMessage.fileData;
+                byte[] by_receive_data= Base64.decode(imageData, Base64.DEFAULT);
+                String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                String imageFileName = "IMAGE_"+ timeStamp + ".jpg";
+                File fileDir = null;
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    //存在sd卡
+                    fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NexFi_ble/image");
+                    if (!fileDir.exists()) {
+                        fileDir.mkdirs();
+                    }
+                }
+                String rece_file_path = fileDir + "/" + imageFileName;
+                File fileRece=FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
+                singleChatMessage.fileMessage.filePath=fileRece.getAbsolutePath();
+            }//如果是语音消息，需要创建临时文件，因为播放语音需要路径
+            else if(singleChatMessage.messageBodyType== MessageBodyType.eMessageBodyType_Voice){
                 String fileData=singleChatMessage.voiceMessage.fileData;
                 byte[] by_receive_data= Base64.decode(fileData, Base64.DEFAULT);
                 String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -274,7 +287,24 @@ public class Node implements TransportListener {
                     File fileRece = FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
                     groupChatMessage.voiceMessage.filePath = fileRece.getAbsolutePath();
                 }
-                //如果数据库没有此msgId，则将此条消息转发,并显示
+                else if(groupChatMessage.messageBodyType== MessageBodyType.eMessageBodyType_Image){//群聊图片
+                    String imageData=groupChatMessage.fileMessage.fileData;
+                    byte[] by_receive_data= Base64.decode(imageData, Base64.DEFAULT);
+                    String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                    String imageFileName = "IMAGE_"+ timeStamp + ".jpg";
+                    File fileDir = null;
+                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        //存在sd卡
+                        fileDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NexFi_ble/image");
+                        if (!fileDir.exists()) {
+                            fileDir.mkdirs();
+                        }
+                    }
+                    String rece_file_path = fileDir + "/" + imageFileName;
+                    File fileRece=FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
+                    groupChatMessage.fileMessage.filePath=fileRece.getAbsolutePath();
+                    bleDBDao.addGroupImageMsg(groupChatMessage.fileMessage);//保存图片数据
+                }
                 UserMessage userMessage=groupChatMessage.userMessage;
                 userMessage.nodeId=link.getNodeId()+"";
                 bleDBDao.addGroupTextMsg2(groupChatMessage);

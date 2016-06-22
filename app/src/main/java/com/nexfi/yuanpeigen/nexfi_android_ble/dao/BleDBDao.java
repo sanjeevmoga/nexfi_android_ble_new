@@ -447,7 +447,7 @@ public class BleDBDao {
     public List<GroupChatMessage> findGroupMsg() {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery(
-                "select * from textGroupMesg",null);
+                "select * from textGroupMesg", null);
         List<GroupChatMessage> mDatas = new ArrayList<GroupChatMessage>();
         while (cursor.moveToNext()) {
             GroupChatMessage groupChatMessage = new GroupChatMessage();
@@ -591,6 +591,43 @@ public class BleDBDao {
         db.close();
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user_group.com"), null);
+    }
+
+
+    public void addGroupImageMsg(FileMessage fileMessage){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("fileData", fileMessage.fileData);
+        values.put("fileName", fileMessage.fileName);
+        values.put("fileSize", fileMessage.fileSize);
+        values.put("fileIcon", fileMessage.fileIcon);
+        values.put("filePath", fileMessage.filePath);
+        values.put("isPb", fileMessage.isPb);
+        values.put("isRead", fileMessage.isRead);
+        db.insert("textGroupImageMesg", null, values);
+        db.close();
+    }
+
+
+    public List<FileMessage> findGroupImageMsg(){
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "select * from textGroupImageMesg", null);
+        List<FileMessage> mDatas = new ArrayList<FileMessage>();
+        while (cursor.moveToNext()){
+            FileMessage fileMessage = new FileMessage();
+            fileMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
+            fileMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
+            fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
+            fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
+            fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
+            fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+            fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
+            mDatas.add(fileMessage);
+        }
+        cursor.close();
+        db.close();
+        return mDatas;
     }
 
 }
