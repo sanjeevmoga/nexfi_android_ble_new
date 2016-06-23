@@ -370,7 +370,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 firstItem = firstVisibleItem;
             }
         });
-
     }
 
     private void initIntentData() {
@@ -437,6 +436,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.iv_pic:
+                String model = android.os.Build.MODEL;
+                if (model.equals("Nexus 5X")) {
+                    return;
+                }
                 if (!Environment.getExternalStorageState().equals(
                         Environment.MEDIA_MOUNTED)) {
                     Toast.makeText(this, "没有内存卡", Toast.LENGTH_SHORT).show();
@@ -450,6 +453,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.iv_camera:
+                String nexModel = android.os.Build.MODEL;
+                if (nexModel.equals("Nexus 5X")) {
+                    return;
+                }
                 if (Build.VERSION.SDK_INT >= 23) {
 
                     if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {

@@ -370,10 +370,18 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 et_chatGroup.setText(null);
                 break;
             case R.id.iv_pic://发图片
+                String model = android.os.Build.MODEL;
+                if (model.equals("Nexus 5X")) {
+                    return;
+                }
                 Intent intentMain = new Intent(GroupChatActivity.this, MainImageActivity.class);
                 startActivityForResult(intentMain, 0);
                 break;
             case R.id.iv_camera:
+                String nexModel = android.os.Build.MODEL;
+                if (nexModel.equals("Nexus 5X")) {
+                    return;
+                }
                 if (Build.VERSION.SDK_INT >= 23) {
 
                     if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {

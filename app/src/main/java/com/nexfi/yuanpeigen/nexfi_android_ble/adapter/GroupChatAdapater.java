@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.VoiceMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.GroupVoicePlayClickListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.BitMapUtil;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 
 import java.util.List;
 
@@ -235,9 +237,17 @@ public class GroupChatAdapater extends BaseAdapter {
 
             case MessageBodyType.eMessageBodyType_Image:
                 try {
-                    final Bitmap bitmap = BitMapUtil.getBitmap(entity.fileMessage.filePath, 100, 100);
-                    viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
-                    viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
+                    String nexModel = android.os.Build.MODEL;
+                    if (nexModel.equals("Nexus 5X")) {
+                        final byte[] bys_send = Base64.decode(entity.fileMessage.fileData, Base64.DEFAULT);
+                        Bitmap bitmap = FileTransferUtils.getPicFromBytes(bys_send);
+                        viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
+                        viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
+                    }else{
+                        final Bitmap bitmap = BitMapUtil.getBitmap(entity.fileMessage.filePath, 100, 100);
+                        viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);
+                        viewHolder_sendImage.iv_icon_send.setScaleType(ImageView.ScaleType.FIT_XY);
+                    }
                 }catch (OutOfMemoryError error){
                     final Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.mipmap.icon_loading);
                     viewHolder_sendImage.iv_icon_send.setImageBitmap(bitmap);

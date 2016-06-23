@@ -21,6 +21,7 @@ public class DebugActivity extends AppCompatActivity {
 
     private List<String> logLists;
     private ListView list_debug;
+    private LogAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,11 @@ public class DebugActivity extends AppCompatActivity {
         setContentView(R.layout.activity_debug);
         logLists = BleApplication.getLogLists();
         list_debug = (ListView)findViewById(R.id.list_debug);
-        list_debug.setAdapter(new LogAdapter());
+        adapter = new LogAdapter();
+        list_debug.setAdapter(adapter);
+        if(adapter!=null){
+            adapter.notifyDataSetChanged();
+        }
     }
 
 
