@@ -67,6 +67,7 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	@Override
 	public void startScan(final long durationMs)
 		{
+			Log.e("TAG","-----BleScanner-------============startScan------------------");
 //		if(Build.VERSION.SDK_INT < 18)
 //		{
 //			queue.dispatch(new Runnable()

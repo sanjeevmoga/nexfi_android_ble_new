@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,6 +77,7 @@ public class BtScanner implements Scanner,BleDetector.Listener
 	@Override
 	public void startScan(long durationMs)
 	{
+		Log.e("TAG","-----BtScanner==========startScan-----------");
 		if(running)
 			return;
 

@@ -191,6 +191,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	@Override
 	public void start()
 	{
+		Log.e("TAG","-----BtTransport-------============start------------------");
 		// Listener queue.
 		this.queue.dispatch(new Runnable()
 		{
@@ -258,6 +259,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 	public void stopInternal()
 	{
+		Log.e("TAG","-----BtTransport-------============stopInternal------------------");
 		// Transport queue.
 		if(!this.running)
 			return;
@@ -589,7 +591,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 	private void connectToDevice(BluetoothDevice device, List<String> deviceUuids)
 	{
-//		Log.e("TAG", "-1004----BtTransport-----connectToDevice---" + device.getAddress());
+		Log.e("TAG", "-1004----BtTransport-----connectToDevice---" + device.getAddress());
 		BtLink link = BtLink.createClientWithUuids(this, device, deviceUuids);
 		linkConnecting(link);
 	}

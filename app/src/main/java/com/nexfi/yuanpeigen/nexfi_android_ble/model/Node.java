@@ -3,6 +3,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.model;
 import android.app.Activity;
 import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
@@ -88,8 +89,8 @@ public class Node implements TransportListener {
 //                StaticLoggerBinder.getSingleton().getLoggerFactory().getLogger(Node.class.getName());
 //        adapter.logger = new NSLogger(activity.getApplicationContext());
 //        adapter.logger.connect("192.168.5.203", 50000);
-
-        Underdark.configureLogging(true);
+//
+//        Underdark.configureLogging(true);
     }
 
     public void start() {
@@ -166,6 +167,7 @@ public class Node implements TransportListener {
     //接收数据，自动调用
     @Override
     public void transportLinkDidReceiveFrame(Transport transport, Link link, byte[] frameData) {
+        Log.e("TAG","-----------接收数据=====000000000000000000000000000000000000000000");
         //接收到数据后将用户数据发送给对方
         String json = new String(frameData);
         JSONObject jsonObject = null;
