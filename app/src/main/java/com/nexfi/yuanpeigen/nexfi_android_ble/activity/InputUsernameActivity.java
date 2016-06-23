@@ -24,7 +24,7 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
     private TextView tv_save;
     private EditText et_inputUsername;
 
-    private String userNick, newUserNick;
+    private String userNick, model;
 
     private final String USER_NICK = "userNick";
 
@@ -36,7 +36,6 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
 
         initView();
         setClickListener();
-
     }
 
     private void setClickListener() {
@@ -49,9 +48,13 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
         tv_save = (TextView) findViewById(R.id.tv_save);
         et_inputUsername = (EditText) findViewById(R.id.et_inputUsername);
         userNick = UserInfo.initUserNick(userNick, this);
+        model = android.os.Build.MODEL;
         if (!userNick.equals("未填写")) {
             et_inputUsername.setText(userNick);
+        } else {
+            et_inputUsername.setText(model);
         }
+        et_inputUsername.setSelection(et_inputUsername.getText().length());
     }
 
     @Override
@@ -68,14 +71,14 @@ public class InputUsernameActivity extends AppCompatActivity implements View.OnC
                 if (!TextUtils.isEmpty(et_inputUsername.getText())) {
                     String name = et_inputUsername.getText().toString();
 //                    if (!name.equals(userNick)) {
-                        userNick = name;
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.putExtra(USER_NICK, userNick);
-                        Log.e("inputusername", userNick + "===============tv_save=======================");
-                        setResult(2, intent);
-                        finish();
-                        UserInfo.saveUsername(this, userNick);
-                        Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                    userNick = name;
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra(USER_NICK, userNick);
+                    Log.e("inputusername", userNick + "===============tv_save=======================");
+                    setResult(2, intent);
+                    finish();
+                    UserInfo.saveUsername(this, userNick);
+                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
 //                    }
                 } else {
                     Toast.makeText(this, "您还未输入昵称哦", Toast.LENGTH_SHORT).show();

@@ -75,6 +75,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 isExit = false;
             }
         };
+        userAge = 18;
+        UserInfo.saveUserAge(this, userAge);
     }
 
     private void initView() {
@@ -145,7 +147,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     UserInfo.saveUserHeadIcon(this, userAvatar);
                 } else {
                     //如果不是默认值，说明用户自己选择了头像
-                    if (userAge != 0 && userGender != null && !userNick.equals("未填写")) {
+                    if (userGender != null && !userNick.equals("未填写")) {
                         UserInfo.setConfigurationInformation(this);
                         UserInfo.saveUserId(this, userIdOfFirstLogin);
                         SharedPreferencesUtils.saveString(getApplicationContext(), "userSelfId", userIdOfFirstLogin);
