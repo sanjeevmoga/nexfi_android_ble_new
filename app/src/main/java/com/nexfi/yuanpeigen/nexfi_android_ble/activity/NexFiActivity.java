@@ -37,12 +37,11 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
     private String release;
     private String model;
     private String sdk;
-    private boolean isRoot, isWifiOpen;
+    private boolean isRoot, isWifiOpen, isSuccess = false;
     private Thread thread;
     private Handler mHandler;
     private AlertDialog mAlertDialog, waimingDialog;
     private RelativeLayout layout_back_nexfi;
-    private boolean isFailed;
     private WifiManager wifiManager;
     private String processNumber, processID;
 
@@ -131,24 +130,18 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
         return s[1];
     }
 
+    private void deleteFile() {
+        File file = new File("/sdcard/flag.txt");
+        if (file.exists()) {
+            file.delete();
+        }
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                try {
-                    processNumber = readSDFile("/sdcard/flag.txt");
-                    processID = getPSId(processNumber);
-                } catch (IOException e) {
-                    Log.e("首次打开flag.txt", "++++++++++++++++");
-                }
-
-                if (processNumber != null) {
-                    isFailed = false;
-                } else {
-                    isFailed = true;
-                }
-                if (isFailed) {
+                if (!isSuccess) {
                     if (model.equals("HM 2LTE-CMCC")) {
                         implHM();
                     } else if (model.equals("MI 4LTE")) {
@@ -159,6 +152,12 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
                         implZX();
                     } else {
                         implXM();
+                    }
+                    try {
+                        processNumber = readSDFile("/sdcard/flag.txt");
+                        processID = getPSId(processNumber);
+                    } catch (IOException e) {
+                        Log.e("打开flag.txt", "++++++++++++++++");
                     }
                 } else {
                     Toast.makeText(NexFiActivity.this, "您已成功打开NexFi网络", Toast.LENGTH_LONG).show();
@@ -189,6 +188,8 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
                 }
                 if (processNumber != null) {
                     Toast.makeText(NexFiActivity.this, "恭喜您成功打开NexFi网络", Toast.LENGTH_LONG).show();
+                    isSuccess = true;
+                    deleteFile();
                 } else {
                     initWarmingDialog();
                 }
@@ -315,6 +316,8 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
                 }
                 if (processNumber != null) {
                     Toast.makeText(NexFiActivity.this, "恭喜您成功打开NexFi网络", Toast.LENGTH_LONG).show();
+                    isSuccess = true;
+                    deleteFile();
                 } else {
                     initWarmingDialog();
                 }
@@ -517,6 +520,8 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
                 }
                 if (processNumber != null) {
                     Toast.makeText(NexFiActivity.this, "恭喜您成功打开NexFi网络", Toast.LENGTH_LONG).show();
+                    isSuccess = true;
+                    deleteFile();
                 } else {
                     initWarmingDialog();
                 }
