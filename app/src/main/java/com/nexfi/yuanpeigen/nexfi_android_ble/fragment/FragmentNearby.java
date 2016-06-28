@@ -21,6 +21,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.GroupChatActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.NexFiActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SendVerificationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.UserListViewAdapter;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
@@ -115,8 +116,8 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         if (userListViewAdapter != null) {
             userListViewAdapter.notifyDataSetChanged();
         }
-        int userCount=userMessageList.size();
-        tv_near.setText("附近的人("+userCount+")");
+        int userCount = userMessageList.size();
+        tv_near.setText("附近的人(" + userCount + ")");
     }
 
 
@@ -137,7 +138,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         iv_add = (ImageView) v_parent.findViewById(R.id.iv_add);
         nexfi = (LinearLayout) View_pop.findViewById(R.id.nexfi);
         myProgressbar = (SmoothProgressBar) v_parent.findViewById(R.id.myProgressbar);
-        tv_near= (TextView) v_parent.findViewById(R.id.tv_near);
+        tv_near = (TextView) v_parent.findViewById(R.id.tv_near);
     }
 
 
@@ -177,9 +178,15 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.nexfi:
-                Intent intent1 = new Intent(BleApplication.getContext(), NexFiActivity.class);
-                startActivity(intent1);
-                mPopupWindow.dismiss();
+                if (UserInfo.initUserPhoneNumber(BleApplication.getContext()) == null) {
+                    Intent it = new Intent(BleApplication.getContext(), SendVerificationActivity.class);
+                    startActivity(it);
+                    mPopupWindow.dismiss();
+                } else {
+                    Intent intent1 = new Intent(BleApplication.getContext(), NexFiActivity.class);
+                    startActivity(intent1);
+                    mPopupWindow.dismiss();
+                }
                 break;
         }
     }

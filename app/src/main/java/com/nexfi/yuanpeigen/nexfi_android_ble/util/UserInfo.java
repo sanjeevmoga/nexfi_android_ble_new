@@ -2,6 +2,8 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 
@@ -10,7 +12,23 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.R;
  */
 public class UserInfo {
 
-    public static int[] userHeadIcon = {R.mipmap.img_head_02, R.mipmap.img_head_03, R.mipmap.img_head_04, R.mipmap.img_head_05, R.mipmap.img_head_06, R.mipmap.img_head_07, R.mipmap.img_head_08, R.mipmap.img_head_09, R.mipmap.img_head_10, R.mipmap.img_head_11, R.mipmap.img_head_12, R.mipmap.img_head_13,R.mipmap.img_head_14,R.mipmap.img_head_15};
+    public static int[] userHeadIcon = {R.mipmap.img_head_02, R.mipmap.img_head_03, R.mipmap.img_head_04, R.mipmap.img_head_05, R.mipmap.img_head_06, R.mipmap.img_head_07, R.mipmap.img_head_08, R.mipmap.img_head_09, R.mipmap.img_head_10, R.mipmap.img_head_11, R.mipmap.img_head_12, R.mipmap.img_head_13, R.mipmap.img_head_14, R.mipmap.img_head_15};
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (info != null && info.isConnected()) {
+                // 当前网络是连接的
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
+                    // 当前所连接的网络可用
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
     public static void saveUsername(Context context, String username) {
@@ -70,6 +88,20 @@ public class UserInfo {
         editor.commit();
     }
 
+    public static void saveUserPhoneNumber(Context context, String UserPhoneNumber) {
+        SharedPreferences preferences = context.getSharedPreferences("PhoneNumber", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("PhoneNumber", UserPhoneNumber);
+        editor.commit();
+    }
+
+    public static String initUserPhoneNumber(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("PhoneNumber", Context.MODE_PRIVATE);
+        String PhoneNumber = preferences.getString("PhoneNumber", null);
+        return PhoneNumber;
+    }
+
+
     public static String initUserAvatar(String userAvatar, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("UserHeadIcon", Context.MODE_PRIVATE);
         userAvatar = preferences.getString("userhead", "img_head_01");
@@ -94,9 +126,9 @@ public class UserInfo {
         return userAge;
     }
 
-    public static boolean initConfigurationInformation(boolean isFirstIn, Context context) {
+    public static boolean initConfigurationInformation(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("first_pref", Context.MODE_PRIVATE);
-        isFirstIn = preferences.getBoolean("isFirstIn", true);
+        boolean isFirstIn = preferences.getBoolean("isFirstIn", true);
         return isFirstIn;
     }
 

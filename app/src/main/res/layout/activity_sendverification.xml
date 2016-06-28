@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@mipmap/close" />
+
+    <TextView
+        android:id="@+id/tv_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_close"
+        android:layout_marginTop="20dp"
+        android:lineSpacingExtra="3dp"
+        android:text="为正常使用NexFi网络、单聊、语音、文件传输等功能，请激活您的账号"
+        android:textColor="@color/textNormol"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/et_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_text"
+        android:layout_marginTop="15dp"
+        android:background="@null"
+        android:gravity="center|left"
+        android:hint="请输入手机号"
+        android:inputType="phone"
+        android:maxLength="11"
+        android:paddingBottom="2dp"
+        android:paddingTop="10dp"
+        android:textColor="#000"
+        android:textSize="13sp" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/et_phone"
+        android:background="@drawable/shape_bg" />
+
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/view"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/shape_btn_login"
+        android:text="发送验证码"
+        android:textColor="#FFF"
+        android:textSize="17sp" />
+</RelativeLayout>

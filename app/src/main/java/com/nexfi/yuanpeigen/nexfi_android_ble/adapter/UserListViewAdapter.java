@@ -3,6 +3,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import android.widget.TextView;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.ChatActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SendVerificationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.UserInformationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.List;
 
@@ -86,7 +89,7 @@ public class UserListViewAdapter extends BaseAdapter {
                 holder = (ViewHolder) convertView.getTag();
             }
             String na = entity.userAvatar;
-            if(na!=null){
+            if (na != null) {
                 int imageRes = BleApplication.iconMap.get(na);
                 holder.iv_userhead_icon.setImageResource(imageRes);
             }
@@ -106,15 +109,22 @@ public class UserListViewAdapter extends BaseAdapter {
             holder.btn_chat.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, ChatActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(USER_AGE, entity.userAge);
-                    intent.putExtra(USER_AVATAR, entity.userAvatar);
-                    intent.putExtra(USER_GENDER, entity.userGender);
-                    intent.putExtra(USER_NICK, entity.userNick);
-                    intent.putExtra(USER_NODE_ID, entity.nodeId);
-                    intent.putExtra(USER_ID, entity.userId);
-                    mContext.startActivity(intent);
+                    if (UserInfo.initUserPhoneNumber(mContext) == null) {
+                        Intent it = new Intent(mContext, SendVerificationActivity.class);
+                        it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(it);
+                        Log.e("单聊", "phoneNumber: " + UserInfo.initUserPhoneNumber(mContext));
+                    } else {
+                        Intent intent = new Intent(mContext, ChatActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(USER_AGE, entity.userAge);
+                        intent.putExtra(USER_AVATAR, entity.userAvatar);
+                        intent.putExtra(USER_GENDER, entity.userGender);
+                        intent.putExtra(USER_NICK, entity.userNick);
+                        intent.putExtra(USER_NODE_ID, entity.nodeId);
+                        intent.putExtra(USER_ID, entity.userId);
+                        mContext.startActivity(intent);
+                    }
                 }
             });
 
