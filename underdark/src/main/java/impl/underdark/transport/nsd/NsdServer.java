@@ -16,8 +16,6 @@
 
 package impl.underdark.transport.nsd;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,8 +24,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import impl.underdark.logging.Logger;
+import io.underdark.util.dispatch.DispatchQueue;
 
 public class NsdServer
 {
@@ -66,7 +67,6 @@ public class NsdServer
 
 	public void startAccepting(final InetAddress address)
 	{
-		Log.e("TAG", "-3333333333-NsdServer----------------startAccepting------");
 		if(accepting)
 			return;
 
@@ -124,7 +124,7 @@ public class NsdServer
 	} // startAccepting
 
 	public void stopAccepting()
-	{Log.e("TAG", "-3333333333-NsdServer----------------startAccepting------");
+	{
 		if(!accepting)
 			return;
 

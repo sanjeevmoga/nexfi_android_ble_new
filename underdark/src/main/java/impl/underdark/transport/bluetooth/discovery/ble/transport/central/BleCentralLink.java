@@ -32,9 +32,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import impl.underdark.logging.Logger;
 import impl.underdark.transport.bluetooth.BtUtils;
 import impl.underdark.transport.bluetooth.discovery.ble.BleConfig;
+import impl.underdark.logging.Logger;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.underdark.transport.Link;
@@ -69,7 +69,6 @@ class BleCentralLink extends BluetoothGattCallback implements Link
 
 	public void connect()
 	{
-//		Log.e("TAG", "---BleCentralLink------------------------------------connect------");
 		central.linkConnecting(this);
 
 		gattAdapter = new BleGattAdapter(this, central.queue);

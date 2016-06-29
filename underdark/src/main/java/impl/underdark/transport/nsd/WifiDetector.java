@@ -25,7 +25,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
-import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -58,7 +57,6 @@ public class WifiDetector
 
 	public void start()
 	{
-		Log.e("TAG", "-999999999999999999999------WifiDetector----------------start------");
 		if(running)
 			return;
 

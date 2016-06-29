@@ -59,6 +59,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 			"0707A437-7DFE-4FA0-92F5-46D5xxxxxxxx",
 	});
 
+
 	public final List<String> uuids = new ArrayList<>();
 
 	private static final int REQUEST_ENABLE_BT = 35434;
@@ -104,7 +105,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		this.pairer = new BtPairer(this, context);
 		this.switcher = new BtSwitcherDumb(this);
 
-		generateUuids();
+		generateUuids();//初始化uuids
 
 		pool = Executors.newCachedThreadPool(
 				new ThreadFactory()
@@ -259,7 +260,6 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 	public void stopInternal()
 	{
-		Log.e("TAG","-----BtTransport-------============stopInternal------------------");
 		// Transport queue.
 		if(!this.running)
 			return;
@@ -392,6 +392,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		if(!adapter.isEnabled())
 		{
 			requestBluetoothEnabled();
+
 			return;
 		}
 
@@ -402,7 +403,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 			switcher.setLegacy(!manager.isPeripheralSupported());
 			if(!manager.isPeripheralSupported())
 				Logger.debug("BLE Peripheral mode is not supported on this device.");
-
+//			requestDiscoverable();//
 			startListening();
 			manager.start();
 
@@ -453,8 +454,12 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 							public void run()
 							{
 								// Main thread.
-								Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-								activity.startActivityForResult(intent, REQUEST_ENABLE_BT);
+//								Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//								activity.startActivityForResult(intent, REQUEST_ENABLE_BT);
+
+								Intent in=new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+								in.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+								activity.startActivity(in);
 							}
 						});
 					}
@@ -466,6 +471,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 			public void run()
 			{
 				listener.transportNeedsActivity(BtTransport.this, callback);
+
 			}
 		});
 	} // requestDiscoverable()
@@ -474,13 +480,12 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	{
 		if(!running)
 			return;
-		Log.e("TAG", "--------BtTransport-----requestDiscoverable----------");
 		long now = new Date().getTime();
 		if (now - discoverableRequestTime < discoverableDurationMaxSeconds * 1000)
 			return;
 
 		discoverableRequestTime = now;
-
+		Log.e("TAG", "--------BtTransport-----requestDiscoverable----------"+discoverableRequestTime);
 		final TransportListener.ActivityCallback callback =
 				new TransportListener.ActivityCallback(){
 					public void accept(final Activity activity)
@@ -505,6 +510,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		listenerQueue.dispatch(new Runnable() {
 			@Override
 			public void run() {
+				Log.e("TAG", "--------BtTransport----listener-run()----------");
 				listener.transportNeedsActivity(BtTransport.this, callback);
 			}
 		});
@@ -528,6 +534,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	@Override
 	public void onChannelsListeningChanged()
 	{
+		Log.e("BtTransport","====onChannelsListeningChanged--------------------------------------");
 		manager.onChannelsListeningChanged();
 		switcher.onPortsChanged(this.getChannelsListening());
 	}
@@ -538,8 +545,8 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		// Transport queue.
 		manager.onChannelsListeningChanged();
 		switcher.onPortsChanged(this.getChannelsListening());
-
 		BtLink link = BtLink.createServer(this, socket, uuid);
+		Log.e("BtTransport","====onSocketAccepted---------"+link);
 		linkConnecting(link);
 	}
 	//endregion
@@ -553,24 +560,24 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		if(isDeviceConnected(device))
 			return;
 
-		if(deviceUuids.isEmpty())
-			return;
+//		if(deviceUuids.isEmpty())
+//			return;
 
 		connectToDevice(device, deviceUuids);
 	}
 
 	public void onDeviceChannelsDiscovered(BluetoothDevice device, List<Integer> channels)
 	{
-		if(device!=null){
-			getDeviceConnectTo(device, channels);
-//			return;
-		}
+//		if(device!=null){
+//			getDeviceConnectTo(device, channels);
+////			return;
+//		}
 		if(isDeviceConnected(device)) {
 			//TODO 2016/5/10  18:27
-			getDeviceConnectTo(device, channels);
+//			getDeviceConnectTo(device, channels);
 			return;
 		}
-//		switcher.onAddressDiscovered(BtUtils.getBytesFromAddress(device.getAddress()), channels);//geng
+		switcher.onAddressDiscovered(BtUtils.getBytesFromAddress(device.getAddress()), channels);//geng
 
 		//BtLink link = BtLink.createClientWithChannels(this, device, channels);
 		//linkConnecting(link);
@@ -585,14 +592,16 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 			deviceUuids.add(uuids.get(channel));
 		}
-
 		connectToDevice(device, deviceUuids);
 	}
 
 	private void connectToDevice(BluetoothDevice device, List<String> deviceUuids)
 	{
-		Log.e("TAG", "-1004----BtTransport-----connectToDevice---" + device.getAddress());
+		if(deviceUuids.isEmpty()){
+			deviceUuids.add("1B9839E4-040B-48B2-AE5F-61B6000392FB");
+		}
 		BtLink link = BtLink.createClientWithUuids(this, device, deviceUuids);
+		Log.e("TAG", "-1004----BtTransport----connectToDevice---" + device.getAddress());
 		linkConnecting(link);
 	}
 	//endregion

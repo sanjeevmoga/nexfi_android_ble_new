@@ -74,6 +74,7 @@ public class BtPort
 
 	public void listen()
 	{
+//		Log.e("underdark_tag","BtPort-----------------listen=========");
 		listenUuids();
 		//listenChannels();
 	}
@@ -95,7 +96,7 @@ public class BtPort
 		}
 
 		this.channel = server.uuids.indexOf(uuid);
-//		Log.e("TAG", "-1007----BtPort--listenUuids---channel---"+channel);
+
 		server.onPortListening(this);
 
 		server.pool.execute(new Runnable()
@@ -198,7 +199,6 @@ public class BtPort
 
 	private static void accept(final BtPort port, final BluetoothServerSocket serverSocket)
 	{
-//		Log.e("TAG", "-1008----BtPort-------------accept------");
 		// Accept thread.
 
 		BluetoothSocket socket = null;

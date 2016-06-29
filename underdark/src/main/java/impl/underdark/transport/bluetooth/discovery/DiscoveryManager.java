@@ -19,7 +19,6 @@ package impl.underdark.transport.bluetooth.discovery;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.util.Log;
 
 import java.util.List;
 
@@ -78,7 +77,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 	public void start()
 	{
-		Log.e("TAG", "---666--------DiscoveryManager---------start-------------");
+//		Log.e("TAG", "---666--------DiscoveryManager---------start-------------");
 		if(running)
 			return;
 
@@ -116,7 +115,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 	public void onMainActivityPaused()
 	{
-		Log.e("TAG", "-777--DiscoveryManager-------------onMainActivityPaused------");
+//		Log.e("TAG", "-777--DiscoveryManager-------------onMainActivityPaused------");
 		foreground = false;
 
 		if(!running)
@@ -155,7 +154,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 			state = State.BLE_SCANNING;
 			btScanner.startScan(Config.btScanDuration);//geng
 			bleScanner.startScan(Config.bleScanDuration);
-			bleAdvertiser.startAdvertise(Config.btScanDuration);//geng
+//			bleAdvertiser.startAdvertise(Config.btScanDuration);//geng
 			return;
 		}
 

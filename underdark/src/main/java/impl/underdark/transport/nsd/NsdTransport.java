@@ -18,7 +18,6 @@ package impl.underdark.transport.nsd;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -61,7 +60,6 @@ public class NsdTransport implements
 			Context context
 	)
 	{
-		Log.e("TAG", "-3333333333-NsdTransport----------------构造------");
 		this.queue = new DispatchQueue();
 
 		this.appId = appId;
@@ -88,7 +86,6 @@ public class NsdTransport implements
 	@Override
 	public void start()
 	{
-		Log.e("TAG", "-3333333333-NsdTransport----------------start------");
 		queue.dispatch(new Runnable()
 		{
 			@Override
@@ -102,7 +99,6 @@ public class NsdTransport implements
 	@Override
 	public void stop()
 	{
-//		Log.e("TAG", "-3333333333-NsdTransport----------------stop------");
 		queue.dispatch(new Runnable()
 		{
 			@Override
@@ -115,7 +111,6 @@ public class NsdTransport implements
 
 	private void startInternal()
 	{
-//		Log.e("TAG", "-3333333333-NsdTransport----------------start--startInternal----");
 		if(running)
 			return;
 
@@ -130,7 +125,6 @@ public class NsdTransport implements
 
 	private void stopInternal()
 	{
-//		Log.e("TAG", "-3333333333-NsdTransport-------------stop-----stopInternal----");
 		if(!running)
 			return;
 
@@ -177,7 +171,6 @@ public class NsdTransport implements
 	@Override
 	public void onBonjourServiceResolved(String name, String address, int port)
 	{
-//		Log.e("TAG", "-3333333333-NsdTransport-------------onBonjourServiceResolved----");
 		if(!running)
 			return;
 
@@ -212,7 +205,6 @@ public class NsdTransport implements
 	@Override
 	public void onServerAccepting(InetAddress address, int port)
 	{
-//		Log.e("TAG", "-3333333333-NsdTransport-------------onServerAccepting----");
 		if(!running)
 			return;
 
@@ -233,7 +225,6 @@ public class NsdTransport implements
 	@Override
 	public void linkConnected(final NsdLink link)
 	{
-//		Log.e("TAG", "-3333333333-NsdTransport-------------linkConnected----");
 		// Queue.
 		if(!running)
 		{
@@ -256,7 +247,6 @@ public class NsdTransport implements
 	@Override
 	public void linkDisconnected(final NsdLink link)
 	{
-//		Log.e("TAG", "-3333333333-NsdTransport-------------linkDisconnected----");
 		// Queue.
 		links.remove(link);
 
@@ -273,7 +263,6 @@ public class NsdTransport implements
 	@Override
 	public void linkDidReceiveFrame(final NsdLink link, final byte[] frameData)
 	{
-//		Log.e("TAG", "-3333333333-NsdTransport-------------linkDidReceiveFrame----");
 		// Queue.
 		if(!running)
 			return;

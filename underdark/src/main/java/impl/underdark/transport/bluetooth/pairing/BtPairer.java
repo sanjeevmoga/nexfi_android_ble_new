@@ -53,7 +53,6 @@ public class BtPairer
 
 	public void start()
 	{
-//		Log.e("TAG", "-10030----BtPairer-----------start-------");
 		if(Build.VERSION.SDK_INT < 19)
 			return;
 
@@ -90,7 +89,6 @@ public class BtPairer
 
 	private void onReceive(Context context, Intent intent)
 	{
-//		Log.e("TAG", "-10031----BtPairer-----------onReceive-------");
 		if(!running)
 			return;
 

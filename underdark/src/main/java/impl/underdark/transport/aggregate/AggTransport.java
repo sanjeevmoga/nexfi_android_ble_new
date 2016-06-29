@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import impl.underdark.logging.Logger;
 import io.underdark.transport.Link;
 import io.underdark.transport.Transport;
 import io.underdark.transport.TransportListener;
 import io.underdark.util.dispatch.DispatchQueue;
+import impl.underdark.logging.Logger;
 
 public class AggTransport implements Transport, TransportListener
 {
@@ -80,7 +80,6 @@ public class AggTransport implements Transport, TransportListener
 			{
 				for (Transport transport : transports)
 				{
-//					Log.e("TAG",System.currentTimeMillis()+"--------------------################################3--------AggTransport-----------------");
 					transport.start();
 				}
 
@@ -215,8 +214,8 @@ public class AggTransport implements Transport, TransportListener
 				public void run()
 				{
 					listener.transportLinkConnected(AggTransport.this, finalLink);
-		}
-	});
+				}
+			});
 		}
 	} // transportLinkConnected()
 
@@ -254,13 +253,13 @@ public class AggTransport implements Transport, TransportListener
 		AggLink aggregate = linksConnected.get(link.getNodeId());
 		if(aggregate == null)
 		{
-//			Logger.error("Aggregate doesn't exist for " + link.toString());
+			Logger.error("Aggregate doesn't exist for " + link.toString());
 			return;
 		}
 
 		if(!aggregate.containsLink(link))
 		{
-//			Logger.error("Aggregate doesn't contain " + link.toString());
+			Logger.error("Aggregate doesn't contain " + link.toString());
 			return;
 		}
 

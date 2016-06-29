@@ -67,7 +67,7 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	@Override
 	public void startScan(final long durationMs)
 		{
-			Log.e("TAG","-----BleScanner-------============startScan------------------");
+			Log.e("TAG", "-----BleScanner-------============startScan------------------");
 //		if(Build.VERSION.SDK_INT < 18)
 //		{
 //			queue.dispatch(new Runnable()
@@ -187,7 +187,7 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	{
 		if(!running)
 			return;
-		Log.e("TAG", device.getAddress() + "---BleScanner---------onDeviceDetected------" + new String(scanRecordData));
+//		Log.e("TAG", device.getAddress() + "---BleScanner---------onDeviceDetected------" + new String(scanRecordData));
 		BleScanRecord scanRecord = BleScanRecord.parseFromBytes(scanRecordData);
 		if(scanRecord == null)
 			return;

@@ -149,14 +149,14 @@ public class BleLollipopDetector implements BleDetector
 		ScanFilter filter = new ScanFilter.Builder()
 				.setServiceUuid(ParcelUuid.fromString(transport.serviceUuid.toString()))
 				.build();
-		filters.add(filter);
+			filters.add(filter);
 
-		ScanSettings settings = new ScanSettings.Builder()
-				.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-				.build();*/
+			ScanSettings settings = new ScanSettings.Builder()
+					.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+					.build();*/
 
-		try
-		{
+			try
+			{
 			scanner.startScan(scanCallback);
 			//scanner.startScan(filters, settings, scanCallback);
 		}

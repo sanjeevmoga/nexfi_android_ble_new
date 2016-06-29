@@ -26,10 +26,14 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
-import impl.underdark.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+
 import impl.underdark.transport.bluetooth.discovery.Advertiser;
 import impl.underdark.transport.bluetooth.discovery.ble.BleConfig;
+import impl.underdark.logging.Logger;
 import impl.underdark.transport.bluetooth.discovery.ble.ManufacturerData;
+import io.underdark.Config;
 import io.underdark.util.dispatch.DispatchQueue;
 
 @TargetApi(21)
@@ -91,7 +95,6 @@ public class BleAdvertiser implements Advertiser, BleAdvCallback.Listener
 	@Override
 	public void startAdvertise(long durationMs)
 	{
-//		Log.e("TAG", "---BleAdvertiser------------startAdvertise---durationMs---"+durationMs);
 		if(Build.VERSION.SDK_INT < 21)
 		{
 			queue.dispatch(new Runnable()
@@ -111,8 +114,7 @@ public class BleAdvertiser implements Advertiser, BleAdvCallback.Listener
 		if (!context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE))
 		{
 			Logger.error("Bluetooth LE is not supported on this device.");
-			queue.dispatch(
-					new Runnable()
+			queue.dispatch(new Runnable()
 			{
 				@Override
 				public void run()
@@ -145,7 +147,7 @@ public class BleAdvertiser implements Advertiser, BleAdvCallback.Listener
 
 		if(!adapter.isMultipleAdvertisementSupported())
 		{
-			Logger.warn("ble peripheral mode is not supported on this device.");//在此设备上不支持 ble 外围模式
+			Logger.warn("ble peripheral mode is not supported on this device.");
 
 			queue.dispatch(new Runnable()
 			{
@@ -200,13 +202,11 @@ public class BleAdvertiser implements Advertiser, BleAdvCallback.Listener
 			stopAdvertise();
 
 		advertise(data);
-//		Log.e("TAG", "---BleAdvertiser--------------startAdvertise----data--" + data);
 	} // startAdvertise()
 
 	@Override
 	public void stopAdvertise()
 	{
-//		Log.e("TAG", "---BleAdvertiser--------------stopAdvertise-----");
 		if(this.callback == null)
 			return;
 

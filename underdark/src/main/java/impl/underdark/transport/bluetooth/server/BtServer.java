@@ -18,6 +18,7 @@ package impl.underdark.transport.bluetooth.server;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +80,6 @@ public class BtServer
 
 	public void start()
 	{
-//		Log.e("TAG", "-1005----BtServer-------------start------");
 		// Transport queue.
 		if(running)
 			return;
@@ -90,7 +90,6 @@ public class BtServer
 
 		for(int i = 0; i < portsCountMax; ++i)
 		{
-//			Log.e("TAG", "-1005----BtServer----start----portsCountMax--"+portsCountMax);
 			final BtPort port = new BtPort(this, uuids.get(i));
 			this.ports.put(port.getUuid(), port);
 			port.listen();
@@ -99,11 +98,10 @@ public class BtServer
 
 	public void stop()
 	{
-
 		// Transport queue.
 		if(!running)
 			return;
-//		Log.e("TAG", "-1005555----BtServer-------------stop------");
+
 		running = false;
 
 		Logger.debug("bt listening stopped");
@@ -129,10 +127,9 @@ public class BtServer
 
 	void onPortListeningCanceled(BtPort port)
 	{
-//		Log.e("TAG", "-10010----BtServer-------------onPortListeningCanceled------");
 		if(!running)
 			return;
-
+		Log.e("underdark_tag","----BtServer-----onPortListeningCanceled--");
 		port.listen();
 	}
 
@@ -142,13 +139,11 @@ public class BtServer
 			return;
 
 		channelsListening.add(port.getChannel());
-//		Log.e("TAG", "-10010----BtServer---onPortListening---port.getChannel()---"+port.getChannel());
 		listener.onChannelsListeningChanged();
 	}
 
 	void onPortConnected(BtPort port, BluetoothSocket socket)
 	{
-//		Log.e("TAG", "-10010----BtServer-------------onPortConnected------");
 		channelsListening.remove(Integer.valueOf(port.getChannel()));
 		sockets.put(socket, port);
 		listener.onSocketAccepted(socket, port.getUuid());
@@ -156,7 +151,6 @@ public class BtServer
 
 	void onPortDisconnected(BtPort port)
 	{
-//		Log.e("TAG", "-10010----BtServer-------------onPortDisconnected------");
 		if(!running)
 			return;
 
@@ -167,7 +161,7 @@ public class BtServer
 	{
 		if(socket == null)
 			return;
-//		Log.e("TAG", "-10010----BtServer-------------onSocketDisconnected------");
+
 		// Transport queue.
 		BtPort port = sockets.remove(socket);
 		if(port == null)

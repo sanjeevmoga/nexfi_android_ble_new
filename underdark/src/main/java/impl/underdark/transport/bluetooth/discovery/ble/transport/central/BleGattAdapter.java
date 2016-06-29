@@ -23,7 +23,6 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.content.Context;
-import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -53,7 +52,6 @@ class BleGattAdapter extends BluetoothGattCallback
 	                                         BluetoothGattCallback callback
 	)
 	{
-		Log.e("TAG", "---BleGattAdapter------------------------------------connectGatt------");
 		try {
 			Method m = BluetoothDevice.class.getMethod("connectGatt",
 					Context.class, boolean.class, BluetoothGattCallback.class, int.class);

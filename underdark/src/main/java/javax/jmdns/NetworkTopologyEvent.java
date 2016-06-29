@@ -18,9 +18,11 @@ public abstract class NetworkTopologyEvent extends EventObject {
 
     /**
      * Constructs a Service Event.
-     *
-     * @param eventSource The DNS on which the Event initially occurred.
-     * @throws IllegalArgumentException if source is null.
+     * 
+     * @param eventSource
+     *            The DNS on which the Event initially occurred.
+     * @exception IllegalArgumentException
+     *                if source is null.
      */
     protected NetworkTopologyEvent(final Object eventSource) {
         super(eventSource);
@@ -28,14 +30,14 @@ public abstract class NetworkTopologyEvent extends EventObject {
 
     /**
      * Returns the JmDNS instance associated with the event or null if it is a generic event.
-     *
+     * 
      * @return JmDNS instance
      */
     public abstract JmDNS getDNS();
 
     /**
      * The Internet address affected by this event.
-     *
+     * 
      * @return InetAddress
      */
     public abstract InetAddress getInetAddress();

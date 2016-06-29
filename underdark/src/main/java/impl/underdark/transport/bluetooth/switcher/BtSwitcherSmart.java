@@ -16,8 +16,6 @@
 
 package impl.underdark.transport.bluetooth.switcher;
 
-import android.util.Log;
-
 import com.google.protobuf.ByteString;
 
 import java.util.ArrayList;
@@ -100,13 +98,13 @@ public class BtSwitcherSmart implements BtSwitcher
 	{
 		if(!shouldConnectToAddress(address, false))
 			return;
-		Log.e("TAG", "-100200---BtSwitcherSmart-----------onAddressDiscovered-------");
+
 		listener.onMustConnectAddress(address, channels);
 	}
 
 	@Override
 	public void onPortsChanged(List<Integer> ports)
-	{Log.e("TAG", "-100200---BtSwitcherSmart-----------onPortsChanged-------");
+	{
 		this.me =
 		Frames.Peer.newBuilder(me)
 				.clearPorts()
@@ -136,7 +134,7 @@ public class BtSwitcherSmart implements BtSwitcher
 
 	@Override
 	public void onLinkConnected(Frames.Peer connectedPeer)
-	{Log.e("TAG", "-100200---BtSwitcherSmart-----------onLinkConnected-------");
+	{
 		// Мы приконнектились к новому соседу.
 		BtPeer linkPeer = this.peers.get(BtUtils.getAddressStringFromBytes(connectedPeer.getAddress().toByteArray()));
 		if(linkPeer != null)

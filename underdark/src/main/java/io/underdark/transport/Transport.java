@@ -16,9 +16,11 @@
 
 package io.underdark.transport;
 
+import java.util.concurrent.Executor;
+
 /**
  * Abstract transport interface, which can aggregate multiple
- * network communication protocols.//抽象的传输接口，可以聚合多种网络通信协议。
+ * network communication protocols.
  * All methods of this class must be called via same handler
  * that was supplied when creating its object.
  */
