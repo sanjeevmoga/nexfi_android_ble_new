@@ -72,7 +72,7 @@ import io.underdark.transport.Link;
 /**
  * Created by Mark on 2016/4/14.
  */
-public class ChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveTextMsgListener, Runnable{
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener, ReceiveTextMsgListener, Runnable {
 
     private RelativeLayout layout_backPrivate;
     private ImageView iv_add_Private, iv_camera, iv_position, iv_pic, iv_editPrivate, iv_changePrivate;
@@ -171,7 +171,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     private class Myobserve extends ContentObserver {
         public Myobserve(Handler handler) {
             super(handler);
@@ -256,21 +255,26 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                               }
 
         );
-        recordButton.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener()
+        try {
+            recordButton.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener()
 
-                                                    {
-                                                        @Override
-                                                        public void onFinished(float seconds, String filePath) {
-                                                            if (null != link) {
-                                                                // 这里没有判断储存卡是否存在，有空要判断
-                                                                sendVoiceMsg(seconds, filePath);
-                                                            }else{
-                                                                initDialogConnectedStatus();
+                                                        {
+                                                            @Override
+                                                            public void onFinished(float seconds, String filePath) {
+                                                                if (null != link) {
+                                                                    // 这里没有判断储存卡是否存在，有空要判断
+                                                                    sendVoiceMsg(seconds, filePath);
+                                                                } else {
+                                                                    initDialogConnectedStatus();
+                                                                }
                                                             }
                                                         }
-                                                    }
 
-        );
+            );
+        } catch (Exception e) {
+            Toast.makeText(this, "权限被禁止", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
@@ -296,7 +300,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         voiceMessage.durational = Math.round(seconds) + "";
         File file = new File(filePath);
         byte[] voice_send = FileTransferUtils.getBytesFromFile(file);
-        if(voice_send==null){
+        if (voice_send == null) {
             return;
         }
         String voiceData = Base64.encodeToString(voice_send, Base64.DEFAULT);
@@ -535,7 +539,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             if (granted) {
                 cameraToSend();
             }
-        }else if (requestCode == RECORD_AUDIO_REQUEST_CODE) {
+        } else if (requestCode == RECORD_AUDIO_REQUEST_CODE) {
             int grantResult = grantResults[0];
             boolean granted = grantResult == PackageManager.PERMISSION_GRANTED;
             if (!granted) {

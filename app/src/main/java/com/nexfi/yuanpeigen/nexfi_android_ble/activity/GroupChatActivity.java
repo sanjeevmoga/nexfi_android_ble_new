@@ -201,15 +201,19 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                                             }
 
         );
-        recordButton.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener() {
-                                                        @Override
-                                                        public void onFinished(float seconds, String filePath) {
-                                                            // 这里没有判断储存卡是否存在，有空要判断
-                                                            sendVoiceMsg(seconds, filePath);
+        try{
+            recordButton.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener() {
+                                                            @Override
+                                                            public void onFinished(float seconds, String filePath) {
+                                                                // 这里没有判断储存卡是否存在，有空要判断
+                                                                sendVoiceMsg(seconds, filePath);
+                                                            }
                                                         }
-                                                    }
+            );
+        }catch (Exception e){
+            Toast.makeText(this, "权限被禁止", Toast.LENGTH_SHORT).show();
+        }
 
-        );
     }
 
 
