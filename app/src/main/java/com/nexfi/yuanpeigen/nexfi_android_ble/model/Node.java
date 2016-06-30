@@ -15,6 +15,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveGroupMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
+import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveUserOfflineListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.TimeUtils;
@@ -45,6 +46,7 @@ public class Node implements TransportListener {
     BleDBDao bleDBDao = new BleDBDao(BleApplication.getContext());
     ReceiveTextMsgListener mReceiveTextMsgListener = null;
     ReceiveGroupMsgListener mReceiveGroupMsgListener=null;
+    ReceiveUserOfflineListener mReceiveUserOfflineListener = null;
     private Gson gson;
 
     public void setReceiveTextMsgListener(ReceiveTextMsgListener receiveTextMsgListener) {
@@ -53,6 +55,10 @@ public class Node implements TransportListener {
 
     public void setReceiveGroupMsgListener(ReceiveGroupMsgListener receiveGroupMsgListener) {
         this.mReceiveGroupMsgListener = receiveGroupMsgListener;
+    }
+
+    public void setReceiveUserOfflineListener(ReceiveUserOfflineListener receiveUserOfflineListener) {
+        this.mReceiveUserOfflineListener = receiveUserOfflineListener;
     }
 
     private String userSelfId;
@@ -158,9 +164,14 @@ public class Node implements TransportListener {
     @Override
     public void transportLinkDisconnected(Transport transport, Link link) {
         Debug.debugLog("TAG", "----发送离线消息--------------" + links.size());
-        bleDBDao.deleteUserByNodeId(link.getNodeId()+"",userSelfId);
-        UserMessage uuu=bleDBDao.findUserByUserId(userSelfId);
+
+        bleDBDao.deleteUserByNodeId(link.getNodeId() + "", userSelfId);
+
         links.remove(link);//移除link
+
+        if(null != mReceiveUserOfflineListener){
+            mReceiveUserOfflineListener.onReceiveUserMsg();
+        }
     }
 
     //接收数据，自动调用

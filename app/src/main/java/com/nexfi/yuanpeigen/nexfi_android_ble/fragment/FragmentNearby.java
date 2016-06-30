@@ -26,6 +26,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.UserListViewAdapter;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
+import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveUserOfflineListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.smoothprogressbar.SmoothProgressBar;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
@@ -33,10 +34,12 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.underdark.transport.Link;
+
 /**
  * Created by Mark on 2016/4/12.
  */
-public class FragmentNearby extends Fragment implements View.OnClickListener {
+public class FragmentNearby extends Fragment implements View.OnClickListener,ReceiveUserOfflineListener {
 
     private PopupWindow mPopupWindow = null, mPopupWindow_share = null;
     private ImageView iv_add;
@@ -91,6 +94,20 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         dialog.show(getFragmentManager(), "Dialog");
     }
 
+    @Override
+    public void onReceiveUserMsg() {//接口回调
+       if(null != userListViewAdapter){
+           for (int i = 0; i < userMessageList.size(); i++) {
+               UserMessage tempUserMsg = userMessageList.get(i);
+               Link tempLink = node.getLink(tempUserMsg.nodeId);
+               if(null == tempLink){
+                   bleDBDao.deleteUserByNodeId(tempUserMsg.nodeId,userId);
+               }
+           }
+           userListViewAdapter.notifyDataSetChanged();
+       }
+    }
+
     private class Myobserve extends ContentObserver {
         public Myobserve(Handler handler) {
             super(handler);
@@ -111,6 +128,14 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         userId = UserInfo.initUserId(userId, BleApplication.getContext());
         //从数据库中获取用户数据
         userMessageList = bleDBDao.findAllUsers(userId);
+        for (int i = 0; i <userMessageList.size() ; i++) {
+            UserMessage tempUserMsg = userMessageList.get(i);
+            Link tempLink = node.getLink(tempUserMsg.nodeId);
+            if(null == tempLink){
+                bleDBDao.deleteUserByNodeId(tempUserMsg.nodeId,userId);
+                userMessageList.remove(tempUserMsg);
+            }
+        }
         userListViewAdapter = new UserListViewAdapter(BleApplication.getContext(), userMessageList, isNewUser);
         lv_userlist.setAdapter(userListViewAdapter);
         if (userListViewAdapter != null) {
@@ -126,6 +151,9 @@ public class FragmentNearby extends Fragment implements View.OnClickListener {
         addChatRoom.setOnClickListener(this);
         iv_add.setOnClickListener(this);
         nexfi.setOnClickListener(this);
+        if(null != node){
+            node.setReceiveUserOfflineListener(this);
+        }
     }
 
     private void initView(LayoutInflater inflater, ViewGroup container) {
