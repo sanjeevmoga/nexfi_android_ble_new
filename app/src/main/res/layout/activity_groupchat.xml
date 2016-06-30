@@ -26,7 +26,7 @@
             android:layout_height="22dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
             android:src="@mipmap/img_chat" />
 
         <RelativeLayout
@@ -38,8 +38,8 @@
 
             <ImageView
                 android:id="@+id/ImageViewGroup"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="5dp"
@@ -52,7 +52,7 @@
                 android:layout_toRightOf="@id/ImageViewGroup"
                 android:text="附近的人"
                 android:textColor="#FFF"
-                android:textSize="16sp" />
+                android:textSize="15sp" />
         </RelativeLayout>
     </RelativeLayout>
 
@@ -70,94 +70,94 @@
         android:stackFromBottom="true" />
 
 
+    <RelativeLayout
+        android:id="@+id/layout_bottomGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+
         <RelativeLayout
-            android:id="@+id/layout_bottomGroup"
+            android:id="@+id/relativeLayout_sendGroup"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
+            android:layout_height="60dp"
+            android:background="#E3E3E6">
 
 
-            <RelativeLayout
-                android:id="@+id/relativeLayout_sendGroup"
+            <ImageView
+                android:id="@+id/iv_changeGroup"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
+                android:src="@mipmap/chat_voice_record"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/iv_editGroup"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
+                android:src="@mipmap/chat_ipunt_message"
+                android:visibility="invisible" />
+
+
+            <EditText
+                android:id="@+id/et_chatGroup"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="#E3E3E6">
+                android:layout_height="43dp"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/btn_sendMsgGroup"
+                android:layout_toRightOf="@+id/iv_changeGroup"
+                android:background="@drawable/shape_button"
+                android:hint="消息内容..."
+                android:paddingLeft="5dp"
+                android:textColor="#000"
+                android:textSize="13sp" />
 
+            <com.nexfi.yuanpeigen.nexfi_android_ble.view.AudioRecordButton
+                android:id="@+id/recordButton"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/btn_sendMsgGroup"
+                android:layout_toRightOf="@+id/iv_changeGroup"
+                android:background="@drawable/shape_button"
+                android:gravity="center"
+                android:text="按住 说话"
+                android:textColor="#3B3B3B"
+                android:textSize="15sp"
+                android:visibility="invisible" />
 
-                <ImageView
-                    android:id="@+id/iv_changeGroup"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginLeft="5dp"
-                    android:src="@mipmap/chat_voice_record"
-                    android:visibility="visible" />
+            <ImageView
+                android:id="@+id/iv_add_Group"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="8dp"
+                android:src="@mipmap/icon_add" />
 
-                <ImageView
-                    android:id="@+id/iv_editGroup"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginLeft="5dp"
-                    android:src="@mipmap/chat_ipunt_message"
-                    android:visibility="invisible" />
-
-
-                <EditText
-                    android:id="@+id/et_chatGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="43dp"
-                    android:layout_centerInParent="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@+id/btn_sendMsgGroup"
-                    android:layout_toRightOf="@+id/iv_changeGroup"
-                    android:background="@drawable/shape_button"
-                    android:hint="消息内容..."
-                    android:paddingLeft="5dp"
-                    android:textColor="#000"
-                    android:textSize="13sp" />
-
-                <com.nexfi.yuanpeigen.nexfi_android_ble.view.AudioRecordButton
-                    android:id="@+id/recordButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="43dp"
-                    android:layout_centerInParent="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@+id/btn_sendMsgGroup"
-                    android:layout_toRightOf="@+id/iv_changeGroup"
-                    android:background="@drawable/shape_button"
-                    android:gravity="center"
-                    android:text="按住 说话"
-                    android:textColor="#3B3B3B"
-                    android:textSize="15sp"
-                    android:visibility="invisible" />
-
-                <ImageView
-                    android:id="@+id/iv_add_Group"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginRight="8dp"
-                    android:src="@mipmap/icon_add" />
-
-                <Button
-                    android:id="@+id/btn_sendMsgGroup"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/shape_send"
-                    android:text="发送"
-                    android:textColor="#FFF"
-                    android:textSize="14sp"
-                    android:visibility="invisible" />
-            </RelativeLayout>
+            <Button
+                android:id="@+id/btn_sendMsgGroup"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/shape_send"
+                android:text="发送"
+                android:textColor="#FFF"
+                android:textSize="14sp"
+                android:visibility="invisible" />
+        </RelativeLayout>
 
 
         <LinearLayout

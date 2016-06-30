@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
@@ -33,7 +34,8 @@ import java.util.List;
  */
 public class NexFiActivity extends AppCompatActivity implements View.OnClickListener {
     private List<String> commnandList = new ArrayList<String>();
-    private Button button, btn_continue;
+    private Button btn_continue;
+    private TextView opean_nexfi;
     private String release;
     private String model;
     private String sdk;
@@ -68,7 +70,7 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initView() {
-        button = (Button) findViewById(R.id.button);
+        opean_nexfi = (TextView) findViewById(R.id.opean_nexfi);
         layout_back_nexfi = (RelativeLayout) findViewById(R.id.layout_back_nexfi);
         layout_back_nexfi.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +78,8 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
                 finish();
             }
         });
-        button.setOnClickListener(this);
+        opean_nexfi.setText(R.string.OpeanNexFi);
+        opean_nexfi.setOnClickListener(this);
     }
 
     private void initDialog() {
@@ -140,7 +143,7 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button:
+            case R.id.opean_nexfi:
                 if (!isSuccess) {
                     if (model.equals("HM 2LTE-CMCC")) {
                         implHM();

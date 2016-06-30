@@ -30,11 +30,11 @@
 
             <ImageView
                 android:id="@+id/ImageViewGroup"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="6dp"
                 android:src="@mipmap/icon_back" />
 
             <TextView
@@ -44,7 +44,7 @@
                 android:layout_toRightOf="@id/ImageViewGroup"
                 android:text="返回"
                 android:textColor="#FFF"
-                android:textSize="16sp" />
+                android:textSize="15sp" />
         </RelativeLayout>
     </RelativeLayout>
 

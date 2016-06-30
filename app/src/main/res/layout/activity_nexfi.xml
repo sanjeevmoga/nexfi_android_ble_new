@@ -30,11 +30,11 @@
 
             <ImageView
                 android:id="@+id/ImageViewPrivate"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:src="@mipmap/icon_back" />
 
             <TextView
@@ -44,20 +44,22 @@
                 android:layout_toRightOf="@id/ImageViewPrivate"
                 android:text="附近的人"
                 android:textColor="#FFF"
-                android:textSize="16sp" />
+                android:textSize="15sp" />
         </RelativeLayout>
     </RelativeLayout>
 
 
-    <Button
-        android:id="@+id/button"
+    <TextView
+        android:id="@+id/opean_nexfi"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_centerInParent="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/shape_userlist_button"
-        android:text="打开NexFi网络"
+        android:gravity="center"
+        android:textColor="#000"
         android:textSize="16sp" />
+
 
 </RelativeLayout>
