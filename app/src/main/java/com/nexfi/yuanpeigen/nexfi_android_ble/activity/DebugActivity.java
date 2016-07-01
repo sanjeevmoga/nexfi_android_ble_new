@@ -28,15 +28,13 @@ public class DebugActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debug);
         logLists = BleApplication.getLogLists();
-        list_debug = (ListView)findViewById(R.id.list_debug);
+        list_debug = (ListView) findViewById(R.id.list_debug);
         adapter = new LogAdapter();
         list_debug.setAdapter(adapter);
-        if(adapter!=null){
+        if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
     }
-
-
 
 
     public class LogAdapter extends BaseAdapter {
@@ -62,9 +60,9 @@ public class DebugActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            String log=logLists.get(position);
+            String log = logLists.get(position);
             TextView textView;
-            textView=new TextView(getApplicationContext());
+            textView = new TextView(getApplicationContext());
             textView.setBackgroundColor(Color.BLACK);
             textView.setText(position + ": " + log);
             return textView;

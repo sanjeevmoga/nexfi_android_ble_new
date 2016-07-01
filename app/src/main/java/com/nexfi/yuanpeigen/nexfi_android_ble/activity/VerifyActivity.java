@@ -108,6 +108,7 @@ public class VerifyActivity extends AppCompatActivity implements View.OnClickLis
                 } else if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {//提交验证码成功
                     Toast.makeText(getApplicationContext(), "验证成功", Toast.LENGTH_SHORT).show();
                     UserInfo.saveUserPhoneNumber(VerifyActivity.this, phoneNunmber);
+                    Log.e(TAG, "手机号：" + phoneNunmber);
                     if (!UserInfo.initConfigurationInformation(VerifyActivity.this)) {
                         startActivity(new Intent(VerifyActivity.this, MainActivity.class));
                     } else {

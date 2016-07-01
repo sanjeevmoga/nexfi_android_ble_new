@@ -73,7 +73,7 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
                 finish();
                 break;
             case R.id.tv_save:
-//                if (isSelected) {
+                if (isSelected) {
                         Intent intent = new Intent(this, MainActivity.class);
                         intent.putExtra(USER_AVATAR, newUserAvatar);
                         setResult(1, intent);
@@ -81,10 +81,10 @@ public class SelectUserHeadIconActivity extends AppCompatActivity implements Vie
                         UserInfo.saveUserHeadIcon(this, newUserAvatar);//存储的是头像的名字
                         SharedPreferencesUtils.saveString(getApplicationContext(),"USER_AVATAR",newUserAvatar);
                         Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
-//                }
-//                else {
-//                    Toast.makeText(this, "您还未选择头像哦", Toast.LENGTH_SHORT).show();
-//                }
+                }
+                else {
+                    Toast.makeText(this, "您还未选择头像哦", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }

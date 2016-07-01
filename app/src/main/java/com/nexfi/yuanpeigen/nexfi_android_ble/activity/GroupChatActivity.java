@@ -159,7 +159,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
             Collections.reverse(mDataArrays);
         }
         if (mDataArrays != null && mDataArrays.size() > 0) {
-            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId,pageSize,startIndex);
+            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId, pageSize, startIndex);
             lv_chatGroup.setAdapter(groupChatAdapater);
             lv_chatGroup.setSelection(mDataArrays.size() - 1);//直接定位到最底部
         }
@@ -201,7 +201,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                                             }
 
         );
-        try{
+        try {
             recordButton.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener() {
                                                             @Override
                                                             public void onFinished(float seconds, String filePath) {
@@ -210,7 +210,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                                                             }
                                                         }
             );
-        }catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(this, "权限被禁止", Toast.LENGTH_SHORT).show();
         }
 
@@ -289,7 +289,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                             List<GroupChatMessage> mLists = bleDBDao.findPartGroupMsg(pageSize, startIndex);
                             Collections.reverse(mLists);
                             mDataArrays.addAll(0, mLists);
-                            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId,pageSize,startIndex);
+                            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId, pageSize, startIndex);
                             lv_chatGroup.setAdapter(groupChatAdapater);
                             lv_chatGroup.setSelection(mLists.size());
                         }
@@ -382,23 +382,24 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 startActivityForResult(intentMain, 0);
                 break;
             case R.id.iv_camera:
-                String nexModel = android.os.Build.MODEL;
-                if (nexModel.equals("Nexus 5X")) {
-                    return;
-                }
-                if (Build.VERSION.SDK_INT >= 23) {
-
-                    if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-                        requestStoragePermission();
-                    }
-
-
-                    if (!(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
-                        requestCameraPermission();
-                    }
-                } else {
-                    cameraToSend();
-                }
+//                String nexModel = android.os.Build.MODEL;
+//                if (nexModel.equals("Nexus 5X")) {
+//                    return;
+//                }
+//                if (Build.VERSION.SDK_INT >= 23) {
+//
+//                    if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+//                        requestStoragePermission();
+//                    }
+//
+//
+//                    if (!(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
+//                        requestCameraPermission();
+//                    }
+//                } else {
+//                    cameraToSend();
+//                }
+                cameraToSend();
                 break;
             case R.id.iv_position:
                 showToast();
@@ -592,7 +593,7 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     private void setAdapter(GroupChatMessage groupChatMessage) {
         mDataArrays.add(groupChatMessage);
         if (null == groupChatAdapater) {
-            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId,pageSize,startIndex);
+            groupChatAdapater = new GroupChatAdapater(GroupChatActivity.this, mDataArrays, userSelfId, pageSize, startIndex);
             lv_chatGroup.setAdapter(groupChatAdapater);
         }
         groupChatAdapater.notifyDataSetChanged();

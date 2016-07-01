@@ -457,22 +457,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.iv_camera:
-                String nexModel = android.os.Build.MODEL;
-                if (nexModel.equals("Nexus 5X")) {
-                    return;
-                }
-                if (Build.VERSION.SDK_INT >= 23) {
-
-                    if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-                        requestStoragePermission();
-                    }
-
-                    if (!(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
-                        requestCameraPermission();
-                    }
-                } else {
-                    cameraToSend();
-                }
+//                String nexModel = android.os.Build.MODEL;
+//                if (nexModel.equals("Nexus 5X")) {
+//                    return;
+//                }
+//                if (Build.VERSION.SDK_INT >= 23) {
+//
+//                    if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+//                        requestStoragePermission();
+//                    }
+//
+//                    if (!(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
+//                        requestCameraPermission();
+//                    }
+//                } else {
+//                    cameraToSend();
+//                }
+                cameraToSend();
                 break;
             case R.id.iv_position:
                 showToast();
