@@ -242,7 +242,8 @@ public class BtLink implements Link
 			return;
 		}
 
-		outputThread.dispatch(new Runnable()
+		outputThread.dispatch(
+				new Runnable()
 		{
 			@Override
 			public void run()
@@ -323,7 +324,7 @@ public class BtLink implements Link
 			@Override
 			public void run()
 			{
-				transport.linkDisconnected(BtLink.this, wasConnected);
+				transport.linkDisconnected(BtLink.this, wasConnected);//断开连接时回调
 			}
 		});
 	}
@@ -438,12 +439,13 @@ public class BtLink implements Link
 
 		if(this.socket == null)
 		{
-			Logger.warn("bt client unsuitable device '{}' {}", device.getName(), device.getAddress());
+//			Logger.warn("bt client unsuitable device '{}' {}", device.getName(), device.getAddress());
+			Log.e("connectClientUuids()", "--connectClientUuids()----------" + this.uuidChannel);
 			notifyDisconnect();
 			return;
 		}
 
-		Logger.debug("bt client socket connected to uuid {} device '{}' {}", uuidChannel, device.getName(), device.getAddress());
+//		Logger.debug("bt client socket connected to uuid {} device '{}' {}", uuidChannel, device.getName(), device.getAddress());
 
 		inputLoop();
 	} // connectClient()
@@ -452,11 +454,12 @@ public class BtLink implements Link
 	{
 		// Input thread.
 
-		Logger.debug("bt server connecting device '{}' {}",
-				device.getName(), device.getAddress());
+//		Logger.debug("bt server connecting device '{}' {}",
+//				device.getName(), device.getAddress());
 
 		if(!connectStreams())
 		{
+			Log.e("connectServer()","--connectServer()----------"+connectStreams());
 			notifyDisconnect();
 			return;
 		}
@@ -546,13 +549,12 @@ public class BtLink implements Link
 			catch (IOException ioex)
 			{
 			}
-
 			notifyDisconnect();
 			return;
 		}
 		catch (Exception ex)
 		{
-			Logger.warn("bt input read failed.", ex);
+			Log.e("exception",ex+"");//java.io.IOException: bt socket closed, read return: -1
 			try
 			{
 				inputStream.close();
@@ -560,12 +562,11 @@ public class BtLink implements Link
 			catch (IOException ioex)
 			{
 			}
-
+			Log.e("inputLoop()","--inputLoop()---222-------"+inputStream);
 			notifyDisconnect();
 			return;
 		}
 
-		Logger.debug("bt input read end.");
 		notifyDisconnect();
 
 	} // inputLoop()

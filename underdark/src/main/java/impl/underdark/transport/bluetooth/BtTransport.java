@@ -458,7 +458,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 //								activity.startActivityForResult(intent, REQUEST_ENABLE_BT);
 
 								Intent in=new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-								in.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+								in.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
 								activity.startActivity(in);
 							}
 						});

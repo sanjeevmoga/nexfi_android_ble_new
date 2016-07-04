@@ -19,6 +19,7 @@ package impl.underdark.transport.bluetooth.server;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,11 +84,13 @@ public class BtPort
 	{
 		try
 		{
+			Log.e("listenUuids","=====listenUuids--1111111-----"+serverSocket);
 			this.serverSocket =
 					BluetoothAdapter.getDefaultAdapter()
 							.listenUsingInsecureRfcommWithServiceRecord(
 									server.serviceName,
 									UUID.fromString(uuid));
+			Log.e("listenUuids","=====listenUuids--222222-----"+serverSocket);
 		} catch (IOException ex)
 		{
 			Logger.error("bt listening failed for uuid {}", uuid);
@@ -209,11 +212,12 @@ public class BtPort
 			{
 				Logger.debug("bt listening channel {} uuid {}", port.getChannel(), port.getUuid());
 				socket = serverSocket.accept();
-				Logger.debug("bt accept channel {} device '{}' {}",
-						port.getChannel(),
-						socket.getRemoteDevice() == null ? null : socket.getRemoteDevice().getName(),
-						socket.getRemoteDevice() == null ? null : socket.getRemoteDevice().getAddress()
-				);
+				Log.e("accept()",socket+"-----accept()===33333====="+serverSocket);
+//				Logger.debug("bt accept channel {} device '{}' {}",
+//						port.getChannel(),
+//						socket.getRemoteDevice() == null ? null : socket.getRemoteDevice().getName(),
+//						socket.getRemoteDevice() == null ? null : socket.getRemoteDevice().getAddress()
+//				);
 			}
 			catch (IOException ex)
 			{
