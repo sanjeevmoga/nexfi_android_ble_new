@@ -49,6 +49,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveTextMsgListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.operation.TextMsgOperation;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileTransferUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.FileUtils;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.MediaManager;
@@ -315,6 +316,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             link.sendFrame(send_text_data);
             bleDBDao.addP2PTextMsg(singleChatMessage);//geng
             setAdapter(singleChatMessage);
+            Debug.debugLog("voice","voice is already sent");
         }
 
     }

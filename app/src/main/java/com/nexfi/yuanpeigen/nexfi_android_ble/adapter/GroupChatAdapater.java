@@ -295,6 +295,18 @@ public class GroupChatAdapater extends BaseAdapter {
                 lParams.width = (int) (mMinItemWith + mMaxItemWith / 60f * Double.parseDouble(voiceMsg.durational));
                 viewHolder_voice.length.setLayoutParams(lParams);
                 viewHolder_voice.userHeadIcon.setImageResource(BleApplication.iconMap.get(entity.userMessage.userAvatar));
+                if (entity.userMessage.userId.equals(userSelfId)) {
+                    viewHolder_voice.userHeadIcon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(mContext, ModifyInformationActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            mContext.startActivity(intent);
+                        }
+                    });
+                } else {
+                    viewHolder_voice.userHeadIcon.setOnClickListener(new AvatarClick(position));
+                }
                 viewHolder_voice.id_recorder_anim.setOnClickListener(new GroupVoicePlayClickListener(entity, viewHolder_voice.id_recorder_anim, userSelfId, this, position));
                 viewHolder_voice.tv_userNick.setText(entity.userMessage.userNick);
                 break;

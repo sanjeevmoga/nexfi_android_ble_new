@@ -15,6 +15,7 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.bean.TextMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.UserMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.VoiceMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.helper.BleDBHelper;
+import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,6 +206,7 @@ public class BleDBDao {
             values.put("fileData", voiceMessage.fileData);
             values.put("isRead", voiceMessage.isRead);
             values.put("filePath",voiceMessage.filePath);
+            Debug.debugLog("bledbdao","add voice to db");
         }
         db.insert("textP2PMessg", null, values);
         db.close();
