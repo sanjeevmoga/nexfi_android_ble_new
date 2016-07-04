@@ -82,15 +82,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
                 .hide(fragmentMine).commitAllowingStateLoss();
     }
 
-    private void initMineFragment() {
-        mFragmentManager = getSupportFragmentManager();
-        fragmentNearby = new FragmentNearby();
-        fragmentMine = new FragmentMine();
-        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
-        mFragmentTransaction.add(R.id.container, fragmentMine)
-                .add(R.id.container, fragmentNearby)
-                .hide(fragmentNearby).commitAllowingStateLoss();
-    }
 
 
     @Override

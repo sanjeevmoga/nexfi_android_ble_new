@@ -301,7 +301,6 @@ public class ChatMessageAdapater extends BaseAdapter {
                         public void onClick(View v) {
                             Intent intent = new Intent(mContext, BigImageActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            intent.putExtra("bitmap", bys_send);
                             intent.putExtra("page", position);
                             intent.putExtra("filePath", entity.fileMessage.filePath);
                             mContext.startActivity(intent);

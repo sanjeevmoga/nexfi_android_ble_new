@@ -1,6 +1,5 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -140,7 +139,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         node = MainActivity.getNode();
         textMsgOperation = new TextMsgOperation();
         userSelfId = UserInfo.initUserId(userSelfId, BleApplication.getContext());
-        //c8f01aea-f0be-4620-8b8d-435e65966e74----聊天界面的
         initIntentData();
         initView();
         initAdapter();
@@ -459,22 +457,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.iv_camera:
-//                String nexModel = android.os.Build.MODEL;
-//                if (nexModel.equals("Nexus 5X")) {
-//                    return;
-//                }
-//                if (Build.VERSION.SDK_INT >= 23) {
-//
-//                    if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-//                        requestStoragePermission();
-//                    }
-//
-//                    if (!(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
-//                        requestCameraPermission();
-//                    }
-//                } else {
-//                    cameraToSend();
-//                }
                 cameraToSend();
                 break;
             case R.id.iv_position:
@@ -503,25 +485,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 2;
 
     private static final int RECORD_AUDIO_REQUEST_CODE = 3;
-
-
-    //拍照
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestCameraPermission() {
-        requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION_CAMERA_CODE);
-    }
-
-    //内存卡
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestStoragePermission() {
-        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
-    }
-
-    //录音
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestRecordAudioPermission() {
-        requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
-    }
 
 
     @Override
@@ -733,7 +696,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             }
-        } else if (requestCode == 0) {//4a67538d-8ef3-4cfa-ac59-0792da2c1335
+        } else if (requestCode == 0) {
             if (null != data) {
                 String seP = data.getStringExtra("RESULT");
                 sendImageMsg(seP);

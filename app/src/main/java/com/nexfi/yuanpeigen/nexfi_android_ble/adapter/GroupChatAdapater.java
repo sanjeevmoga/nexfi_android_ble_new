@@ -278,7 +278,6 @@ public class GroupChatAdapater extends BaseAdapter {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, GroupImageActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        intent.putExtra("bitmap", bys_send);
                         intent.putExtra("page", position);
                         intent.putExtra("pageSize",pageSize);
                         intent.putExtra("startIndex", startIndex);

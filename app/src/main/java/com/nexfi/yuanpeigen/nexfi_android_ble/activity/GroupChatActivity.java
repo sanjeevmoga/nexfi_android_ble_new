@@ -1,14 +1,11 @@
 package com.nexfi.yuanpeigen.nexfi_android_ble.activity;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -382,23 +379,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
                 startActivityForResult(intentMain, 0);
                 break;
             case R.id.iv_camera:
-//                String nexModel = android.os.Build.MODEL;
-//                if (nexModel.equals("Nexus 5X")) {
-//                    return;
-//                }
-//                if (Build.VERSION.SDK_INT >= 23) {
-//
-//                    if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-//                        requestStoragePermission();
-//                    }
-//
-//
-//                    if (!(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
-//                        requestCameraPermission();
-//                    }
-//                } else {
-//                    cameraToSend();
-//                }
                 cameraToSend();
                 break;
             case R.id.iv_position:
@@ -414,17 +394,6 @@ public class GroupChatActivity extends AppCompatActivity implements View.OnClick
     private static final int REQUEST_PERMISSION_CAMERA_CODE = 1;
 
     private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 2;
-
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestCameraPermission() {
-        requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION_CAMERA_CODE);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestStoragePermission() {
-        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
-    }
 
 
     @Override
