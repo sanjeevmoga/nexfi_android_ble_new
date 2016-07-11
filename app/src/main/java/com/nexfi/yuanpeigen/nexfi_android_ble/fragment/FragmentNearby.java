@@ -78,7 +78,7 @@ public class FragmentNearby extends Fragment implements View.OnClickListener, Re
                         showScanDialog();
                     }
             }
-        }, 45 * 1000);
+        }, 60 * 1000);
         return v_parent;
     }
 

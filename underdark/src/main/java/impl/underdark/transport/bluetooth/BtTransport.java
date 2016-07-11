@@ -81,7 +81,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	private BroadcastReceiver receiver;
 
 	private BtServer server;
-	private List<BtLink> links = new ArrayList<>();
+	public List<BtLink> links = new ArrayList<>();
 
 	private DiscoveryManager manager;
 	private BtPairer pairer;
@@ -554,6 +554,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	//region Discovery
 	public void onDeviceUuidsDiscovered(BluetoothDevice device, List<String> deviceUuids)
 	{
+		Log.e("onDeviceUuidsDiscovered", "-34567----BtTransport----onDeviceUuidsDiscovered---");
 		if(device!=null){
 			connectToDevice(device, deviceUuids);
 		}
@@ -595,7 +596,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		connectToDevice(device, deviceUuids);
 	}
 
-	private void connectToDevice(BluetoothDevice device, List<String> deviceUuids)
+	public void connectToDevice(BluetoothDevice device, List<String> deviceUuids)
 	{
 		if(deviceUuids.isEmpty()){
 			deviceUuids.add("1B9839E4-040B-48B2-AE5F-61B6000392FB");
@@ -610,6 +611,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	@Override
 	public void onMustConnectAddress(byte[] address, List<Integer> channels)
 	{
+		Log.e("onMustConnectAddress", "-10041234----BtTransport----onMustConnectAddress---");
 		if(!running)
 			return;
 

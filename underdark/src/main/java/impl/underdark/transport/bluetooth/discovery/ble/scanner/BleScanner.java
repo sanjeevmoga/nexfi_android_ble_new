@@ -187,7 +187,6 @@ public class BleScanner implements BleDetector.Listener, Scanner
 	{
 		if(!running)
 			return;
-//		Log.e("TAG", device.getAddress() + "---BleScanner---------onDeviceDetected------" + new String(scanRecordData));
 		BleScanRecord scanRecord = BleScanRecord.parseFromBytes(scanRecordData);
 		if(scanRecord == null)
 			return;

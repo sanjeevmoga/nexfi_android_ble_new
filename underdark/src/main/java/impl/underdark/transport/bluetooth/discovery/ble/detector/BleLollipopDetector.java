@@ -157,7 +157,7 @@ public class BleLollipopDetector implements BleDetector
 
 			try
 			{
-			scanner.startScan(scanCallback);
+			scanner.startScan(scanCallback);///////////////////////////////////////////////
 			//scanner.startScan(filters, settings, scanCallback);
 		}
 		catch (Exception ex)
@@ -211,6 +211,7 @@ public class BleLollipopDetector implements BleDetector
 	private void scanResult(ScanResult result)
 	{
 		// Queue.
+		Log.e("BleLollipopDetector","-------scanResult=========="+result.getDevice().getAddress());
 		listener.onDeviceDetected(result.getDevice(), result.getScanRecord().getBytes());
 	}
 } // BleLollipopDetector

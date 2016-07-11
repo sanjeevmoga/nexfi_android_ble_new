@@ -86,10 +86,10 @@ public class BtPort
 		{
 			Log.e("listenUuids","=====listenUuids--1111111-----"+serverSocket);
 			this.serverSocket =
-					BluetoothAdapter.getDefaultAdapter()
-							.listenUsingInsecureRfcommWithServiceRecord(
-									server.serviceName,
-									UUID.fromString(uuid));
+					BluetoothAdapter.getDefaultAdapter().listenUsingRfcommWithServiceRecord(server.serviceName,UUID.fromString(uuid));
+//							.listenUsingInsecureRfcommWithServiceRecord(
+//									server.serviceName,
+//									UUID.fromString(uuid));
 			Log.e("listenUuids","=====listenUuids--222222-----"+serverSocket);
 		} catch (IOException ex)
 		{

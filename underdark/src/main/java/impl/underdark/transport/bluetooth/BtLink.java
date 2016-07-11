@@ -404,6 +404,7 @@ public class BtLink implements Link
 						uuid, device.getName(), device.getAddress());
 				BluetoothSocket socket =
 						device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(uuid));
+				Log.e("BtLink", "----vvvvvvvvvvvvvvvv---create  socket======" +uuid);
 				socket.connect();
 				Log.e("BtLink", "----wwwwwwwwww---connectClientUuids======" +uuid);
 				this.socket = socket;

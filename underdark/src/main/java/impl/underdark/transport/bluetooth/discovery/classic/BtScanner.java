@@ -30,33 +30,37 @@ import java.util.Arrays;
 import java.util.List;
 
 import impl.underdark.logging.Logger;
+import impl.underdark.transport.bluetooth.BtLink;
+import impl.underdark.transport.bluetooth.BtTransport;
 import impl.underdark.transport.bluetooth.BtUtils;
 import impl.underdark.transport.bluetooth.discovery.Scanner;
 import impl.underdark.transport.bluetooth.discovery.ble.BleConfig;
 import impl.underdark.transport.bluetooth.discovery.ble.ManufacturerData;
 import impl.underdark.transport.bluetooth.discovery.ble.detector.BleDetector;
 import impl.underdark.transport.bluetooth.discovery.ble.detector.BleScanRecord;
+import impl.underdark.transport.bluetooth.pairing.BtPairer;
 import io.underdark.util.dispatch.DispatchQueue;
 
-public class BtScanner implements Scanner,BleDetector.Listener
+public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 {
 	private BluetoothAdapter adapter;
 	private Context context;
 	private Scanner.Listener listener;
 	private DispatchQueue queue;
 	private  List<String> uuids = new ArrayList<>();
-
+	private BtTransport transport;//geng76
 	private BroadcastReceiver receiver;
 
 	private boolean running;
 	private long duration;
 	private boolean discovered;
-
+	BtPairer pairer;
 	private List<BluetoothDevice> devicesDiscovered = new ArrayList<>();
 
 	private Runnable stopCommand;
 	private int appId;
 	public BtScanner(
+			BtTransport transport,
 			int appId,
 			BluetoothAdapter adapter,
 			Context context,
@@ -65,12 +69,15 @@ public class BtScanner implements Scanner,BleDetector.Listener
 			List<String> uuids
 	)
 	{
+		this.transport = transport;
 		this.appId=appId;
 		this.adapter = adapter;
 		this.context = context;
 		this.listener = listener;
 		this.queue = queue;
 		this.uuids = new ArrayList<>(uuids);
+
+		this.pairer = new BtPairer(this,context);
 	}
 
 	//region Scanner
@@ -83,7 +90,7 @@ public class BtScanner implements Scanner,BleDetector.Listener
 
 		this.running = true;
 		this.duration = durationMs;
-
+		this.pairer.start();
 		this.receiver = new BroadcastReceiver()
 		{
 			@Override
@@ -120,8 +127,9 @@ public class BtScanner implements Scanner,BleDetector.Listener
 			@Override
 			public void run()
 			{
-				listener.onScanStarted(BtScanner.this);
-				startDiscovery();
+				adapter.startDiscovery();
+//				listener.onScanStarted(BtScanner.this);
+//				startDiscovery();
 			}
 		});
 	} // startScan()
@@ -131,7 +139,7 @@ public class BtScanner implements Scanner,BleDetector.Listener
 	{
 		if(!running)
 			return;
-
+		this.pairer.stop();//=================================
 		queue.cancel(stopCommand);
 		stopCommand = null;
 
@@ -158,10 +166,10 @@ public class BtScanner implements Scanner,BleDetector.Listener
 
 	private void startDiscovery()
 	{
-//		Log.e("TAG", "--------BtScanner---startDiscovery------------");
+
 		if(!running)
 			return;
-
+		Log.e("startDiscovery()","==adapter==startDiscovery()-----------------------");
 		if(discovered)
 			return;
 
@@ -291,12 +299,12 @@ public class BtScanner implements Scanner,BleDetector.Listener
 			return;
 
 		if(scanMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-		{
+		{adapter.startDiscovery();
 			startDiscovery();
 		}
 
 		if(scanMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE)
-		{
+		{adapter.startDiscovery();
 			startDiscovery();
 		}
 
@@ -318,7 +326,14 @@ public class BtScanner implements Scanner,BleDetector.Listener
 
 		// IMPORTANT!
 		// Uuids cannot be fetched during discovery.
-//		Log.e("TAG", device.getName()+"--------BtScanner---startDiscovery------------"+device.getAddress());
+		Log.e("BtScanner", device.getName()+"--------BtScanner-555555555--startDiscovery------------"+device.getAddress());
+
+//		uuids.clear();
+//		uuids.add("1B9839E4-040B-48B2-AE5F-61B6000392FB");
+//		uuids.add("6FB34FD8-579F-4915-88FF-71B2000392FB");
+//		uuids.add("8CC0C5A1-1E22-4C95-89D7-3639000392FB");
+		transport.connectToDevice(device,uuids);
+
 		devicesDiscovered.add(device);
 	} // ACTION_FOUND
 
@@ -326,7 +341,7 @@ public class BtScanner implements Scanner,BleDetector.Listener
 	{
 
 		final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//		Log.e("TAG", device.getName()+"---BtScanner---onReceive_ACTION_UUID---############################----"+device.getAddress());
+		Log.e("TAG", device.getName()+"---BtScanner---onReceive_ACTION_UUID---############################----"+device.getAddress());
 		if(device == null)
 			return;
 
@@ -366,7 +381,8 @@ public class BtScanner implements Scanner,BleDetector.Listener
 			@Override
 			public void run()
 			{
-				listener.onDeviceUuidsDiscovered(BtScanner.this, device, deviceUuids);
+				transport.connectToDevice(device, deviceUuids);//geng76
+//				listener.onDeviceUuidsDiscovered(BtScanner.this, device, deviceUuids);
 			}
 		});
 	} // ACTION_UUID
@@ -383,7 +399,7 @@ public class BtScanner implements Scanner,BleDetector.Listener
 
 	@Override
 	public void onDeviceDetected(BluetoothDevice device, byte[] scanRecordData) {
-//		Log.e("TAG", device.getName()+"---BtScanner---onDeviceDetected---############################----"+device.getAddress());
+		Log.e("BtScanner", device.getName()+"---BtScanner---onDeviceDetected---##########----"+device.getAddress());
 		if(!running)
 			return;
 
@@ -416,6 +432,22 @@ public class BtScanner implements Scanner,BleDetector.Listener
 				listener.onDeviceChannelsDiscovered(BtScanner.this, remoteDevice, manufacturerData.getChannels());
 			}
 		});
+	}
+
+	@Override
+	public boolean shouldPairDevice(BluetoothDevice device) {
+		for(BtLink link : transport.links)
+		{
+			if(link.getDevice().getAddress().equalsIgnoreCase(device.getAddress()))
+				return true;
+		}
+
+		return true;
+	}
+
+	@Override
+	public void onDevicePaired(BluetoothDevice device) {
+
 	}
 
 	//endregion

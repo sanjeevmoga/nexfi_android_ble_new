@@ -19,6 +19,7 @@ package impl.underdark.transport.bluetooth.discovery;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		this.idleAdvertiser = new IdleAdvertiser(this, queue);
 
-		this.btScanner = new BtScanner(transport.getAppId(),adapter, context, this, queue, uuids);
+		this.btScanner = new BtScanner(transport,transport.getAppId(),adapter, context, this, queue, uuids);
 
 		this.bleScanner = new BleScanner(transport.getAppId(), context, this, queue);
 		this.bleAdvertiser = new BleAdvertiser(transport.getAppId(), context, this, queue);
@@ -77,7 +78,6 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 	public void start()
 	{
-//		Log.e("TAG", "---666--------DiscoveryManager---------start-------------");
 		if(running)
 			return;
 
@@ -89,7 +89,6 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 	public void stop()
 	{
-//		Log.e("TAG", "---6666666--------DiscoveryManager---------stop-------------"+!running);
 		if(!running)
 			return;
 
@@ -99,7 +98,6 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 	public void onMainActivityResumed()
 	{
-//		Log.e("TAG", "-777--DiscoveryManager-------------onMainActivityResumed------");
 		foreground = true;
 
 		if(!running)
@@ -115,7 +113,6 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 	public void onMainActivityPaused()
 	{
-//		Log.e("TAG", "-777--DiscoveryManager-------------onMainActivityPaused------");
 		foreground = false;
 
 		if(!running)
@@ -131,13 +128,11 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 	public void onChannelsListeningChanged()
 	{
-//		Log.e("TAG", "-777--DiscoveryManager-------------onChannelsListeningChanged------");
 		bleAdvertiser.touch();
 	}
 
 	private void nextState()
 	{
-//		Log.e("TAG", "-777--DiscoveryManager-------------nextState------");
 		if(!running)
 		{
 			state = State.IDLE;
@@ -150,17 +145,16 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		if(state == State.IDLE)
 		{
-//			Log.e("TAG", "-888--idle--DiscoveryManager-------------nextState------");
+			Log.e("TAG", "-888--idle--DiscoveryManager-------------nextState------");
 			state = State.BLE_SCANNING;
 			btScanner.startScan(Config.btScanDuration);//geng
-			bleScanner.startScan(Config.bleScanDuration);
-//			bleAdvertiser.startAdvertise(Config.btScanDuration);//geng
+			bleScanner.startScan(Config.bleScanDuration);//7.6
+			bleAdvertiser.startAdvertise(Config.btScanDuration);//geng
 			return;
 		}
 
 		if(state == State.BLE_SCANNING)
 		{
-//			Log.e("TAG", "-888--BLE_SCANNING--DiscoveryManager-------------nextState------");
 			//state = State.BT_SCANNING;
 			//btScanner.startScan(Config.btScanDuration);
 
@@ -185,7 +179,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		if(state == State.BT_SCANNING)
 		{
-//			Log.e("TAG", "-888--BT_SCANNING--DiscoveryManager-------------nextState------");
+			Log.e("TAG", "-888--BT_SCANNING--DiscoveryManager-------------nextState------");
 			state = State.ADVERTISING;
 			bleAdvertiser.startAdvertise(
 					foreground
@@ -196,15 +190,14 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		if(state == State.ADVERTISING && foreground)
 		{
-//			Log.e("TAG", "-888--foreground--DiscoveryManager-------------nextState------");
 			state = State.BLE_SCANNING;
-			bleScanner.startScan(Config.bleScanDuration);
+			bleScanner.startScan(Config.bleScanDuration);//7.6
+//			btScanner.startScan(Config.btScanDuration);//geng
 			return;
 		}
 
 		if(state == State.ADVERTISING && !foreground)
 		{
-//			Log.e("TAG", "-888--!foreground--DiscoveryManager-------------nextState------");
 			state = State.IDLE;
 			idleAdvertiser.startAdvertise(Config.bleIdleBackgroundDuration);
 			return;
@@ -216,14 +209,12 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 	public void onAdvertiseStarted(Advertiser advertiser)
 	{
 //		nextState();//geng
-//		Log.e("TAG", "-1003----DiscoveryManager-------------onAdvertiseStarted------");
 	}
 
 	@Override
 	public void onAdvertiseStopped(Advertiser advertiser, boolean error)
 	{
 		nextState();
-//		Log.e("TAG", "-1003----DiscoveryManager-------------onAdvertiseStopped------");
 	}
 	//endregion
 
@@ -244,27 +235,23 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 	public void onScanStarted(Scanner scanner)
 	{
 //		bleScanner.startScan(Config.bleScanDuration);
-//		Log.e("TAG", "-1002----DiscoveryManager-----------onScanStarted----bleScanner.startScan--");
 	}
 
 	@Override
 	public void onScanStopped(Scanner scanner, boolean error)
 	{
-//		Log.e("TAG", "-1002----DiscoveryManager-----------onScanStopped------");
 		nextState();
 	}
 
 	@Override
 	public void onDeviceUuidsDiscovered(Scanner scanner, BluetoothDevice device, List<String> deviceUuids)
 	{
-//		Log.e("TAG", "-1002----DiscoveryManager-----------onDeviceUuidsDiscovered------");
 		transport.onDeviceUuidsDiscovered(device, deviceUuids);
 	}
 
 	@Override
 	public void onDeviceChannelsDiscovered(Scanner scanner, BluetoothDevice device, List<Integer> channels)
 	{
-//		Log.e("TAG", "-1002----DiscoveryManager-----------onDeviceChannelsDiscovered------");
 		transport.onDeviceChannelsDiscovered(device, channels);
 	}
 	//endregion
