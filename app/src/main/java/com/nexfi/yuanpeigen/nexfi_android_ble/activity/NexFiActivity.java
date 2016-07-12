@@ -150,6 +150,7 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
                     } else if (model.equals("MI 4LTE")) {
                         implXM();
                     } else if (model.equals("Nexus 5X")) {
+                        Log.e(" implNexus()", "++++++++++++++++");
                         implNexus();
                     } else if (model.equals("ZTE C880A")) {
                         implZX();
@@ -198,10 +199,11 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         }, 50000);
-
+        Log.e("  new Thread", "++++++++++++++++");
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.e("run()", "++++++++++++++++");
                 printLog();
                 isRoot = upgradeRootPermission(getPackageCodePath());
                 Log.e("isRoot", isRoot + "");
@@ -291,10 +293,11 @@ public class NexFiActivity extends AppCompatActivity implements View.OnClickList
                 }
                 commnandList.add("ps | grep /system/bin/batmand > /sdcard/flag.txt");
                 commnandList.add("sleep 1");
+                Log.e("commnandList.add", "++++++++++++++++");
                 ShellUtils.execCommand(commnandList, true);
             }
         });
-
+        thread.start();
     }
 
     private void implHM() {
