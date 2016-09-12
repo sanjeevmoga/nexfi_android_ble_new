@@ -144,7 +144,6 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		if(state == State.IDLE)
 		{
-//			Log.e("TAG", "-888--idle--DiscoveryManager-------------nextState------");
 			state = State.BLE_SCANNING;
 			btScanner.startScan(Config.btScanDuration);//geng
 			bleScanner.startScan(Config.bleScanDuration);//7.6
@@ -154,8 +153,6 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		if(state == State.BLE_SCANNING)
 		{
-			//state = State.BT_SCANNING;
-			//btScanner.startScan(Config.btScanDuration);
 
 			long duration = foreground
 					? Config.bleAdvertiseForegroundDuration
@@ -178,7 +175,6 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		if(state == State.BT_SCANNING)
 		{
-//			Log.e("TAG", "-888--BT_SCANNING--DiscoveryManager-------------nextState------");
 			state = State.ADVERTISING;
 			bleAdvertiser.startAdvertise(
 					foreground
@@ -233,7 +229,6 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 	@Override
 	public void onScanStarted(Scanner scanner)
 	{
-//		bleScanner.startScan(Config.bleScanDuration);
 	}
 
 	@Override

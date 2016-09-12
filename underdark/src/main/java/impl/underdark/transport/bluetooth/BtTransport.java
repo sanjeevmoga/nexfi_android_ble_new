@@ -416,8 +416,6 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 							@Override
 							public void run() {
 								// Main thread.
-//                                Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//打开蓝牙
-//								activity.startActivityForResult(intent, REQUEST_ENABLE_BT);
 
 								Intent in = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);//蓝牙可以被检测
 								in.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);

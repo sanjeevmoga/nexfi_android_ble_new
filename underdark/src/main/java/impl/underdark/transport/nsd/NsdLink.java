@@ -258,7 +258,7 @@ public class NsdLink implements Link
 					try
 					{
 						//TODO
-						outputStream.close();//gengbaolong
+						outputStream.close();
 						socket.close();
 					}
 					catch (IOException e)
@@ -305,7 +305,6 @@ public class NsdLink implements Link
 			//TODO
 			try
 			{
-//				Log.e("NsdLink  ", " writeFrameBytes()----IOException----" + ex.toString());//java.net.SocketException: sendto failed: EPIPE (Broken pipe)
 				outputStream.close();
 				socket.close();
 			}

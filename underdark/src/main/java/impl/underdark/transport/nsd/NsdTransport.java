@@ -222,7 +222,6 @@ public class NsdTransport implements
 	@Override
 	public void linkConnected(final NsdLink link)
 	{
-//		Log.e("NsdTransport  ","linkConnected(final NsdLink link)-------"+link);
 		// Queue.
 		if(!running)
 		{

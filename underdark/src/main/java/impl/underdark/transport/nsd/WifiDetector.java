@@ -116,7 +116,6 @@ public class WifiDetector
 		ConnectivityManager connectivityManager =
 				(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//		Log.e("WifiDetector "," isConnectedViaWifi()------ "+info.isConnected());
 		return info.isConnected();
 	}
 
@@ -135,7 +134,6 @@ public class WifiDetector
 		if (NetworkInfo.State.CONNECTED.equals(info.getState()))
 		{
 			// Wi-Fi connection established
-			//Logger.debug("wifi NETWORK_STATE_CHANGED_ACTION connected");
 
 			if(connected)
 				return;

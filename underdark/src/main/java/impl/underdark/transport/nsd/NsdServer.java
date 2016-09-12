@@ -163,7 +163,6 @@ public class NsdServer
 				continue;
 			}
 			final NsdLink link = new NsdLink(this, socket);
-//			Log.e("NsdServer","  sssssssss  "+socket.getRemoteSocketAddress()+" Server link: "+link);
 			queue.execute(new Runnable()
 			{
 				@Override

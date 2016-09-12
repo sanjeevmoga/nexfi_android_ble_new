@@ -170,12 +170,10 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 	@Override
 	public void serviceAdded(ServiceEvent event)
 	{
-//		Log.e("JmdResolver"," serviceAdded ----------------------");
 		// Any thread.
 //		if(event.getName().equals(this.serviceName))//已改动
 //			return;
 
-		//Logger.debug("jmd serviceAdded '{}' '{}'", event.getName(), event.getType());
 		jmdns.requestServiceInfo(event.getType(), event.getName());
 	}
 
@@ -189,7 +187,6 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 	@Override
 	public void serviceResolved(final ServiceEvent event)
 	{
-//		Log.e("JmdResolver",event.getName()+"--------serviceResolved------------------ "+this.serviceName);//6912868998272742549  serviceResolved------------------ 5727741365093556490
 		// Any thread.
 //		if(event.getName().equals(this.serviceName))//已改动
 //			return;
@@ -203,11 +200,7 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 		final String name = event.getName();
 		final String address = event.getInfo().getHostAddress();
 		final int port = event.getInfo().getPort();
-//		if(("192.168.1.170".equals(address))){
-//			return;
-//		}
 
-//		Log.e("JmdResolver  ",name+"  serviceResolved------------------ "+port);//192.168.10.160  serviceResolved------------------ 60979
 		queue.dispatch(new Runnable()
 		{
 			@Override

@@ -126,8 +126,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 			public void run()
 			{
 				adapter.startDiscovery();
-//				listener.onScanStarted(BtScanner.this);
-//				startDiscovery();
 			}
 		});
 	} // startScan()
@@ -316,18 +314,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 		if(device == null)
 			return;
 
-		//BluetoothClass btclass = intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS);
-
-		//Logger.debug("bt discovered device '{}' {}", device.getName(), device.getAddress());
-
-		// IMPORTANT!
-		// Uuids cannot be fetched during discovery.
-//		Log.e("BtScanner", device.getName()+"--------BtScanner-555555555--startDiscovery------------"+device.getAddress());
-
-//		uuids.clear();
-//		uuids.add("1B9839E4-040B-48B2-AE5F-61B6000392FB");
-//		uuids.add("6FB34FD8-579F-4915-88FF-71B2000392FB");
-//		uuids.add("8CC0C5A1-1E22-4C95-89D7-3639000392FB");
 		transport.connectToDevice(device,uuids);
 
 		devicesDiscovered.add(device);
@@ -337,7 +323,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 	{
 
 		final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//		Log.e("TAG", device.getName()+"---BtScanner---onReceive_ACTION_UUID---############################----"+device.getAddress());
 		if(device == null)
 			return;
 
@@ -376,7 +361,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 			public void run()
 			{
 				transport.connectToDevice(device, deviceUuids);//geng76
-//				listener.onDeviceUuidsDiscovered(BtScanner.this, device, deviceUuids);
 			}
 		});
 	} // ACTION_UUID
@@ -393,7 +377,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 
 	@Override
 	public void onDeviceDetected(BluetoothDevice device, byte[] scanRecordData) {
-//		Log.e("BtScanner", device.getName()+"---BtScanner---onDeviceDetected---##########----"+device.getAddress());
 		if(!running)
 			return;
 
