@@ -24,11 +24,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-
-import impl.underdark.logging.Logger;
-import io.underdark.util.dispatch.DispatchQueue;
 
 public class NsdServer
 {
@@ -50,6 +45,8 @@ public class NsdServer
 
 	private InetAddress serverAddress;
 	ServerSocket serverSocket;
+	//TODO
+	int port;
 
 	private List<NsdLink> linksConnecting = new ArrayList<>();
 
@@ -76,14 +73,16 @@ public class NsdServer
 		}
 
 		serverAddress = address;
-
+		//TODO
+//		port = 22345;//192.168.1.172服务端监听的端口是：23456
+		//192.168.1.170服务端监听的端口是：12345
 		try
 		{
 			serverSocket = new ServerSocket(0, 50, address);
+//			serverSocket = new ServerSocket(port);
 		}
 		catch (IOException ex)
 		{
-			Logger.error("nsd ServerSocket create failed: {}", ex);
 
 			queue.execute(new Runnable()
 			{
@@ -99,8 +98,7 @@ public class NsdServer
 
 		serverAddress = ((InetSocketAddress) serverSocket.getLocalSocketAddress()).getAddress();
 		final InetAddress localAddress = serverAddress;
-		final int port = serverSocket.getLocalPort();
-
+		final int port = serverSocket.getLocalPort();//得到随机端口(构造中的port为0)
 		queue.execute(new Runnable()
 		{
 			@Override
@@ -135,7 +133,9 @@ public class NsdServer
 
 		try
 		{
-			serverSocket.close();
+			if(serverSocket!=null){
+				serverSocket.close();
+			}
 		}
 		catch (IOException ex)
 		{
@@ -145,7 +145,6 @@ public class NsdServer
 	private void accept()
 	{
 		// Accept thread.
-
 		while(true)
 		{
 			synchronized (this)
@@ -161,11 +160,10 @@ public class NsdServer
 				socket = serverSocket.accept();
 			} catch (IOException ex)
 			{
-				//Logger.warn("nsd accept() failed: {}", ex);
 				continue;
 			}
-
 			final NsdLink link = new NsdLink(this, socket);
+//			Log.e("NsdServer","  sssssssss  "+socket.getRemoteSocketAddress()+" Server link: "+link);
 			queue.execute(new Runnable()
 			{
 				@Override

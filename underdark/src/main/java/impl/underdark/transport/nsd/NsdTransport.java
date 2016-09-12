@@ -78,7 +78,6 @@ public class NsdTransport implements
 				this,
 				queue,
 				context);
-
 		server = new NsdServer(nodeId, this, queue);
 	} // BnjTransport()
 
@@ -154,7 +153,7 @@ public class NsdTransport implements
 	{
 		Logger.debug("bnj wifi enabled {}", address.toString());
 
-		server.startAccepting(address);
+		server.startAccepting(address);//-------------------------------------------------
 	} // onWifiEnabled
 
 	@Override
@@ -185,8 +184,7 @@ public class NsdTransport implements
 				if(link.getNodeId() == linkNodeId)
 					return;
 			}
-
-			server.connect(linkNodeId, InetAddress.getByName(address), port);
+			server.connect(linkNodeId, InetAddress.getByName(address), port);//
 		}
 		catch (NumberFormatException ex)
 		{
@@ -203,11 +201,10 @@ public class NsdTransport implements
 
 	//region BnjServer.Listener
 	@Override
-	public void onServerAccepting(InetAddress address, int port)
+	public void onServerAccepting(InetAddress address, int port)//socket: 192.168.10.160-------%%%%%%%%%%%%%%%%%%%%%%%-----43337
 	{
-		if(!running)
+		if(!running)//56089---------------------------------9999999999999999999------------port---192.168.10.122
 			return;
-
 		bonjourResolver.start(address, port);
 		//bonjourResolver.startPublishOnly(address, port);
 		//bonjourResolver.startResolveOnly(address);
@@ -225,6 +222,7 @@ public class NsdTransport implements
 	@Override
 	public void linkConnected(final NsdLink link)
 	{
+//		Log.e("NsdTransport  ","linkConnected(final NsdLink link)-------"+link);
 		// Queue.
 		if(!running)
 		{

@@ -16,6 +16,8 @@
 
 package impl.underdark.transport.nsd;
 
+import android.util.Log;
+
 import com.google.protobuf.ByteString;
 
 import java.io.IOException;
@@ -41,7 +43,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.underdark.Config;
 import io.underdark.transport.Link;
-import io.underdark.util.dispatch.DispatchQueue;
 import io.underdark.util.dispatch.SerialExecutorService;
 
 public class NsdLink implements Link
@@ -69,7 +70,7 @@ public class NsdLink implements Link
 
 	private ScheduledThreadPoolExecutor pool;
 	private ExecutorService outputExecutor;
-	private Queue<Frames.Frame> outputQueue = new LinkedList<>();
+	private Queue<Frames.Frame> outputQueue = new LinkedList<>();//Queue就是一个集合
 
 	private boolean shouldCloseWhenOutputIsEmpty = false;
 
@@ -82,7 +83,6 @@ public class NsdLink implements Link
 		this.socket = socket;
 		this.host = socket.getInetAddress();
 		this.port = socket.getPort();
-
 		configureOutput();
 	}
 
@@ -95,7 +95,6 @@ public class NsdLink implements Link
 		this.nodeId = nodeId;
 		this.host = host;
 		this.port = port;
-
 		configureOutput();
 	}
 
@@ -157,11 +156,9 @@ public class NsdLink implements Link
 	@Override
 	public void disconnect()
 	{
-		outputExecutor.execute(new Runnable()
-		{
+		outputExecutor.execute(new Runnable() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				shouldCloseWhenOutputIsEmpty = true;
 				writeNextFrame();
 			}
@@ -260,7 +257,8 @@ public class NsdLink implements Link
 				{
 					try
 					{
-						outputStream.close();
+						//TODO
+						outputStream.close();//gengbaolong
 						socket.close();
 					}
 					catch (IOException e)
@@ -268,7 +266,6 @@ public class NsdLink implements Link
 					}
 				}
 
-				//Logger.debug("nsd link outputQueue empty");
 				return;
 			}
 
@@ -294,22 +291,24 @@ public class NsdLink implements Link
 	private boolean writeFrameBytes(byte[] frameBytes)
 	{
 		// Output thread.
-		ByteBuffer header = ByteBuffer.allocate(4);
+		ByteBuffer header = ByteBuffer.allocate(4);//这个数字4不能随意改动
 		header.order(ByteOrder.BIG_ENDIAN);
 		header.putInt(frameBytes.length);
-
+//		Log.e("NsdLink", "===writeFrameBytes===" + frameBytes.length);
 		try
 		{
 			outputStream.write(header.array());
-			outputStream.write(frameBytes);
+			outputStream.write(frameBytes);//java.net.SocketException: sendto failed: EPIPE (Broken pipe)
 			//Logger.info("write " + (header.array().length + frameBytes.length));
 			outputStream.flush();
 		}
 		catch (IOException ex)
 		{
-			Logger.warn("nsd output write failed.", ex);
+//			ex.printStackTrace();
+			//TODO
 			try
 			{
+				Log.e("NsdLink  ", " writeFrameBytes()----IOException----" + ex.toString());//java.net.SocketException: sendto failed: EPIPE (Broken pipe)
 				outputStream.close();
 				socket.close();
 			}
@@ -330,11 +329,64 @@ public class NsdLink implements Link
 		{
 			try
 			{
+				Log.e("connectImpl()  ", host+"    11111111111111111111   create client successfully   "+port);
 				this.socket = new Socket(host, port);
+//				byte[] hostBys = BnjUtil.ipTo4Byte("192.168.1.172");
+//				for (int i = 0; i < hostBys.length; i++) {
+//					Log.e("NsdLink   ",hostBys[i]+"  --------hostBys----------  ");
+//				}
+//				byte[] portBys = BnjUtil.HexString2Bytes(Integer.toHexString(12345));
+//				if(hostBys == null | portBys == null){
+//					return;
+//				}
+//				Log.e("NsdLink   ",portBys[0]+"  --------portBys----------  "+portBys[1]);
+
+				//TODO proxy
+//				this.socket = new Socket("127.0.0.1", 9999);//跟代理连接
+//				Log.e("create", "socket create successfully");
+//
+//				byte[] proxyDatas = {0x05, 0x01, 0x00};//发送的握手字节序列
+//				OutputStream proxyOS = this.socket.getOutputStream();
+//				proxyOS.write(proxyDatas);
+//				Log.e("write", "send 1 successfully");
+//
+//				byte[] proxyReceive = new byte[2]; //服务端返回的字节
+//				InputStream proxyIS = this.socket.getInputStream();
+//				int proxyCount = proxyIS.read(proxyReceive);
+//				if (proxyCount < 0) {
+//					return;
+//				}
+//				Log.e("create ", "The server response !");
+//
+//				if (proxyReceive[0] == 0x05 && proxyReceive[1] == 0x00) {
+//					Log.e("connect", "Connected to socks5 proxy server");
+//				}
+//				//192.168.1.170		C0A801AA	-64,-88,1,-86
+//				//192.168.1.171		C0A801AB
+//				//192.168.1.172		C0A801AC	-64,-88,1,-84
+//
+//				//12345     3039	48,57
+//				//23456     5BA0	91,-96
+//
+//				//192.168.10.160	C0A80AA0
+//				byte[] destDatas = {0x05, 0x01, 0x00, 0x01, -64,-88,1,-86, (byte)0x30, (byte)0x39};//192.168.1.172	 23456
+//				proxyOS.write(destDatas);
+//				Log.e("NsdLink   ","  proxyOS.write(destDatas);-------------- ");
+//				byte[] ipPort = new byte[16];
+//				int destLen = proxyIS.read(ipPort);
+//
+//				Log.e("NsdLink   ",new String(ipPort,0,destLen)+"  proxyOS.write ------destLen-------- "+destLen);
+//				for (int i = 0; i <destLen ; i++) {
+//					Log.e("NsdLink   ","  proxyOS.write ------destLen-字节---- "+ipPort[i]);
+//				}
+//				if (destLen < 0) {
+//					return;
+//				}
+				//proxy end
+
 			}
 			catch (IOException ex)
-			{
-				Logger.warn("nsd link connect failed to {}:{} {}", host, port, ex);
+			{Log.e("NsdLink   ", " ---------------创建代理客户端socket-------------IOException ex--- " + ex.toString());
 				notifyDisconnect();
 				return;
 			}
@@ -348,9 +400,10 @@ public class NsdLink implements Link
 		}
 		catch (SocketException ex)
 		{
+			ex.printStackTrace();
 		}
 
-		if (!connectStreams())
+		if (!connectStreams())//在这里获得了InputStream 和 OutputStream
 		{
 			notifyDisconnect();
 			return;
@@ -358,19 +411,18 @@ public class NsdLink implements Link
 
 		sendHelloFrame();
 
-		pool.scheduleAtFixedRate(new Runnable()
-		{
+		pool.scheduleAtFixedRate(new Runnable() {
 			@Override
-			public void run()
-			{
-				if(state != State.CONNECTED)
+			public void run() {
+				if (state != State.CONNECTED)
 					return;
 
 				sendHeartbeat();
 			}
 		}, 0, Config.bnjHeartbeatInterval, TimeUnit.MILLISECONDS);
 
-		inputLoop();
+		inputLoop();//已改动
+
 	} // connectImpl
 
 	private boolean connectStreams()
@@ -386,8 +438,6 @@ public class NsdLink implements Link
 			Logger.error("nsd link streams get failed {}", ex);
 			return false;
 		}
-
-		//Logger.debug("bt retrieved streams device '{}' {}", device.getName(), device.getAddress());
 
 		return true;
 	}
@@ -433,7 +483,6 @@ public class NsdLink implements Link
 		final int bufferSize = 4096;
 		ByteBuf inputData = Unpooled.buffer(bufferSize);
 		inputData.order(ByteOrder.BIG_ENDIAN);
-
 		try
 		{
 			int len;
@@ -443,12 +492,11 @@ public class NsdLink implements Link
 				len = inputStream.read(
 						inputData.array(),
 						inputData.writerIndex(),
-						bufferSize);
+						bufferSize);//java.net.SocketException: recvfrom failed: EBADF (Bad file descriptor)
 				if(len <= 0)
 					break;
 
 				inputData.writerIndex(inputData.writerIndex() + len);
-
 				if(!formFrames(inputData))
 					break;
 
@@ -458,13 +506,12 @@ public class NsdLink implements Link
 		}
 		catch (InterruptedIOException ex)
 		{
-			Logger.warn("nsd input timeout: {}", ex);
 			try
 			{
 				inputStream.close();
 			}
 			catch (IOException ioex)
-			{
+			{Log.e("NsdLink   ", "  inputLoop()#-------------#IOException# "+(ioex.toString()));
 			}
 
 			notifyDisconnect();
@@ -472,7 +519,6 @@ public class NsdLink implements Link
 		}
 		catch (Exception ex)
 		{
-			Logger.warn("nsd input read failed: {}", ex);
 			try
 			{
 				inputStream.close();
@@ -500,10 +546,8 @@ public class NsdLink implements Link
 
 			inputData.markReaderIndex();
 			int	frameSize = inputData.readInt();
-
 			if(frameSize > Config.frameSizeMax)
 			{
-				Logger.warn("nsd frame size limit reached.");
 				return false;
 			}
 
@@ -528,7 +572,6 @@ public class NsdLink implements Link
 					continue;
 				}
 			}
-
 			if(this.state == State.CONNECTING)
 			{
 				if(frame.getKind() != Frames.Frame.Kind.HELLO)
@@ -589,4 +632,6 @@ public class NsdLink implements Link
 
 		return true;
 	} // formFrames
+
+
 } // NsdLink

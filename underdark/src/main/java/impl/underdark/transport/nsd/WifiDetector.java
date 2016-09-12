@@ -62,18 +62,25 @@ public class WifiDetector
 
 		running = true;
 
-		if(isConnectedViaWifi())
+		if(true)//isConnectedViaWifi() 已改动
 		{
-			final InetAddress address = determineAddress();
+			InetAddress address = determineAddress();
+//			InetAddress address = null;//determineAddress();
+//			try {
+//				address = InetAddress.getByName("192.168.1.172");
+//			} catch (UnknownHostException e) {
+//				e.printStackTrace();
+//			}
 			if(address != null)
 			{
+				final InetAddress proxyAddr = address;
 				connected = true;
 				queue.dispatch(new Runnable()
 				{
 					@Override
 					public void run()
 					{
-						listener.onWifiEnabled(address);
+						listener.onWifiEnabled(proxyAddr);
 					}
 				});
 			}
@@ -109,8 +116,7 @@ public class WifiDetector
 		ConnectivityManager connectivityManager =
 				(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-		//Logger.debug("wifi isConnectedViaWifi() {}", info.isConnected());
+//		Log.e("WifiDetector "," isConnectedViaWifi()------ "+info.isConnected());
 		return info.isConnected();
 	}
 
@@ -135,9 +141,15 @@ public class WifiDetector
 				return;
 
 			final InetAddress address = determineAddress();
+//			InetAddress address = null;//determineAddress();
+//			try {
+//				address = InetAddress.getByName("192.168.1.172");
+//			} catch (UnknownHostException e) {
+//				e.printStackTrace();
+//			}
 			if(address == null)
 				return;
-
+			final InetAddress proxyAddr = address;
 			this.connected = true;
 
 			queue.dispatch(new Runnable()
@@ -145,7 +157,7 @@ public class WifiDetector
 				@Override
 				public void run()
 				{
-					listener.onWifiEnabled(address);
+					listener.onWifiEnabled(proxyAddr);
 				}
 			});
 
