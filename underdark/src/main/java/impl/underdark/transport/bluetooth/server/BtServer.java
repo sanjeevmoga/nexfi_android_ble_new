@@ -18,7 +18,6 @@ package impl.underdark.transport.bluetooth.server;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,7 +128,6 @@ public class BtServer
 	{
 		if(!running)
 			return;
-		Log.e("underdark_tag","----BtServer-----onPortListeningCanceled--");
 		port.listen();
 	}
 

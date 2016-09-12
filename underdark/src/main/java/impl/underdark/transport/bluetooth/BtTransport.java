@@ -24,12 +24,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -46,10 +47,9 @@ import io.underdark.transport.Transport;
 import io.underdark.transport.TransportListener;
 import io.underdark.util.dispatch.DispatchQueue;
 
-public class BtTransport implements Transport, BtServer.Listener, BtPairer.Listener, BtSwitcherSmart.Listener
-{
+public class BtTransport implements Transport, BtServer.Listener, BtPairer.Listener, BtSwitcherSmart.Listener {
 	// Uppercase.
-	private static final List<String> uuidTemplates = Arrays.asList(new String[] {
+	private static final List<String> uuidTemplates = Arrays.asList(new String[]{
 			"1B9839E4-040B-48B2-AE5F-61B6xxxxxxxx",
 			"6FB34FD8-579F-4915-88FF-71B2xxxxxxxx",
 			"8CC0C5A1-1E22-4C95-89D7-3639xxxxxxxx",
@@ -92,8 +92,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 			long nodeId,
 			TransportListener listener,
 			DispatchQueue listenerQueue,
-			Context context)
-	{
+			Context context) {
 		this.queue = DispatchQueue.main;
 
 		this.appId = appId;
@@ -108,11 +107,9 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		generateUuids();//初始化uuids
 
 		pool = Executors.newCachedThreadPool(
-				new ThreadFactory()
-				{
+				new ThreadFactory() {
 					@Override
-					public Thread newThread(Runnable r)
-					{
+					public Thread newThread(Runnable r) {
 						Thread thread = new Thread(r);
 						thread.setDaemon(true);
 						return thread;
@@ -120,7 +117,7 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 				});
 
 		this.adapter = BluetoothAdapter.getDefaultAdapter();
-		if(this.adapter == null)
+		if (this.adapter == null)
 			return;
 
 		Logger.info("bt adapter address " + BtUtils.getLocalAddress(context));
@@ -131,22 +128,18 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		manager = new DiscoveryManager(this, adapter, queue, context, uuids);
 	} // BtTransport()
 
-	public int getAppId()
-	{
+	public int getAppId() {
 		return appId;
 	}
 
-	public long getNodeId()
-	{
+	public long getNodeId() {
 		return nodeId;
 	}
 
-	private void generateUuids()
-	{
-		for (final String uuidTemplate : uuidTemplates)
-		{
+	private void generateUuids() {
+		for (final String uuidTemplate : uuidTemplates) {
 			String appIdHex = Integer.toHexString(appId).toUpperCase();
-			while(appIdHex.length() != "xxxxxxxx".length())
+			while (appIdHex.length() != "xxxxxxxx".length())
 				appIdHex = "0" + appIdHex;
 
 			String uuid = uuidTemplate.replace("xxxxxxxx", appIdHex);
@@ -156,15 +149,12 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 	//region Transport
 	@Override
-	public void onMainActivityResumed()
-	{
+	public void onMainActivityResumed() {
 		// Any thread.
-		queue.dispatch(new Runnable()
-		{
+		queue.dispatch(new Runnable() {
 			@Override
-			public void run()
-			{
-				if(!running)
+			public void run() {
+				if (!running)
 					return;
 
 				manager.onMainActivityResumed();
@@ -173,15 +163,12 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	}
 
 	@Override
-	public void onMainActivityPaused()
-	{
+	public void onMainActivityPaused() {
 		// Any thread.
-		queue.dispatch(new Runnable()
-		{
+		queue.dispatch(new Runnable() {
 			@Override
-			public void run()
-			{
-				if(!running)
+			public void run() {
+				if (!running)
 					return;
 
 				manager.onMainActivityPaused();
@@ -190,44 +177,35 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	}
 
 	@Override
-	public void start()
-	{
-		Log.e("TAG","-----BtTransport-------============start------------------");
+	public void start() {
 		// Listener queue.
-		this.queue.dispatch(new Runnable()
-		{
+		this.queue.dispatch(new Runnable() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				startInternal();
 			}
 		});
 	}
 
 	@Override
-	public void stop()
-	{
+	public void stop() {
 		// Listener queue.
-		this.queue.dispatch(new Runnable()
-		{
+		this.queue.dispatch(new Runnable() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				stopInternal();
 			}
 		});
 	}
 
-	public void startInternal()
-	{
+	public void startInternal() {
 		// Transport queue.
-		if(this.running)
+		if (this.running)
 			return;
 
-		this.pairer.start();
+//        this.pairer.start();
 
-		if(adapter == null)
-		{
+		if (adapter == null) {
 			// Bluetooth not supported.
 			Logger.error("Bluetooth is not supported on this device.");
 			return;
@@ -241,11 +219,9 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 		this.running = true;
 
-		this.receiver = new BroadcastReceiver()
-		{
+		this.receiver = new BroadcastReceiver() {
 			@Override
-			public void onReceive(Context context, Intent intent)
-			{
+			public void onReceive(Context context, Intent intent) {
 				BtTransport.this.onReceive(context, intent);
 			}
 		};
@@ -256,12 +232,26 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		context.registerReceiver(this.receiver, filter);
 
 		checkScanModeAtStart();
+		//TODO
+		new Thread(){
+			@Override
+			public void run() {
+				super.run();
+
+				Timer palyTimer = new Timer();
+				TimerTask m_PlayTimerTask = new TimerTask() {
+					public void run() {
+					}
+
+				};
+				palyTimer.schedule(m_PlayTimerTask, 0, 1000);
+			}
+		}.start();
 	} // start()
 
-	public void stopInternal()
-	{
+	public void stopInternal() {
 		// Transport queue.
-		if(!this.running)
+		if (!this.running)
 			return;
 
 		this.running = false;
@@ -277,15 +267,12 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	} // stop()
 	//endregion
 
-	private boolean isDeviceConnected(BluetoothDevice device)
-	{
-		for (BtLink link : links)
-		{
-			if(link.getDevice() == null)
+	private boolean isDeviceConnected(BluetoothDevice device) {
+		for (BtLink link : links) {
+			if (link.getDevice() == null)
 				continue;
 
-			if(device.getAddress().equalsIgnoreCase(link.getDevice().getAddress()))
-			{
+			if (device.getAddress().equalsIgnoreCase(link.getDevice().getAddress())) {
 				return true;
 			}
 		}
@@ -295,11 +282,9 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 	//region BtPairer.Listener
 	@Override
-	public boolean shouldPairDevice(BluetoothDevice device)
-	{
-		for(BtLink link : links)
-		{
-			if(link.getDevice().getAddress().equalsIgnoreCase(device.getAddress()))
+	public boolean shouldPairDevice(BluetoothDevice device) {
+		for (BtLink link : links) {
+			if (link.getDevice().getAddress().equalsIgnoreCase(device.getAddress()))
 				return true;
 		}
 
@@ -307,49 +292,42 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	}
 
 	@Override
-	public void onDevicePaired(BluetoothDevice device)
-	{
+	public void onDevicePaired(BluetoothDevice device) {
 	}
 	//endregion
 
 	//region BroadcastReceiver
-	private void onReceive(Context context, Intent intent)
-	{
+	private void onReceive(Context context, Intent intent) {
 		// Transport queue.
-		if(intent.getAction().equals(BluetoothAdapter.ACTION_STATE_CHANGED))
-		{
+		if (intent.getAction().equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
 			onReceive_ACTION_STATE_CHANGED(intent);
 			return;
 		} // ACTION_STATE_CHANGED
 
-		if(intent.getAction().equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED))
-		{
+		if (intent.getAction().equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
 			onReceive_ACTION_SCAN_MODE_CHANGED(intent);
 			return;
 		} // ACTION_SCAN_MODE_CHANGED
 
 	} // onReceive
 
-	private void onReceive_ACTION_STATE_CHANGED(Intent intent)
-	{
+	private void onReceive_ACTION_STATE_CHANGED(Intent intent) {
 		int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
-		if(state == -1)
+		if (state == -1)
 			return;
 
-		if(state == BluetoothAdapter.STATE_ON)
-		{
+		if (state == BluetoothAdapter.STATE_ON) {
 			Logger.debug("bt bluetooth STATE_ON");
 
 			switcher.setLegacy(!manager.isPeripheralSupported());
-			if(!manager.isPeripheralSupported())
+			if (!manager.isPeripheralSupported())
 				Logger.debug("BLE Peripheral mode is not supported on this device.");
 
 			manager.start();
 			startListening();
 		}
 
-		if(state == BluetoothAdapter.STATE_OFF)
-		{
+		if (state == BluetoothAdapter.STATE_OFF) {
 			Logger.debug("bt bluetooth STATE_OFF");
 			manager.stop();
 			stopListening();
@@ -357,84 +335,71 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		}
 	} // ACTION_STATE_CHANGED
 
-	private void onReceive_ACTION_SCAN_MODE_CHANGED(Intent intent)
-	{
+	private void onReceive_ACTION_SCAN_MODE_CHANGED(Intent intent) {
 		int scanMode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, -1);
-		if(scanMode == -1)
+		if (scanMode == -1)
 			return;
 
-		if(scanMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-		{
+		if (scanMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
 			Logger.debug("bt SCAN_MODE_CONNECTABLE_DISCOVERABLE");
 			switcher.setMyAddress(BtUtils.getBytesFromAddress(BtUtils.getLocalAddress(context)));
 		}
 
-		if(scanMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE)
-		{
+		if (scanMode == BluetoothAdapter.SCAN_MODE_CONNECTABLE) {
 			Logger.debug("bt SCAN_MODE_CONNECTABLE");
 			switcher.setMyAddress(BtUtils.getBytesFromAddress(BtUtils.getLocalAddress(context)));
 		}
 
-		if(scanMode == BluetoothAdapter.SCAN_MODE_NONE)
-		{
+		if (scanMode == BluetoothAdapter.SCAN_MODE_NONE) {
 			Logger.debug("bt SCAN_MODE_NONE");
 			switcher.setMyAddress(new byte[BtUtils.btAddressLen]);
 		}
 	} // ACTION_SCAN_MODE_CHANGED
 	//endregion
 
-	private void checkScanModeAtStart()
-	{
-		if(!running)
+	private void checkScanModeAtStart() {
+		if (!running)
 			return;
 
 		// Transport queue.
-		if(!adapter.isEnabled())
-		{
+		if (!adapter.isEnabled()) {//判断蓝牙是否打开，如果没有则请求打开
 			requestBluetoothEnabled();
 
 			return;
 		}
 
-		if(adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE
-				|| adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE)
-		{
+		if (adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE
+				|| adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE) {
 			switcher.setMyAddress(BtUtils.getBytesFromAddress(BtUtils.getLocalAddress(context)));
 			switcher.setLegacy(!manager.isPeripheralSupported());
-			if(!manager.isPeripheralSupported())
+			if (!manager.isPeripheralSupported())
 				Logger.debug("BLE Peripheral mode is not supported on this device.");
-//			requestDiscoverable();//
 			startListening();
 			manager.start();
 
 			return;
 		}
 
-		if(adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_NONE)
-		{
+		if (adapter.getScanMode() == BluetoothAdapter.SCAN_MODE_NONE) {
 			requestBluetoothEnabled();
 			return;
 		}
 	} // checkScanModeAtStart()
 
-	public byte[] getAddress()
-	{
+	public byte[] getAddress() {
 		return BtUtils.getBytesFromAddress(BtUtils.getLocalAddress(context));
 	}
 
-	public List<Integer> getChannelsListening()
-	{
+	public List<Integer> getChannelsListening() {
 		return server.getChannelsListening();
 	}
 
-	public Frames.Peer getPeerMe()
-	{
+	public Frames.Peer getPeerMe() {
 		return switcher.getPeerMe();
 	}
 
-	private void requestBluetoothEnabled()
-	{
-		if(!running)
+	private void requestBluetoothEnabled() {
+		if (!running)
 			return;
 
 		long now = new Date().getTime();
@@ -444,20 +409,17 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		discoverableRequestTime = now;
 
 		final TransportListener.ActivityCallback callback =
-				new TransportListener.ActivityCallback(){
-					public void accept(final Activity activity)
-					{
+				new TransportListener.ActivityCallback() {
+					public void accept(final Activity activity) {
 						// Any thread.
-						queue.dispatch(new Runnable()
-						{
+						queue.dispatch(new Runnable() {
 							@Override
-							public void run()
-							{
+							public void run() {
 								// Main thread.
-//								Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//                                Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//打开蓝牙
 //								activity.startActivityForResult(intent, REQUEST_ENABLE_BT);
 
-								Intent in=new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+								Intent in = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);//蓝牙可以被检测
 								in.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
 								activity.startActivity(in);
 							}
@@ -465,38 +427,30 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 					}
 				};
 
-		listenerQueue.dispatch(new Runnable()
-		{
+		listenerQueue.dispatch(new Runnable() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				listener.transportNeedsActivity(BtTransport.this, callback);
 
 			}
 		});
 	} // requestDiscoverable()
 
-	private void requestDiscoverable()
-	{
-		if(!running)
+	private void requestDiscoverable() {
+		if (!running)
 			return;
 		long now = new Date().getTime();
 		if (now - discoverableRequestTime < discoverableDurationMaxSeconds * 1000)
 			return;
 
 		discoverableRequestTime = now;
-		Log.e("TAG", "--------BtTransport-----requestDiscoverable----------"+discoverableRequestTime);
 		final TransportListener.ActivityCallback callback =
-				new TransportListener.ActivityCallback(){
-					public void accept(final Activity activity)
-					{
+				new TransportListener.ActivityCallback() {
+					public void accept(final Activity activity) {
 						// Any thread.
-						queue.dispatch(new Runnable()
-						{
+						queue.dispatch(new Runnable() {
 							@Override
-							public void run()
-							{
-								Log.e("TAG", "--------BtTransport----callback-run()----------");
+							public void run() {
 								// Main thread.
 								Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
 								intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, discoverableDurationMaxSeconds);
@@ -510,85 +464,64 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		listenerQueue.dispatch(new Runnable() {
 			@Override
 			public void run() {
-				Log.e("TAG", "--------BtTransport----listener-run()----------");
 				listener.transportNeedsActivity(BtTransport.this, callback);
 			}
 		});
 	} // requestDiscoverable()
 
 	//region BtServer.Listener
-	private void startListening()
-	{
+	private void startListening() {
 		// Transport queue.
-		if(!running)
+		if (!running)
 			return;
 		this.server.start();
 	}
 
-	private void stopListening()
-	{
+	private void stopListening() {
 		// Transport queue.
 		this.server.stop();
 	}
 
 	@Override
-	public void onChannelsListeningChanged()
-	{
-		Log.e("BtTransport","====onChannelsListeningChanged--------------------------------------");
+	public void onChannelsListeningChanged() {
 		manager.onChannelsListeningChanged();
 		switcher.onPortsChanged(this.getChannelsListening());
 	}
 
 	@Override
-	public void onSocketAccepted(BluetoothSocket socket, String uuid)
-	{
+	public void onSocketAccepted(BluetoothSocket socket, String uuid) {
 		// Transport queue.
 		manager.onChannelsListeningChanged();
 		switcher.onPortsChanged(this.getChannelsListening());
 		BtLink link = BtLink.createServer(this, socket, uuid);
-		Log.e("BtTransport","====onSocketAccepted---------"+link);
 		linkConnecting(link);
 	}
 	//endregion
 
 	//region Discovery
-	public void onDeviceUuidsDiscovered(BluetoothDevice device, List<String> deviceUuids)
-	{
-		Log.e("onDeviceUuidsDiscovered", "-34567----BtTransport----onDeviceUuidsDiscovered---");
-		if(device!=null){
+	public void onDeviceUuidsDiscovered(BluetoothDevice device, List<String> deviceUuids) {
+		if (device != null) {
 			connectToDevice(device, deviceUuids);
 		}
-		if(isDeviceConnected(device))
+		if (isDeviceConnected(device))
 			return;
 
-//		if(deviceUuids.isEmpty())
-//			return;
 
 		connectToDevice(device, deviceUuids);
 	}
 
-	public void onDeviceChannelsDiscovered(BluetoothDevice device, List<Integer> channels)
-	{
-//		if(device!=null){
-//			getDeviceConnectTo(device, channels);
-////			return;
-//		}
-		if(isDeviceConnected(device)) {
-			//TODO 2016/5/10  18:27
-//			getDeviceConnectTo(device, channels);
+	public void onDeviceChannelsDiscovered(BluetoothDevice device, List<Integer> channels) {
+		if (isDeviceConnected(device)) {
 			return;
 		}
 		switcher.onAddressDiscovered(BtUtils.getBytesFromAddress(device.getAddress()), channels);//geng
 
-		//BtLink link = BtLink.createClientWithChannels(this, device, channels);
-		//linkConnecting(link);
 	}
 
 	private void getDeviceConnectTo(BluetoothDevice device, List<Integer> channels) {
 		List<String> deviceUuids = new ArrayList<>();
-		for(int channel : channels)
-		{
-			if(channel < 0 || channel >= uuids.size())
+		for (int channel : channels) {
+			if (channel < 0 || channel >= uuids.size())
 				continue;
 
 			deviceUuids.add(uuids.get(channel));
@@ -596,34 +529,29 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 		connectToDevice(device, deviceUuids);
 	}
 
-	public void connectToDevice(BluetoothDevice device, List<String> deviceUuids)
-	{
-		if(deviceUuids.isEmpty()){
+	public void connectToDevice(BluetoothDevice device, List<String> deviceUuids) {
+		if (deviceUuids.isEmpty()) {
 			deviceUuids.add("1B9839E4-040B-48B2-AE5F-61B6000392FB");
 		}
 		BtLink link = BtLink.createClientWithUuids(this, device, deviceUuids);
-		Log.e("TAG", "-1004----BtTransport----connectToDevice---" + device.getAddress());
 		linkConnecting(link);
 	}
 	//endregion
 
 	//region BtSwitcher.Listener
 	@Override
-	public void onMustConnectAddress(byte[] address, List<Integer> channels)
-	{
-		Log.e("onMustConnectAddress", "-10041234----BtTransport----onMustConnectAddress---");
-		if(!running)
+	public void onMustConnectAddress(byte[] address, List<Integer> channels) {
+		if (!running)
 			return;
 
 		BluetoothDevice device = this.adapter.getRemoteDevice(address);
 
-		if(isDeviceConnected(device))
+		if (isDeviceConnected(device))
 			return;
 
 		List<String> deviceUuids = new ArrayList<>();
-		for(int channel : channels)
-		{
-			if(channel < 0 || channel >= uuids.size())
+		for (int channel : channels) {
+			if (channel < 0 || channel >= uuids.size())
 				continue;
 
 			deviceUuids.add(uuids.get(channel));
@@ -633,33 +561,27 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	}
 
 	@Override
-	public void onMustDisconnectAddress(byte[] address)
-	{
-		if(!running)
+	public void onMustDisconnectAddress(byte[] address) {
+		if (!running)
 			return;
 
-		for(BtLink link : links)
-		{
-			if(Arrays.equals(link.getAddress(), address))
-			{
+		for (BtLink link : links) {
+			if (Arrays.equals(link.getAddress(), address)) {
 				link.disconnect();
 			}
 		}
 	}
 
 	@Override
-	public void onMustSendFrame(byte[] address, Frames.Frame frame)
-	{
-		if(!running)
+	public void onMustSendFrame(byte[] address, Frames.Frame frame) {
+		if (!running)
 			return;
 
 		Logger.debug("bt onMustSendFrame {} to {}",
 				frame.getKind().toString(), BtUtils.getAddressStringFromBytes(address));
 
-		for(BtLink link : links)
-		{
-			if(Arrays.equals(link.getAddress(), address))
-			{
+		for (BtLink link : links) {
+			if (Arrays.equals(link.getAddress(), address)) {
 				link.sendLinkFrame(frame);
 				break;
 			}
@@ -668,42 +590,34 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 	//endregion
 
 	//region Links
-	public void linkConnecting(BtLink link)
-	{
+	public void linkConnecting(BtLink link) {
 		// Transport queue.
 		links.add(link);
 		link.connect();
 	}
 
-	void linkConnected(final BtLink link, Frames.Peer peer)
-	{
+	void linkConnected(final BtLink link, Frames.Peer peer) {
 		// Transport queue.
 
 		switcher.onLinkConnected(peer);
 
-		listenerQueue.dispatch(new Runnable()
-		{
+		listenerQueue.dispatch(new Runnable() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				listener.transportLinkConnected(BtTransport.this, link);
 			}
 		});
 	}
 
-	void linkDisconnected(final BtLink link, boolean wasConnected)
-	{
+	void linkDisconnected(final BtLink link, boolean wasConnected) {
 		// Transport queue.
 		links.remove(link);
-		if(wasConnected)
-		{
+		if (wasConnected) {
 			switcher.onLinkDisconnected(link.getAddress());
 
-			listenerQueue.dispatch(new Runnable()
-			{
+			listenerQueue.dispatch(new Runnable() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					listener.transportLinkDisconnected(BtTransport.this, link);
 				}
 			});
@@ -711,47 +625,39 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 
 		server.onSocketDisconnected(link.socket);
 
-		if(!link.isClient())
-		{
+		if (!link.isClient()) {
 			manager.onChannelsListeningChanged();
 			switcher.onPortsChanged(this.getChannelsListening());
 		}
 	}
 
-	void linkDidReceiveFrame(final BtLink link, final byte[] frameData)
-	{
+	void linkDidReceiveFrame(final BtLink link, final byte[] frameData) {
 		// Transport queue.
-		if(!running)
+		if (!running)
 			return;
 
-		listenerQueue.dispatch(new Runnable()
-		{
+		listenerQueue.dispatch(new Runnable() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				listener.transportLinkDidReceiveFrame(BtTransport.this, link, frameData);
 			}
 		});
 	}
 
-	void linkDidReceiveLinkFrame(BtLink link, Frames.Frame frame)
-	{
-		if(frame.getKind() == Frames.Frame.Kind.PORTS)
-		{
+	void linkDidReceiveLinkFrame(BtLink link, Frames.Frame frame) {
+		if (frame.getKind() == Frames.Frame.Kind.PORTS) {
 			Logger.debug("bt frame PORTS");
 			switcher.onPortsFrame(link.getAddress(), frame.getPorts());
 			return;
 		}
 
-		if(frame.getKind() == Frames.Frame.Kind.CONNECTED)
-		{
+		if (frame.getKind() == Frames.Frame.Kind.CONNECTED) {
 			Logger.debug("bt frame CONNECTED");
 			switcher.onConnectedFrame(link.getAddress(), frame.getConnected());
 			return;
 		}
 
-		if(frame.getKind() == Frames.Frame.Kind.DISCONNECTED)
-		{
+		if (frame.getKind() == Frames.Frame.Kind.DISCONNECTED) {
 			Logger.debug("bt frame DISCONNECTED");
 
 			switcher.onDisconnectedFrame(link.getAddress(), frame.getDisconnected());

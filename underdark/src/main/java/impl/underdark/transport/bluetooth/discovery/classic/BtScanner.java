@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Parcelable;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,7 +83,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 	@Override
 	public void startScan(long durationMs)
 	{
-		Log.e("TAG","-----BtScanner==========startScan-----------");
 		if(running)
 			return;
 
@@ -169,7 +167,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 
 		if(!running)
 			return;
-		Log.e("startDiscovery()","==adapter==startDiscovery()-----------------------");
 		if(discovered)
 			return;
 
@@ -219,7 +216,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 
 		for (BluetoothDevice device : devicesDiscovered)
 		{
-//			Log.e("TAG", "--------BtScanner---finishDiscovery---------------------"+device.getAddress());
 			if(!device.fetchUuidsWithSdp())
 			{
 				Logger.warn("bt scan failed fetchUuidsWithSdp() for device '{}' {}",
@@ -326,7 +322,7 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 
 		// IMPORTANT!
 		// Uuids cannot be fetched during discovery.
-		Log.e("BtScanner", device.getName()+"--------BtScanner-555555555--startDiscovery------------"+device.getAddress());
+//		Log.e("BtScanner", device.getName()+"--------BtScanner-555555555--startDiscovery------------"+device.getAddress());
 
 //		uuids.clear();
 //		uuids.add("1B9839E4-040B-48B2-AE5F-61B6000392FB");
@@ -341,19 +337,17 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 	{
 
 		final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-		Log.e("TAG", device.getName()+"---BtScanner---onReceive_ACTION_UUID---############################----"+device.getAddress());
+//		Log.e("TAG", device.getName()+"---BtScanner---onReceive_ACTION_UUID---############################----"+device.getAddress());
 		if(device == null)
 			return;
 
 		Parcelable[] extraUuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
 		if(extraUuids == null)
 		{
-			//Logger.error("bt uuids null for device '{}' {}", device.getName(), device.getAddress());
 			return;
 		}
 
 		// IMPORTANT
-		// This intent can be called MULTIPLE times with SAME uuids.
 
 		final List<String> deviceUuids = new ArrayList<>();
 
@@ -399,7 +393,7 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 
 	@Override
 	public void onDeviceDetected(BluetoothDevice device, byte[] scanRecordData) {
-		Log.e("BtScanner", device.getName()+"---BtScanner---onDeviceDetected---##########----"+device.getAddress());
+//		Log.e("BtScanner", device.getName()+"---BtScanner---onDeviceDetected---##########----"+device.getAddress());
 		if(!running)
 			return;
 
@@ -423,7 +417,6 @@ public class BtScanner implements Scanner,BleDetector.Listener,BtPairer.Listener
 
 		final BluetoothDevice remoteDevice = adapter.getRemoteDevice(manufacturerData.getAddress());
 		//final BluetoothDevice remoteDevice = device;
-//		Log.e("TAG", remoteDevice.getAddress() + "-----BleScanner---remoteDevice--");
 		queue.dispatch(new Runnable()
 		{
 			@Override

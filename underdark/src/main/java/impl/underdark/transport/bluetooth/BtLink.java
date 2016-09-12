@@ -232,7 +232,6 @@ public class BtLink implements Link
 				}
 			}
 
-			//Logger.debug("bt link outputQueue empty");
 			return;
 		}
 
@@ -244,13 +243,13 @@ public class BtLink implements Link
 
 		outputThread.dispatch(
 				new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				writeNextFrame();
-			}
-		});
+				{
+					@Override
+					public void run()
+					{
+						writeNextFrame();
+					}
+				});
 	}
 
 	private boolean writeFrame(Frames.Frame frame)
@@ -293,10 +292,8 @@ public class BtLink implements Link
 			@Override
 			public void run() {
 				if (client) {
-					Log.e("BtLink", "===22222222222222===connectClient------------");
 					connectClient();
 				} else {
-					Log.e("BtLink", "===22222222222222===connectServer------------");
 					connectServer();
 				}
 			}
@@ -391,10 +388,6 @@ public class BtLink implements Link
 
 	private void connectClientUuids()
 	{
-//		if(uuids.size()==0){
-//			Log.e("BtLink",uuids.size()+"---qqqqqqqqqqqq-----size---connectClientUuids====");
-//			uuids.add("1B9839E4-040B-48B2-AE5F-61B6000392FB");
-//		}
 		// Input thread.
 		for(final String uuid : uuids)
 		{
@@ -404,9 +397,7 @@ public class BtLink implements Link
 						uuid, device.getName(), device.getAddress());
 				BluetoothSocket socket =
 						device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(uuid));
-				Log.e("BtLink", "----vvvvvvvvvvvvvvvv---create  socket======" +uuid);
 				socket.connect();
-				Log.e("BtLink", "----wwwwwwwwww---connectClientUuids======" +uuid);
 				this.socket = socket;
 				this.uuidChannel = uuid;
 			}
@@ -440,13 +431,9 @@ public class BtLink implements Link
 
 		if(this.socket == null)
 		{
-//			Logger.warn("bt client unsuitable device '{}' {}", device.getName(), device.getAddress());
-			Log.e("connectClientUuids()", "--connectClientUuids()----------" + this.uuidChannel);
 			notifyDisconnect();
 			return;
 		}
-
-//		Logger.debug("bt client socket connected to uuid {} device '{}' {}", uuidChannel, device.getName(), device.getAddress());
 
 		inputLoop();
 	} // connectClient()
@@ -455,12 +442,8 @@ public class BtLink implements Link
 	{
 		// Input thread.
 
-//		Logger.debug("bt server connecting device '{}' {}",
-//				device.getName(), device.getAddress());
-
 		if(!connectStreams())
 		{
-			Log.e("connectServer()","--connectServer()----------"+connectStreams());
 			notifyDisconnect();
 			return;
 		}
@@ -473,9 +456,7 @@ public class BtLink implements Link
 		try
 		{
 			inputStream = socket.getInputStream();
-			//Logger.debug("bt retrieved input stream device '{}' {}", device.getName(), device.getAddress());
 			outputStream = socket.getOutputStream();
-			//Logger.debug("bt retrieved output stream device '{}' {}", device.getName(), device.getAddress());
 		}
 		catch (IOException ex)
 		{
@@ -484,16 +465,12 @@ public class BtLink implements Link
 			return false;
 		}
 
-		//Logger.debug("bt retrieved streams device '{}' {}", device.getName(), device.getAddress());
-
 		return true;
 	}
 
 	private void sendHelloFrame()
 	{
 		// Input I/O thread.
-
-		//Logger.debug("bt link header send started");
 
 		Frames.Frame.Builder builder = Frames.Frame.newBuilder();
 		builder.setKind(Frames.Frame.Kind.HELLO);
@@ -563,7 +540,6 @@ public class BtLink implements Link
 			catch (IOException ioex)
 			{
 			}
-			Log.e("inputLoop()","--inputLoop()---222-------"+inputStream);
 			notifyDisconnect();
 			return;
 		}
@@ -574,7 +550,6 @@ public class BtLink implements Link
 
 	private boolean formFrames(ByteBuf inputData)
 	{
-		Log.e("BtLink","---eeeeeeeeeeeee------------BtLink----------------formFrames--------");
 		final int headerSize = 4;
 
 		while(true)

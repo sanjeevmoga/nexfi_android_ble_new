@@ -16,7 +16,7 @@ import java.util.Date;
  * Created by gengbaolong on 2016/4/13.
  */
 public class Debug {
-    public static boolean DEBUG=true;
+    public static boolean DEBUG=false;
 
     public static void debugLog(String key,String log){
         if(DEBUG){

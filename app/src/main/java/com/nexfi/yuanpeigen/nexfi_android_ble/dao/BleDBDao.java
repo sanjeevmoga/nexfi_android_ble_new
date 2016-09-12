@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.util.Log;
 
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.FileMessage;
@@ -54,7 +53,6 @@ public class BleDBDao {
         values.put("birthday", userMessage.birthday);
         db.insert("userData", null, values);
         db.close();
-        Log.e("SQLiteDatabase add", userMessage.userNick + "-保存到数据库---" + userMessage.userAvatar + "====" + userMessage.userId);
         //有新用户上线
         context.getContentResolver().notifyChange(
                 Uri.parse("content://www.nexfi_ble_user.com"), null);
@@ -440,63 +438,6 @@ public class BleDBDao {
         }
         return false;
     }
-
-
-    /**
-     * 查询群聊数据
-     * @return
-     */
-    public List<GroupChatMessage> findGroupMsg() {
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(
-                "select * from textGroupMesg", null);
-        List<GroupChatMessage> mDatas = new ArrayList<GroupChatMessage>();
-        while (cursor.moveToNext()) {
-            GroupChatMessage groupChatMessage = new GroupChatMessage();
-            groupChatMessage.messageType = cursor.getInt(cursor.getColumnIndex("messageType"));
-            groupChatMessage.messageBodyType = cursor.getInt(cursor.getColumnIndex("messageBodyType"));
-            groupChatMessage.timeStamp = cursor.getString(cursor.getColumnIndex("timeStamp"));
-            groupChatMessage.groupId = cursor.getString(cursor.getColumnIndex("groupId"));
-            groupChatMessage.msgId = cursor.getString(cursor.getColumnIndex("msgId"));
-
-            UserMessage userMessage = new UserMessage();
-            userMessage.birthday = cursor.getString(cursor.getColumnIndex("birthday"));
-            userMessage.userId = cursor.getString(cursor.getColumnIndex("userId"));
-            userMessage.userNick = cursor.getString(cursor.getColumnIndex("userNick"));
-            userMessage.userAvatar = cursor.getString(cursor.getColumnIndex("userAvatar"));
-            userMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
-            userMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
-            groupChatMessage.userMessage = userMessage;
-
-            TextMessage textMessage = new TextMessage();
-            textMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
-            textMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
-            groupChatMessage.textMessage = textMessage;
-
-            FileMessage fileMessage = new FileMessage();
-            fileMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
-            fileMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
-            fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
-            fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
-            fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
-            fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
-            fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
-            groupChatMessage.fileMessage = fileMessage;
-
-            VoiceMessage voiceMessage = new VoiceMessage();
-            voiceMessage.fileData = cursor.getString(cursor.getColumnIndex("fileData"));
-            voiceMessage.isRead = cursor.getString(cursor.getColumnIndex("isRead"));
-            voiceMessage.durational = cursor.getString(cursor.getColumnIndex("durational"));
-            voiceMessage.filePath= cursor.getString(cursor.getColumnIndex("filePath"));
-            groupChatMessage.voiceMessage = voiceMessage;
-
-            mDatas.add(groupChatMessage);
-        }
-        cursor.close();
-        db.close();
-        return mDatas;
-    }
-
 
 
 

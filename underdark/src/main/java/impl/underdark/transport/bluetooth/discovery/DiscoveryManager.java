@@ -19,7 +19,6 @@ package impl.underdark.transport.bluetooth.discovery;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.util.Log;
 
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 			BluetoothAdapter adapter,
 			DispatchQueue queue,
 			Context context,
-	        List<String> uuids
+			List<String> uuids
 	)
 	{
 		this.transport = transport;
@@ -145,7 +144,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		if(state == State.IDLE)
 		{
-			Log.e("TAG", "-888--idle--DiscoveryManager-------------nextState------");
+//			Log.e("TAG", "-888--idle--DiscoveryManager-------------nextState------");
 			state = State.BLE_SCANNING;
 			btScanner.startScan(Config.btScanDuration);//geng
 			bleScanner.startScan(Config.bleScanDuration);//7.6
@@ -179,7 +178,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 
 		if(state == State.BT_SCANNING)
 		{
-			Log.e("TAG", "-888--BT_SCANNING--DiscoveryManager-------------nextState------");
+//			Log.e("TAG", "-888--BT_SCANNING--DiscoveryManager-------------nextState------");
 			state = State.ADVERTISING;
 			bleAdvertiser.startAdvertise(
 					foreground
@@ -192,7 +191,7 @@ public class DiscoveryManager implements Scanner.Listener, Advertiser.Listener
 		{
 			state = State.BLE_SCANNING;
 			bleScanner.startScan(Config.bleScanDuration);//7.6
-//			btScanner.startScan(Config.btScanDuration);//geng
+			btScanner.startScan(Config.btScanDuration);//geng
 			return;
 		}
 

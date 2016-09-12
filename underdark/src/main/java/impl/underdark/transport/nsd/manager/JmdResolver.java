@@ -18,6 +18,7 @@ package impl.underdark.transport.nsd.manager;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -61,6 +62,7 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 	@Override
 	public void start(InetAddress address, int port)
 	{
+		Log.e("JmdResolver  ",address.getHostAddress()+"   start   "+startJmdns(address));// 192.168.10.122   start   true
 		if(!startJmdns(address))
 			return;
 
@@ -105,7 +107,7 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 
 		jmdns = null;
 
-		lock.release();
+//		lock.release();//已改动
 
 		Logger.debug("jmdns stopped");
 	} // stop()
@@ -136,23 +138,23 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 
 	private boolean startJmdns(InetAddress address)
 	{
-		manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-
-		lock = manager.createMulticastLock("BnjTransport");
-		lock.setReferenceCounted(true);
+//		Log.e("JmdResolver ","  startJmdns====================   ");
+//		manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);//已改动
+//		lock = manager.createMulticastLock("BnjTransport");
+//		lock.setReferenceCounted(true);
 
 		//AndroidLoggingHandler.reset(new AndroidLoggingHandler());
 		//java.util.logging.Logger.getLogger("javax.jmdns").setLevel(Level.FINEST);
 
 		try
 		{
-			lock.acquire();
+//			lock.acquire();//已改动
 			jmdns = JmDNS.create(address);
 			Logger.debug("jmdns bind address {}", address);
 		}
 		catch (IOException ex)
 		{
-			lock.release();
+//			lock.release();//已改动
 			Logger.error("jmdns failed jmdns.create() {}", ex);
 			return false;
 		}
@@ -168,9 +170,10 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 	@Override
 	public void serviceAdded(ServiceEvent event)
 	{
+//		Log.e("JmdResolver"," serviceAdded ----------------------");
 		// Any thread.
-		if(event.getName().equals(this.serviceName))
-			return;
+//		if(event.getName().equals(this.serviceName))//已改动
+//			return;
 
 		//Logger.debug("jmd serviceAdded '{}' '{}'", event.getName(), event.getType());
 		jmdns.requestServiceInfo(event.getType(), event.getName());
@@ -186,9 +189,10 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 	@Override
 	public void serviceResolved(final ServiceEvent event)
 	{
+//		Log.e("JmdResolver",event.getName()+"--------serviceResolved------------------ "+this.serviceName);//6912868998272742549  serviceResolved------------------ 5727741365093556490
 		// Any thread.
-		if(event.getName().equals(this.serviceName))
-			return;
+//		if(event.getName().equals(this.serviceName))//已改动
+//			return;
 
 		/*Logger.debug("jmd serviceResolved '{}' {}:{}",
 				event.getName(),
@@ -199,7 +203,11 @@ public class JmdResolver implements BonjourResolver, ServiceListener
 		final String name = event.getName();
 		final String address = event.getInfo().getHostAddress();
 		final int port = event.getInfo().getPort();
+//		if(("192.168.1.170".equals(address))){
+//			return;
+//		}
 
+//		Log.e("JmdResolver  ",name+"  serviceResolved------------------ "+port);//192.168.10.160  serviceResolved------------------ 60979
 		queue.dispatch(new Runnable()
 		{
 			@Override

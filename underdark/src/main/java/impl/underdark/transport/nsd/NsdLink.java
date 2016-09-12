@@ -294,21 +294,18 @@ public class NsdLink implements Link
 		ByteBuffer header = ByteBuffer.allocate(4);//这个数字4不能随意改动
 		header.order(ByteOrder.BIG_ENDIAN);
 		header.putInt(frameBytes.length);
-//		Log.e("NsdLink", "===writeFrameBytes===" + frameBytes.length);
 		try
 		{
 			outputStream.write(header.array());
 			outputStream.write(frameBytes);//java.net.SocketException: sendto failed: EPIPE (Broken pipe)
-			//Logger.info("write " + (header.array().length + frameBytes.length));
 			outputStream.flush();
 		}
 		catch (IOException ex)
 		{
-//			ex.printStackTrace();
 			//TODO
 			try
 			{
-				Log.e("NsdLink  ", " writeFrameBytes()----IOException----" + ex.toString());//java.net.SocketException: sendto failed: EPIPE (Broken pipe)
+//				Log.e("NsdLink  ", " writeFrameBytes()----IOException----" + ex.toString());//java.net.SocketException: sendto failed: EPIPE (Broken pipe)
 				outputStream.close();
 				socket.close();
 			}
@@ -329,7 +326,6 @@ public class NsdLink implements Link
 		{
 			try
 			{
-				Log.e("connectImpl()  ", host+"    11111111111111111111   create client successfully   "+port);
 				this.socket = new Socket(host, port);
 //				byte[] hostBys = BnjUtil.ipTo4Byte("192.168.1.172");
 //				for (int i = 0; i < hostBys.length; i++) {
@@ -386,7 +382,7 @@ public class NsdLink implements Link
 
 			}
 			catch (IOException ex)
-			{Log.e("NsdLink   ", " ---------------创建代理客户端socket-------------IOException ex--- " + ex.toString());
+			{
 				notifyDisconnect();
 				return;
 			}
@@ -620,14 +616,6 @@ public class NsdLink implements Link
 				continue;
 			}
 
-			/*server.queue.dispatch(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					server.linkDidReceiveLinkFrame(NsdLink.this, frame);
-				}
-			});*/
 		} // while
 
 		return true;

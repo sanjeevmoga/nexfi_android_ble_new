@@ -16,11 +16,6 @@
 
 package impl.underdark.transport.nsd.manager;
 
-// Android Bonjour problems:
-// http://stackoverflow.com/questions/4656379/bonjour-implementation-on-android
-
-// Service resolve can be only one at time:
-// http://stackoverflow.com/questions/24665342/nsdmanager-doesnt-resolve-multiple-discovered-services
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
