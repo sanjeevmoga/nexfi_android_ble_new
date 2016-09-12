@@ -11,10 +11,8 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,78 +40,6 @@ public class FileTransferUtils {
             int h = newOpts.outHeight;
             float hh = 100f;//
             float ww = 100f;//
-            int be = 1;
-            if (w > h && w > ww) {
-                be = (int) (newOpts.outWidth / ww);
-            } else if (w < h && h > hh) {
-                be = (int) (newOpts.outHeight / hh);
-            }
-            if (be <= 0)
-                be = 1;
-            newOpts.inSampleSize = be;//设置采样率
-
-            newOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;//该模式是默认的,可不设
-            newOpts.inPurgeable = true;// 同时设置才会有效
-            newOpts.inInputShareable = true;//。当系统内存不够时候图片自动被回收
-            try {
-                bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length,
-                        newOpts);
-            }catch (OutOfMemoryError error){
-                //
-            }
-            return bitmap;
-        }
-        return null;
-    }
-
-
-
-    public static Bitmap getBitmapByStream(String path,float ww,float hh){
-        InputStream is =null;
-        try {
-            is = new FileInputStream(new File(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
-
-        options.inJustDecodeBounds = false;
-        int w = options.outWidth;
-        int h = options.outHeight;
-        int be = 1;
-        if (w > h && w > ww) {
-            be = (int) (options.outWidth / ww);
-        } else if (w < h && h > hh) {
-            be = (int) (options.outHeight / hh);
-        }
-        if (be <= 0)
-            be = 1;
-        options.inSampleSize = be;//设置采样率
-
-        options.inPreferredConfig = Bitmap.Config.RGB_565;//该模式是默认的,可不设
-        options.inPurgeable = true;// 同时设置才会有效
-        options.inInputShareable = true;//。当系统内存不够时候图片自动被回收
-        bitmap = BitmapFactory.decodeStream(is, null, options);
-
-        return bitmap;
-    }
-
-
-
-    public static Bitmap getPicFromBytesAndWH(byte[] bytes,int reqWidth, int reqHeight) {
-        if (bytes != null) {
-            BitmapFactory.Options newOpts = new BitmapFactory.Options();
-            newOpts.inJustDecodeBounds = true;//只读边,不读内容
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length,newOpts);
-
-            newOpts.inJustDecodeBounds = false;
-            int w = newOpts.outWidth;
-            int h = newOpts.outHeight;
-            float hh = (float)reqHeight;//
-            float ww = (float)reqWidth;//
             int be = 1;
             if (w > h && w > ww) {
                 be = (int) (newOpts.outWidth / ww);
@@ -189,25 +115,6 @@ public class FileTransferUtils {
         return inSampleSize;
     }
 
-
-    public static Bitmap decodeSampledBitmapFromResource(byte[] bytes,
-                                                         int reqWidth, int reqHeight) {
-        // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-        // 调用上面定义的方法计算inSampleSize值
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        // 使用获取到的inSampleSize值再次解析图片
-        options.inJustDecodeBounds = false;
-        Bitmap bitmap=null;
-        try{
-            bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-        }catch (OutOfMemoryError error){
-            //
-        }
-        return bitmap;
-    }
 
 
     /**
