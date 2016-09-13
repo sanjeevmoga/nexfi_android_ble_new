@@ -282,7 +282,6 @@ public class Node implements TransportListener {
             userMsg.nodeId = link.getNodeId() + "";
             baseMessage.userMessage = userMsg;
             if (!bleDBDao.findSameUserByUserId(userMsg.userId)) {
-                Log.e("TAG",  userMsg.userNick+"----接收的数据------------" + userMsg.lattitude+"  "+userMsg.longitude);
                 bleDBDao.add(baseMessage);
             }
             //收到请求之后，将自己的信息封装发给对方
@@ -357,7 +356,7 @@ public class Node implements TransportListener {
                 singleChatMessage.voiceMessage.filePath = fileRece.getAbsolutePath();
             }
             singleChatMessage.receiver = singleChatMessage.userMessage.userId;
-            bleDBDao.addP2PTextMsg(singleChatMessage);//geng
+            bleDBDao.addP2PTextMsg(singleChatMessage);
             if (null != mReceiveTextMsgListener) {
                 mReceiveTextMsgListener.onReceiveTextMsg(singleChatMessage);
             }
