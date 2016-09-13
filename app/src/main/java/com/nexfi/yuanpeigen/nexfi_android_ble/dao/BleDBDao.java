@@ -305,7 +305,6 @@ public class BleDBDao {
         } catch (OutOfMemoryError error) {
             //
         }
-
         return mDatas;
     }
 
