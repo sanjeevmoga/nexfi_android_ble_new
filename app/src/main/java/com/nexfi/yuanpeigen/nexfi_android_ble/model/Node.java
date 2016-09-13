@@ -29,7 +29,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +53,6 @@ public class Node implements TransportListener {
     ReceiveGroupMsgListener mReceiveGroupMsgListener = null;
     ReceiveUserOfflineListener mReceiveUserOfflineListener = null;
     private Gson gson;
-    private Socket chatSocket = null;
 
     public void setReceiveTextMsgListener(ReceiveTextMsgListener receiveTextMsgListener) {
         this.mReceiveTextMsgListener = receiveTextMsgListener;
@@ -100,7 +98,7 @@ public class Node implements TransportListener {
                     latitude = amapLocation.getLatitude();
                     longitude = amapLocation.getLongitude();
                     amapLocation.getAccuracy();//获取精度信息
-                    String address = amapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
+                    String address = amapLocation.getAddress();
                     Log.e("定位结果 ", " 经度:" + longitude + " 纬度:" + latitude + " 地址:" + address);
                 }else {
                     //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
@@ -142,7 +140,7 @@ public class Node implements TransportListener {
     }
 
     public void start() {
-        Debug.debugLog("TAG", "-1--Node------------------------------------start------");
+        Debug.debugLog("TAG", "-1--Node------start------");
         if (running)
             return;
 
@@ -223,12 +221,13 @@ public class Node implements TransportListener {
             baseMessage.timeStamp = TimeUtils.getNowTime();
             UserMessage userMessage = bleDBDao.findUserByUserId(userSelfId);
             if (null != userMessage) {
+
                 if(latitude!=0 && longitude!=0) {
                     //定位信息
                     userMessage.lattitude = latitude + "";
                     userMessage.longitude = longitude + "";
-                    Log.e("TAG",  userMessage.longitude+"------自己的位置信息---------"+userMessage.lattitude);
                 }
+
                 userMessage.nodeId = link.getNodeId() + "";
                 baseMessage.userMessage = userMessage;
                 bleDBDao.updateUserInfoByUserId(userMessage, userSelfId);
@@ -289,16 +288,21 @@ public class Node implements TransportListener {
             baseMsg.messageType = MessageType.eMessageType_SendUserInfo;//反馈消息
             baseMsg.timeStamp = TimeUtils.getNowTime();
             UserMessage userMg = bleDBDao.findUserByUserId(userSelfId);
-            if(latitude != 0 && longitude != 0){
-                userMg.lattitude = latitude+"";
-                userMg.longitude = longitude+"";//自己的位置信息
+
+            if(null != userMg && latitude != 0 && longitude != 0){
+                userMg.lattitude = latitude + "";
+                userMg.longitude = longitude + "";//自己的位置信息
             }
+
             baseMsg.userMessage = userMg;
             String responseJson = gson.toJson(baseMsg);
             byte[] dataM = responseJson.getBytes();
             link.sendFrame(dataM);
+
         } else if (MessageType.eMessageType_SendUserInfo == messageType) {
+
             BaseMessage baseMessage = gson.fromJson(json, BaseMessage.class);
+
             //接收对方反馈的用户信息
             UserMessage userMsg = baseMessage.userMessage;
             userMsg.nodeId = link.getNodeId() + "";
@@ -309,8 +313,11 @@ public class Node implements TransportListener {
                     bleDBDao.add(baseMessage);
                 }
             }
+
         } else if (MessageType.eMessageType_UpdateUserInfo == messageType) {//用户信息修改请求
+
             BaseMessage baseMessage = gson.fromJson(json, BaseMessage.class);
+
             //接收到用户信息修改消息后，根据userId将对应的用户信息修改
             UserMessage userMessage = baseMessage.userMessage;
             userMessage.nodeId = link.getNodeId() + "";
@@ -318,8 +325,11 @@ public class Node implements TransportListener {
             bleDBDao.updateUserInfoByUserId(userMessage, userMessage.userId);//根据userId更新数据库中对应的用户信息
             bleDBDao.updateP2PMsgByUserId(userMessage, userMessage.userId);//单聊数据
             bleDBDao.updateGroupMsgByUserId(userMessage, userMessage.userId);//群聊数据
+
         } else if (MessageType.eMessageType_SingleChat == messageType) {//单聊
+
             SingleChatMessage singleChatMessage = gson.fromJson(json, SingleChatMessage.class);
+
             //如果是图片消息，需要创建文件
             if (singleChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Image) {
                 String imageData = singleChatMessage.fileMessage.fileData;
@@ -337,6 +347,7 @@ public class Node implements TransportListener {
                 String rece_file_path = fileDir + "/" + imageFileName;
                 File fileRece = FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
                 singleChatMessage.fileMessage.filePath = fileRece.getAbsolutePath();
+
             }//如果是语音消息，需要创建临时文件，因为播放语音需要路径
             else if (singleChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Voice) {
                 String fileData = singleChatMessage.voiceMessage.fileData;
@@ -360,8 +371,11 @@ public class Node implements TransportListener {
             if (null != mReceiveTextMsgListener) {
                 mReceiveTextMsgListener.onReceiveTextMsg(singleChatMessage);
             }
+
         } else if (MessageType.eMessageType_AllUserChat == messageType) {//群聊
+
             GroupChatMessage groupChatMessage = gson.fromJson(json, GroupChatMessage.class);
+
             if (!(bleDBDao.findSameGroupByUuid(groupChatMessage.msgId))) {
                 if (groupChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Voice) {//群聊语音
                     String fileData = groupChatMessage.voiceMessage.fileData;
@@ -379,6 +393,7 @@ public class Node implements TransportListener {
                     String rece_file_path = fileDir + "/" + videoFileName;
                     File fileRece = FileTransferUtils.getFileFromBytes(by_receive_data, rece_file_path);
                     groupChatMessage.voiceMessage.filePath = fileRece.getAbsolutePath();
+
                 } else if (groupChatMessage.messageBodyType == MessageBodyType.eMessageBodyType_Image) {//群聊图片
                     String imageData = groupChatMessage.fileMessage.fileData;
                     byte[] by_receive_data = Base64.decode(imageData, Base64.DEFAULT);
@@ -400,14 +415,12 @@ public class Node implements TransportListener {
                 UserMessage userMessage = groupChatMessage.userMessage;
                 userMessage.nodeId = link.getNodeId() + "";
                 bleDBDao.addGroupTextMsg2(groupChatMessage);
-                UserMessage user = bleDBDao.findUserByUserId(userSelfId);
                 if (null != mReceiveGroupMsgListener) {
                     mReceiveGroupMsgListener.onReceiveGroupMsg(groupChatMessage);
                 }
             }
-        }//TODO
+        }
     }
-
 
     /**
      * 根据nodeId获取link
@@ -427,6 +440,5 @@ public class Node implements TransportListener {
         }
         return null;
     }
-
 
 } // Node
