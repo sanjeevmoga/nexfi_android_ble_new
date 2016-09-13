@@ -51,6 +51,11 @@ public class BleDBDao {
         values.put("userGender", userMessage.userGender);
         values.put("userAvatar", userMessage.userAvatar);
         values.put("birthday", userMessage.birthday);
+
+        //增加定位信息
+        values.put("lattitude",userMessage.lattitude);
+        values.put("longitude",userMessage.longitude);
+
         db.insert("userData", null, values);
         db.close();
         //有新用户上线
@@ -75,6 +80,11 @@ public class BleDBDao {
         values.put("userGender", userMessage.userGender);
         values.put("userAvatar", userMessage.userAvatar);
         values.put("birthday", userMessage.birthday);
+
+        //增加定位信息
+        values.put("lattitude", userMessage.lattitude);
+        values.put("longitude", userMessage.longitude);
+
         db.update("userData", values, "userId=?", new String[]{userId});
         db.close();
         context.getContentResolver().notifyChange(
@@ -101,6 +111,11 @@ public class BleDBDao {
             user.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
             user.userAvatar = cursor.getString(cursor.getColumnIndex("userAvatar"));
             user.birthday = cursor.getString(cursor.getColumnIndex("birthday"));
+
+            //位置信息
+            user.lattitude = cursor.getString(cursor.getColumnIndex("lattitude"));
+            user.longitude = cursor.getString(cursor.getColumnIndex("longitude"));
+
             if (!userId.equals(user.userId)) {
                 mDatas.add(user);
             }
@@ -128,6 +143,11 @@ public class BleDBDao {
             user.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
             user.userAvatar = cursor.getString(cursor.getColumnIndex("userAvatar"));
             user.birthday = cursor.getString(cursor.getColumnIndex("birthday"));
+
+            //位置信息
+            user.lattitude = cursor.getString(cursor.getColumnIndex("lattitude"));
+            user.longitude = cursor.getString(cursor.getColumnIndex("longitude"));
+
             return user;
         }
         return null;
@@ -180,6 +200,10 @@ public class BleDBDao {
         values.put("userAvatar", userMessage.userAvatar);
         values.put("userGender", userMessage.userGender);
         values.put("birthday", userMessage.birthday);
+
+        //增加定位信息
+        values.put("lattitude", userMessage.lattitude);
+        values.put("longitude", userMessage.longitude);
 
         TextMessage textMessage = singleChatMessage.textMessage;
         if (textMessage != null) {
@@ -247,6 +271,10 @@ public class BleDBDao {
                 userMessage.userAvatar = cursor.getString(cursor.getColumnIndex("userAvatar"));
                 userMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
                 userMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+                //增加定位信息
+                userMessage.lattitude = cursor.getString(cursor.getColumnIndex("lattitude"));
+                userMessage.longitude = cursor.getString(cursor.getColumnIndex("longitude"));
+
                 singleChatMessage.userMessage = userMessage;
 
                 TextMessage textMessage = new TextMessage();
@@ -260,7 +288,7 @@ public class BleDBDao {
                 fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
                 fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
                 fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
-                fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+                fileMessage.fileIcon = cursor.getString(cursor.getColumnIndex("fileIcon"));
                 fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
                 singleChatMessage.fileMessage = fileMessage;
 
@@ -314,6 +342,11 @@ public class BleDBDao {
                 userMessage.userAvatar = cursor.getString(cursor.getColumnIndex("userAvatar"));
                 userMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
                 userMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+
+                //增加定位信息
+                userMessage.lattitude = cursor.getString(cursor.getColumnIndex("lattitude"));
+                userMessage.longitude = cursor.getString(cursor.getColumnIndex("longitude"));
+
                 singleChatMessage.userMessage = userMessage;
 
                 TextMessage textMessage = new TextMessage();
@@ -327,7 +360,7 @@ public class BleDBDao {
                 fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
                 fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
                 fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
-                fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+                fileMessage.fileIcon = cursor.getString(cursor.getColumnIndex("fileIcon"));
                 fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
                 singleChatMessage.fileMessage = fileMessage;
 
@@ -366,6 +399,11 @@ public class BleDBDao {
         values.put("userAge", userMessage.userAge);
         values.put("userGender", userMessage.userGender);
         values.put("userAvatar", userMessage.userAvatar);
+
+        //增加定位信息
+        values.put("lattitude",userMessage.lattitude);
+        values.put("longitude",userMessage.longitude);
+
         db.update("textP2PMessg", values, "userId=?", new String[]{userId});
         db.close();
         context.getContentResolver().notifyChange(
@@ -393,6 +431,10 @@ public class BleDBDao {
         values.put("userAvatar", userMessage.userAvatar);
         values.put("userGender", userMessage.userGender);
         values.put("birthday", userMessage.birthday);
+
+        //增加定位信息
+        values.put("lattitude",userMessage.lattitude);
+        values.put("longitude",userMessage.longitude);
 
         TextMessage textMessage = groupChatMessage.textMessage;
         if (textMessage != null) {
@@ -469,6 +511,11 @@ public class BleDBDao {
             userMessage.userAvatar = cursor.getString(cursor.getColumnIndex("userAvatar"));
             userMessage.userGender = cursor.getString(cursor.getColumnIndex("userGender"));
             userMessage.userAge = cursor.getInt(cursor.getColumnIndex("userAge"));
+
+            //增加定位信息
+            userMessage.lattitude = cursor.getString(cursor.getColumnIndex("lattitude"));
+            userMessage.longitude = cursor.getString(cursor.getColumnIndex("longitude"));
+
             groupChatMessage.userMessage = userMessage;
 
             TextMessage textMessage = new TextMessage();
@@ -482,7 +529,7 @@ public class BleDBDao {
             fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
             fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
             fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
-            fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+            fileMessage.fileIcon = cursor.getString(cursor.getColumnIndex("fileIcon"));
             fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
             groupChatMessage.fileMessage = fileMessage;
 
@@ -530,6 +577,11 @@ public class BleDBDao {
         values.put("userAge", userMessage.userAge);
         values.put("userGender", userMessage.userGender);
         values.put("userAvatar", userMessage.userAvatar);
+
+        //增加定位信息
+        values.put("lattitude",userMessage.lattitude);
+        values.put("longitude",userMessage.longitude);
+
         db.update("textGroupMesg", values, "userId=?", new String[]{userId});
         db.close();
         context.getContentResolver().notifyChange(
@@ -564,7 +616,7 @@ public class BleDBDao {
             fileMessage.filePath = cursor.getString(cursor.getColumnIndex("filePath"));
             fileMessage.fileName = cursor.getString(cursor.getColumnIndex("fileName"));
             fileMessage.fileSize = cursor.getString(cursor.getColumnIndex("fileSize"));
-            fileMessage.fileIcon = cursor.getInt(cursor.getColumnIndex("fileIcon"));
+            fileMessage.fileIcon = cursor.getString(cursor.getColumnIndex("fileIcon"));
             fileMessage.isPb = cursor.getInt(cursor.getColumnIndex("isPb"));
             mDatas.add(fileMessage);
         }

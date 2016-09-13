@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.GroupChatActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MainActivity;
+import com.nexfi.yuanpeigen.nexfi_android_ble.activity.MapActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.NexFiActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.activity.SendVerificationActivity;
 import com.nexfi.yuanpeigen.nexfi_android_ble.adapter.UserListViewAdapter;
@@ -135,7 +136,6 @@ public class FragmentNearby extends Fragment implements View.OnClickListener, Re
                 UserMessage tempUserMsg = userMessageList.get(i);
                 Link tempLink = node.getLink(tempUserMsg.nodeId);
                 if (null == tempLink) {
-                    Debug.debugLog("tempLink", userMessageList.size() + "--------tempLink---");
                     bleDBDao.deleteUserByNodeId(tempUserMsg.nodeId, userId);
                     userMessageList.remove(tempUserMsg);
                 }
@@ -172,6 +172,16 @@ public class FragmentNearby extends Fragment implements View.OnClickListener, Re
         nexfi = (LinearLayout) View_pop.findViewById(R.id.nexfi);
         myProgressbar = (SmoothProgressBar) v_parent.findViewById(R.id.myProgressbar);
         tv_near = (TextView) v_parent.findViewById(R.id.tv_near);
+
+
+        ImageView bt_map = (ImageView) v_parent.findViewById(R.id.bt_map);
+        bt_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mapIntent = new Intent(BleApplication.getContext(), MapActivity.class);
+                startActivity(mapIntent);
+            }
+        });
     }
 
 

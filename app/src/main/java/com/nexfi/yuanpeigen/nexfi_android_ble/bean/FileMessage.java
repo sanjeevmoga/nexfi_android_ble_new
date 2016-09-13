@@ -10,7 +10,7 @@ public class FileMessage implements Serializable{
     public String fileName;
     public String fileSize;//文件大小
     public String fileData;//文件数据
-    public int fileIcon;
+    public String fileIcon;
     public int isPb;
     public String filePath;
     public String isRead;

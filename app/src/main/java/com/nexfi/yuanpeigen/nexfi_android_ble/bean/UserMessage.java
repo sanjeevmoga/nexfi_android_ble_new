@@ -15,6 +15,9 @@ public class UserMessage implements Serializable {
     public String userAvatar;
     public String birthday;
 
+    public String lattitude;//纬度
+    public String longitude;//经度
+
     @Override
     public String toString() {
         return "userId="+userId+",userNick="+userNick+",nodeId="+nodeId;
