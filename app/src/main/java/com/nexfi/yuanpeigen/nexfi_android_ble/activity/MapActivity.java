@@ -78,9 +78,7 @@ public class MapActivity extends AppCompatActivity{
 
 //    public static final Gradient ALT_HEATMAP_GRADIENT = new Gradient(
 //            ALT_HEATMAP_GRADIENT_COLORS, ALT_HEATMAP_GRADIENT_START_POINTS);
-//
-//
-//
+
     HashMap<Marker,UserMessage> hashMap = new HashMap<Marker,UserMessage>();
 
     private final String USER_AGE = "userAge";
@@ -291,20 +289,21 @@ public class MapActivity extends AppCompatActivity{
         map_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(5));
-                if(!isOpenHeatMap){
-                    isOpenHeatMap = true;
-                    addHeatMap();
-                }else{
-                    isOpenHeatMap = false;
-                    heatmap.removeHeatMap();
-                }
+                mBaiduMap.setBaiduHeatMapEnabled(true);//开启热力图
+
+//                mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(5));
+//                if(!isOpenHeatMap){
+//                    isOpenHeatMap = true;
+//                    addHeatMap();
+//                }else{
+//                    isOpenHeatMap = false;
+//                    heatmap.removeHeatMap();
+//                }
             }
         });
     }
 
     private void addHeatMap() {
-
         final Handler h = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -319,9 +318,9 @@ public class MapActivity extends AppCompatActivity{
             public void run() {
                 super.run();
                 List<LatLng> data = getLocations();
-                //将自己的位置放入所写定点的集合中
-                LatLng selfLatLng = new LatLng(latitude,longitude);
-                data.add(selfLatLng);
+//                //将自己的位置放入所写定点的集合中
+//                LatLng selfLatLng = new LatLng(latitude,longitude);
+//                data.add(selfLatLng);
                 heatmap = new HeatMap.Builder().data(data).build();
                 h.sendEmptyMessage(0);
             }
