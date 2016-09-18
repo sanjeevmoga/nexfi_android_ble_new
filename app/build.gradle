@@ -44,9 +44,7 @@ dependencies {
     compile project(':underdark')
     compile files('libs/MobCommons-2016.0303.1229.jar')
     compile files('libs/MobTools-2016.0303.1229.jar')
-    compile files('libs/AMap_2DMap_V2.9.0_20160525.jar')
-    compile files('libs/AMap_Location_V2.8.0_20160811.jar')
-    compile files('libs/AMap_Search_V3.4.0_20160811.jar')
+    compile files('libs/BaiduLBS_Android.jar')
 }
 
 repositories {

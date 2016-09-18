@@ -42,9 +42,15 @@
         android:theme="@style/AppTheme">
 
         <!--集成高德地图key-->
+        <!--<meta-data-->
+            <!--android:name="com.amap.api.v2.apikey"-->
+            <!--android:value="dc1ecb755d2babc93d53ee0c77b2500c"/>-->
+
+        <!--集成百度地图key-->
         <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="dc1ecb755d2babc93d53ee0c77b2500c"/>
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="MNGeeir2ogvyOz8uEh6Iz1HlF6eSfh6X" />
+
 
         <activity
             android:name=".activity.GuideActivity"
@@ -172,7 +178,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
-        <service android:name="com.amap.api.location.APSService"></service>
+        <!--高德地图服务-->
+        <!--<service android:name="com.amap.api.location.APSService"></service>-->
+
+
+        <!--百度定位必须加-->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" >
+        </service>
 
     </application>
 

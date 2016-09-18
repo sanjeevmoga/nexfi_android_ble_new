@@ -3,6 +3,7 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.application;
 import android.app.Application;
 import android.content.Context;
 
+import com.baidu.mapapi.SDKInitializer;
 import com.nexfi.yuanpeigen.nexfi_android_ble.R;
 import com.nexfi.yuanpeigen.nexfi_android_ble.uncaught.CrashHandler;
 
@@ -29,6 +30,8 @@ public class BleApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //百度地图初始化
+        SDKInitializer.initialize(getApplicationContext());
         mContext = getApplicationContext();
         crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());

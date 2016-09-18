@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.amap.api.maps2d.MapView
+    <com.baidu.mapapi.map.MapView
         android:id="@+id/map_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
 
-</LinearLayout>
+
+    <ImageView
+        android:id="@+id/map_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/map_switch"/>
+
+
+
+</RelativeLayout>

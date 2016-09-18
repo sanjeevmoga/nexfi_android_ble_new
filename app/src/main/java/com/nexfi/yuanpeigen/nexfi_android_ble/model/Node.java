@@ -3,12 +3,12 @@ package com.nexfi.yuanpeigen.nexfi_android_ble.model;
 import android.app.Activity;
 import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.google.gson.Gson;
 import com.nexfi.yuanpeigen.nexfi_android_ble.application.BleApplication;
 import com.nexfi.yuanpeigen.nexfi_android_ble.bean.BaseMessage;
@@ -80,35 +80,55 @@ public class Node implements TransportListener {
     private double latitude = 0;
 
 
-    //声明AMapLocationClient类对象
-    public AMapLocationClient mLocationClient = null;
+    //定位
+    private LocationClient mLocationClient;
+    private MyLocationListener myLocationListener;
+    private boolean isFirstIn = true;//用户是否是第一次进入
+    private MyLocationConfiguration.LocationMode mLocationMode;//定位模式
 
-    //声明AMapLocationClientOption对象
-    public AMapLocationClientOption mLocationOption = null;
-
-    //声明定位回调监听器
-    public AMapLocationListener mLocationListener = new AMapLocationListener(){
+    public class MyLocationListener implements BDLocationListener {
 
         @Override
-        public void onLocationChanged(AMapLocation amapLocation) {
-            if (amapLocation != null) {
-                if (amapLocation.getErrorCode() == 0) {
-                    //可在其中解析amapLocation获取相应内容。
-                    amapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                    latitude = amapLocation.getLatitude();
-                    longitude = amapLocation.getLongitude();
-                    amapLocation.getAccuracy();//获取精度信息
-                    String address = amapLocation.getAddress();
-                    Log.e("定位结果 ", " 经度:" + longitude + " 纬度:" + latitude + " 地址:" + address);
-                }else {
-                    //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-                    Log.e("AmapError", "location Error, ErrCode:"
-                            + amapLocation.getErrorCode() + ", errInfo:"
-                            + amapLocation.getErrorInfo());
-                }
-            }
+        public void onReceiveLocation(BDLocation bdLocation) {
+
+            latitude= bdLocation.getLatitude();
+            longitude=bdLocation.getLongitude();
+            String address = bdLocation.getAddrStr();
+//            Log.e("定位结果 ", " 经度:" + longitude + " 纬度:" + latitude + " 地址:" + address);//经度:121.605259 纬度:31.21449 地址:中国上海市浦东新区郭守敬路498号-14号楼-1楼
         }
-    };
+    }
+
+
+
+//    //声明AMapLocationClient类对象
+//    public AMapLocationClient mLocationClient = null;
+//
+//    //声明AMapLocationClientOption对象
+//    public AMapLocationClientOption mLocationOption = null;
+//
+//    //声明定位回调监听器
+//    public AMapLocationListener mLocationListener = new AMapLocationListener(){
+//
+//        @Override
+//        public void onLocationChanged(AMapLocation amapLocation) {
+//            if (amapLocation != null) {
+//                if (amapLocation.getErrorCode() == 0) {
+//                    //可在其中解析amapLocation获取相应内容。
+//                    amapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
+//                    latitude = amapLocation.getLatitude();
+//                    longitude = amapLocation.getLongitude();
+//                    amapLocation.getAccuracy();//获取精度信息
+//                    String address = amapLocation.getAddress();
+//                    Log.e("定位结果 ", " 经度:" + longitude + " 纬度:" + latitude + " 地址:" + address);
+//                }else {
+//                    //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
+//                    Log.e("AmapError", "location Error, ErrCode:"
+//                            + amapLocation.getErrorCode() + ", errInfo:"
+//                            + amapLocation.getErrorInfo());
+//                }
+//            }
+//        }
+//    };
 
 
     public Node(Activity activity) {
@@ -155,26 +175,49 @@ public class Node implements TransportListener {
     //
     private void initLocation() {
 
-        //初始化定位
-        mLocationClient = new AMapLocationClient(this.activity);
+//        //初始化定位
+//        mLocationClient = new AMapLocationClient(this.activity);
+//
+//        //设置定位回调监听
+//        mLocationClient.setLocationListener(mLocationListener);
+//
+//        //初始化AMapLocationClientOption对象
+//        mLocationOption = new AMapLocationClientOption();
+//
+//        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
+//
+//        mLocationOption.setOnceLocation(true);
+//
+//        //设置是否返回地址信息（默认返回地址信息）
+//        mLocationOption.setNeedAddress(true);
+//
+//        //给定位客户端对象设置定位参数
+//        mLocationClient.setLocationOption(mLocationOption);
+//        //启动定位
+//        mLocationClient.startLocation();
 
-        //设置定位回调监听
-        mLocationClient.setLocationListener(mLocationListener);
 
-        //初始化AMapLocationClientOption对象
-        mLocationOption = new AMapLocationClientOption();
 
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
+        mLocationMode = MyLocationConfiguration.LocationMode.NORMAL;//默认是普通模式
+        mLocationClient = new LocationClient(activity);
 
-        mLocationOption.setOnceLocation(true);
+        myLocationListener = new MyLocationListener();
 
-        //设置是否返回地址信息（默认返回地址信息）
-        mLocationOption.setNeedAddress(true);
+        mLocationClient.registerLocationListener(myLocationListener);
 
-        //给定位客户端对象设置定位参数
-        mLocationClient.setLocationOption(mLocationOption);
-        //启动定位
-        mLocationClient.startLocation();
+        LocationClientOption option=new LocationClientOption();
+        option.setCoorType("bd09ll");//坐标类型,"bd09ll"能与百度地图很好的融合
+        option.setIsNeedAddress(true);
+        option.setOpenGps(true);
+        option.setScanSpan(0);//仅定位一次
+
+        mLocationClient.setLocOption(option);
+
+        //开启定位
+        if(!mLocationClient.isStarted()){
+            mLocationClient.start();
+        }
+
     }
 
 
