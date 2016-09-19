@@ -211,11 +211,6 @@ public class BtTransport implements Transport, BtServer.Listener, BtPairer.Liste
 			return;
 		}
 
-//		if(Build.VERSION.SDK_INT < 18)
-//		{
-//			Logger.error("Bluetooth LE is not supported on this device.");
-//			return;
-//		}
 
 		this.running = true;
 

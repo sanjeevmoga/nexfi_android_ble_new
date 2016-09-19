@@ -39,7 +39,7 @@ import java.util.List;
 import io.underdark.transport.Link;
 
 /**
- * Created by Mark on 2016/4/12.
+ * Created by gengbaolong on 2016/4/12.
  */
 public class FragmentNearby extends Fragment implements View.OnClickListener, ReceiveUserOfflineListener {
 

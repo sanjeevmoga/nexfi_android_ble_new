@@ -289,16 +289,14 @@ public class MapActivity extends AppCompatActivity{
         map_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBaiduMap.setBaiduHeatMapEnabled(true);//开启热力图
-
-//                mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(5));
-//                if(!isOpenHeatMap){
-//                    isOpenHeatMap = true;
-//                    addHeatMap();
-//                }else{
-//                    isOpenHeatMap = false;
-//                    heatmap.removeHeatMap();
-//                }
+                mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(5));
+                if(!isOpenHeatMap){
+                    isOpenHeatMap = true;
+                    addHeatMap();
+                }else{
+                    isOpenHeatMap = false;
+                    heatmap.removeHeatMap();
+                }
             }
         });
     }
