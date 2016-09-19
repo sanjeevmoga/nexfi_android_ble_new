@@ -30,7 +30,6 @@ import com.nexfi.yuanpeigen.nexfi_android_ble.dao.BleDBDao;
 import com.nexfi.yuanpeigen.nexfi_android_ble.listener.ReceiveUserOfflineListener;
 import com.nexfi.yuanpeigen.nexfi_android_ble.model.Node;
 import com.nexfi.yuanpeigen.nexfi_android_ble.smoothprogressbar.SmoothProgressBar;
-import com.nexfi.yuanpeigen.nexfi_android_ble.util.Debug;
 import com.nexfi.yuanpeigen.nexfi_android_ble.util.UserInfo;
 
 import java.util.ArrayList;
@@ -130,7 +129,6 @@ public class FragmentNearby extends Fragment implements View.OnClickListener, Re
         userId = UserInfo.initUserId(userId, BleApplication.getContext());
         //从数据库中获取用户数据
         userMessageList = bleDBDao.findAllUsers(userId);
-        Debug.debugLog("initData", userMessageList.size() + "--------userMessageList---");
         if (null != node) {
             for (int i = 0; i < userMessageList.size(); i++) {
                 UserMessage tempUserMsg = userMessageList.get(i);
